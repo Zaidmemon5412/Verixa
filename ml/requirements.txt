@@ -1,0 +1,16 @@
+# ==============================================================================
+# Verixa ML Service Python Requirements
+# ==============================================================================
+
+# Core Data Operations
+pandas>=2.1.3
+numpy>=1.26.2
+scikit-learn>=1.3.2
+
+# Serialization & Model Saving
+joblib>=1.3.2
+
+# Development / Research
+jupyterlab>=4.0.9
+matplotlib>=3.8.2
+seaborn>=0.13.0

@@ -1,0 +1,2 @@
+# Gitkeep to preserve serialized ML models folder
+# Saved weights are ignored by git via root .gitignore (track with DVC instead)
