@@ -1,7 +1,9 @@
 import uuid
 from django.db import models
 from django.db.models import CheckConstraint, Q
+# pyrefly: ignore [missing-import]
 from apps.core.models import BaseModel
+# pyrefly: ignore [missing-import]
 from apps.core.validators import validate_phone_number
 
 
@@ -62,7 +64,8 @@ class Builder(BaseModel):
         ordering = ['builder_name']
         constraints = [
             CheckConstraint(
-                check=Q(established_year__gte=1800) & Q(established_year__lte=2100),
+                # pyrefly: ignore [unexpected-keyword]
+                check = Q(established_year__gte=1800) & Q(established_year__lte=2100),
                 name="check_builder_established_year_range"
             )
         ]
