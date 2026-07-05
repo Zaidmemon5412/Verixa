@@ -1,8 +1,11 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+# pyrefly: ignore [missing-import]
 from apps.core.validators import validate_phone_number
+# pyrefly: ignore [missing-import]
 from apps.properties.models import Property
+from .managers import CustomUserManager
 
 
 class User(AbstractUser):
@@ -31,11 +34,6 @@ class User(AbstractUser):
         unique=True,
         db_index=True,
         verbose_name="Email Address"
-    )
-    # password_hash to explicitly store/manage hashes alongside standard password
-    password_hash = models.CharField(
-        max_length=255,
-        verbose_name="Password Hash"
     )
     phone = models.CharField(
         max_length=15,
@@ -66,7 +64,10 @@ class User(AbstractUser):
         verbose_name="Updated At"
     )
 
-    REQUIRED_FIELDS = ['email', 'role', 'full_name']
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'role', 'full_name']
 
     class Meta:
         verbose_name = "User"
@@ -76,7 +77,7 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.full_name} ({self.role})"
 
-    def save(self, *value, **kwargs):
+    def save(self, *args, **kwargs):
         # Sync full_name into first_name and last_name for Django compatibility
         if self.full_name:
             names = self.full_name.split(' ', 1)
@@ -84,11 +85,7 @@ class User(AbstractUser):
             if len(names) > 1:
                 self.last_name = names[1]
 
-        # Auto-populate password_hash using password value if set
-        if self.password and not self.password_hash:
-            self.password_hash = self.password
-
-        super().save(*value, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class SavedProperty(models.Model):

@@ -8,12 +8,12 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'full_name', 'email', 'role', 'phone', 'is_staff', 'created_at')
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
     fieldsets = UserAdmin.fieldsets + (
-        ('Custom Profile Data', {'fields': ('role', 'phone', 'full_name', 'password_hash', 'profile_image')}),
+        ('Custom Profile Data', {'fields': ('role', 'phone', 'full_name', 'profile_image')}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Custom Profile Data', {
             'classes': ('wide',),
-            'fields': ('role', 'phone', 'email', 'full_name', 'password_hash', 'profile_image'),
+            'fields': ('role', 'phone', 'email', 'full_name', 'profile_image'),
         }),
     )
     search_fields = ('username', 'full_name', 'email', 'phone')
