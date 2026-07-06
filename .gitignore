@@ -2,6 +2,8 @@
 # Verixa Global .gitignore (Multi-Service Architecture)
 # ==============================================================================
 
+# Test comment for linking Antigravity and GitHub Desktop
+
 # OS & Systems
 .DS_Store
 Thumbs.db
