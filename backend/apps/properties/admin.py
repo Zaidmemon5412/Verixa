@@ -58,6 +58,15 @@ class PropertyAdmin(admin.ModelAdmin):
 class AmenityAdmin(admin.ModelAdmin):
     list_display = ('amenity_name',)
     search_fields = ('amenity_name',)
+    ordering = ('amenity_name',)
+
+
+@admin.register(PropertyAmenity)
+class PropertyAmenityAdmin(admin.ModelAdmin):
+    list_display = ('property', 'amenity')
+    search_fields = ('property__property_name', 'amenity__amenity_name')
+    list_filter = ('amenity',)
+    ordering = ('property', 'amenity')
 
 
 @admin.register(PropertyImage)

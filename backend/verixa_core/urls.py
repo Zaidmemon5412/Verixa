@@ -14,6 +14,12 @@ urlpatterns = [
     # Accounts authentication and profiles endpoints
     path('api/accounts/', include('apps.accounts.urls')),
 
+    # Builders endpoints
+    path('api/builders/', include('apps.builders.urls')),
+
+    # Properties endpoints (amenities, property-amenities)
+    path('api/', include('apps.properties.urls')),
+
     # API Documentation (drf-spectacular)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
