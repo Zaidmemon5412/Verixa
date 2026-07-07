@@ -20,6 +20,9 @@ urlpatterns = [
     # Properties endpoints (amenities, property-amenities)
     path('api/', include('apps.properties.urls')),
 
+    # Locations endpoints (localities, nearby-places)
+    path('api/', include('apps.locations.urls')),
+
     # API Documentation (drf-spectacular)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
