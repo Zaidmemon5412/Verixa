@@ -185,3 +185,7 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # OCR Path Setting
 TESSERACT_CMD_PATH = env.str('TESSERACT_CMD_PATH', default='/usr/bin/tesseract')
+
+# Supported locations configuration
+SUPPORTED_CITIES = env.list('SUPPORTED_CITIES', default=['Ahmedabad'])
+SUPPORTED_STATES = env.list('SUPPORTED_STATES', default=['Gujarat'])
