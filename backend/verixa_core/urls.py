@@ -17,17 +17,17 @@ urlpatterns = [
     # Builders endpoints
     path('api/builders/', include('apps.builders.urls')),
 
-    # Properties endpoints (amenities, property-amenities)
+    # Properties endpoints (amenities, property-amenities, images, documents)
     path('api/', include('apps.properties.urls')),
 
     # Locations endpoints (localities, nearby-places)
     path('api/', include('apps.locations.urls')),
-
     # API Documentation (drf-spectacular)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
+
 
 # Static & Media routing in local environment
 if settings.DEBUG:
