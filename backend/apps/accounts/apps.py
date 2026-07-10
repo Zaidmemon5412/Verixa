@@ -9,4 +9,5 @@ class AccountsConfig(AppConfig):
         """
         Perform application initialization such as registering signal receivers.
         """
-        import apps.accounts.signals  # noqa
+        # pyrefly: ignore [missing-import]
+        import apps.accounts.signals 

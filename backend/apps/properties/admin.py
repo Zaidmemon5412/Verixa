@@ -72,15 +72,32 @@ class PropertyAmenityAdmin(admin.ModelAdmin):
 @admin.register(PropertyImage)
 class PropertyImageAdmin(admin.ModelAdmin):
     list_display = ('property', 'image_type', 'display_order', 'is_primary')
-    list_filter = ('image_type', 'is_primary')
-    search_fields = ('property__property_name',)
+    list_filter = ('property', 'image_type', 'is_primary')
+    search_fields = ('property__property_name', 'image_type')
+    ordering = ('property', 'display_order')
 
 
 @admin.register(PropertyDocument)
 class PropertyDocumentAdmin(admin.ModelAdmin):
     list_display = ('document_name', 'property', 'document_type', 'ocr_status', 'verification_status', 'uploaded_at')
-    list_filter = ('document_type', 'ocr_status', 'verification_status')
+    list_filter = ('property', 'document_type', 'ocr_status', 'verification_status')
     search_fields = ('document_name', 'property__property_name')
+    ordering = ('-uploaded_at',)
+    actions = ['trigger_verification']
+
+    @admin.action(description="Trigger verification for selected documents")
+    def trigger_verification(self, request, queryset):
+        from .services import PropertyDocumentService
+        count = 0
+        for doc in queryset:
+            PropertyDocumentService.update_document_status(
+                document_id=doc.pk,
+                ocr_status='completed',
+                verification_status='verified'
+            )
+            count += 1
+        self.message_user(request, f"Triggered verification and updated status to verified for {count} documents.")
+
 
 
 @admin.register(PriceHistory)
