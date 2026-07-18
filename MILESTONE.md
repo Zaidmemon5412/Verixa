@@ -19,7 +19,7 @@
 | Core Property Management | 🟡 In Progress | 70% |
 | Property Module | ⏳ Pending | 0% |
 | User Features | ⏳ Pending | 0% |
-| Frontend | ⏳ Pending | 0% |
+| Frontend | 🟡 In Progress | 20% |
 | Map Integration | ⏳ Pending | 0% |
 | Data Collection | ⏳ Pending | 0% |
 | Machine Learning | ⏳ Pending | 0% |
@@ -242,7 +242,7 @@ Status: ⏳ Pending
 - [ ] Profile
 - [ ] Dashboard
 
-Status: ⏳ Pending
+Status: 🟡 In Progress
 
 ---
 
