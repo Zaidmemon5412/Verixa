@@ -223,8 +223,8 @@ Status: ⏳ Pending
 
 ## Authentication
 
-- [ ] Login
-- [ ] Register
+- [x] Login
+- [x] Register
 - [ ] Forgot Password
 
 ## Layout
@@ -339,7 +339,7 @@ Core Property Mgmt        ███████░░░ 70%
 
 Property Module           ░░░░░░░░░░ 0%
 
-Frontend                  ░░░░░░░░░░ 0%
+Frontend                  ██░░░░░░░░ 20%
 
 Map Integration           ░░░░░░░░░░ 0%
 
