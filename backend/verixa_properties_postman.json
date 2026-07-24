@@ -1,0 +1,152 @@
+{
+    "info": {
+        "name": "Verixa Property Module APIs",
+        "description": "CRUD endpoints for Property Module",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Get All Properties",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/properties/",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "properties",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Property",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"property_name\": \"Luxury Villa Test\",\n    \"property_type\": \"villa\",\n    \"transaction_type\": \"new\",\n    \"price\": 15000000,\n    \"price_per_sqft\": 5000,\n    \"bhk\": 3,\n    \"carpet_area\": 3000,\n    \"latitude\": 19.0760,\n    \"longitude\": 72.8777,\n    \"status\": \"ready\",\n    \"address\": \"123 Mumbai Street\",\n    \"builder\": null,\n    \"locality\": null\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/properties/",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "properties",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Single Property",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/api/properties/{{property_id}}/",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "properties",
+                        "{{property_id}}",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Property",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"price\": 16000000\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/properties/{{property_id}}/",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "properties",
+                        "{{property_id}}",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Property",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/properties/{{property_id}}/",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "properties",
+                        "{{property_id}}",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000"
+        },
+        {
+            "key": "access_token",
+            "value": "your_access_token_here"
+        },
+        {
+            "key": "property_id",
+            "value": "your_property_uuid_here"
+        }
+    ]
+}

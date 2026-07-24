@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+# pyrefly: ignore [missing-import]
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -13,6 +14,9 @@ urlpatterns = [
 
     # Accounts authentication and profiles endpoints
     path('api/accounts/', include('apps.accounts.urls')),
+
+    # Properties endpoints
+    path('api/properties/', include('apps.properties.urls')),
 
     # API Documentation (drf-spectacular)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
