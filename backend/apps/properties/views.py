@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Amenity, PropertyAmenity, Property, PropertyImage, PropertyDocument
+from .models import Amenity, PropertyAmenity, Property, PropertyImage, PropertyDocument, PropertyListing, PropertyLegal
 from .serializers import (
     AmenitySerializer,
     AmenityCreateSerializer,
@@ -20,6 +20,13 @@ from .serializers import (
     PropertyAmenityCreateSerializer,
     PropertyImageSerializer,
     PropertyDocumentSerializer,
+    PropertySerializer,
+    PropertyListSerializer,
+    PropertyDetailSerializer,
+    PropertyCreateSerializer,
+    PropertyUpdateSerializer,
+    PropertyListingSerializer,
+    PropertyLegalSerializer,
 )
 from .services import (
     create_amenity,
@@ -33,7 +40,24 @@ from .services import (
     get_amenity_properties,
     PropertyImageService,
     PropertyDocumentService,
+    create_property,
+    get_property,
+    list_properties,
+    update_property,
+    delete_property,
+    create_listing,
+    get_listing,
+    list_listings,
+    update_listing,
+    delete_listing,
+    create_legal_record,
+    get_legal_record,
+    list_legal_records,
+    update_legal_record,
+    delete_legal_record,
 )
+from .pagination import PropertyPagination, StandardResultsSetPagination
+from .permissions import IsAdminOrReadOnly, IsListingOwnerOrBuilderOrAdmin
 
 logger = logging.getLogger(__name__)
 
@@ -711,3 +735,484 @@ class PropertyDocumentDetailView(APIView):
             return api_response(success=False, message=str(e), status_code=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return api_response(success=False, message=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ==================================================
+# PROPERTY, LISTING & LEGAL VIEWSETS
+# ==================================================
+
+class PropertyViewSet(viewsets.ViewSet):
+    """
+    ViewSet for managing Property instances.
+    Endpoints:
+    - GET /api/properties/
+    - POST /api/properties/
+    - GET /api/properties/<property_id>/
+    - PUT /api/properties/<property_id>/
+    - PATCH /api/properties/<property_id>/
+    - DELETE /api/properties/<property_id>/
+    """
+    permission_classes = [AllowAny]
+    pagination_class = PropertyPagination
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = list_properties(request.query_params)
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = PropertyListSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+            serializer = PropertyListSerializer(queryset, many=True)
+            return Response({
+                "success": True,
+                "message": "Properties retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error listing properties")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        try:
+            property_obj = get_property(pk)
+            serializer = PropertyDetailSerializer(property_obj)
+            return Response({
+                "success": True,
+                "message": "Property retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.exception(f"Error retrieving property ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request, *args, **kwargs):
+        serializer = PropertyCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            property_obj = create_property(serializer.validated_data)
+            response_data = PropertyDetailSerializer(property_obj).data
+            return Response({
+                "success": True,
+                "message": "Property created successfully.",
+                "data": response_data
+            }, status=status.HTTP_201_CREATED)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception("Error creating property")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=True)
+
+    def _update(self, request, pk=None, partial=False):
+        try:
+            property_obj = get_property(pk)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PropertyUpdateSerializer(property_obj, data=request.data, partial=partial)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            updated_obj = update_property(property_obj, serializer.validated_data)
+            response_data = PropertyDetailSerializer(updated_obj).data
+            return Response({
+                "success": True,
+                "message": "Property updated successfully.",
+                "data": response_data
+            }, status=status.HTTP_200_OK)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception(f"Error updating property ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        try:
+            property_obj = get_property(pk)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            delete_property(property_obj)
+            return Response({
+                "success": True,
+                "message": "Property deleted successfully.",
+                "data": {}
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f"Error deleting property ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PropertyListingViewSet(viewsets.ViewSet):
+    """
+    ViewSet for managing PropertyListing instances.
+    """
+    permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = list_listings(request.query_params)
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = PropertyListingSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+            serializer = PropertyListingSerializer(queryset, many=True)
+            return Response({
+                "success": True,
+                "message": "Property listings retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error listing property listings")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        try:
+            listing_obj = get_listing(pk)
+            serializer = PropertyListingSerializer(listing_obj)
+            return Response({
+                "success": True,
+                "message": "Property listing retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except (PropertyListing.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property listing not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.exception(f"Error retrieving listing ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request, *args, **kwargs):
+        serializer = PropertyListingSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            listing_obj = create_listing(serializer.validated_data)
+            response_data = PropertyListingSerializer(listing_obj).data
+            return Response({
+                "success": True,
+                "message": "Property listing created successfully.",
+                "data": response_data
+            }, status=status.HTTP_201_CREATED)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception("Error creating property listing")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=True)
+
+    def _update(self, request, pk=None, partial=False):
+        try:
+            listing_obj = get_listing(pk)
+        except (PropertyListing.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property listing not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PropertyListingSerializer(listing_obj, data=request.data, partial=partial)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            updated_obj = update_listing(listing_obj, serializer.validated_data)
+            response_data = PropertyListingSerializer(updated_obj).data
+            return Response({
+                "success": True,
+                "message": "Property listing updated successfully.",
+                "data": response_data
+            }, status=status.HTTP_200_OK)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception(f"Error updating listing ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        try:
+            listing_obj = get_listing(pk)
+        except (PropertyListing.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property listing not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            delete_listing(listing_obj)
+            return Response({
+                "success": True,
+                "message": "Property listing deleted successfully.",
+                "data": {}
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f"Error deleting listing ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PropertyLegalViewSet(viewsets.ViewSet):
+    """
+    ViewSet for managing PropertyLegal records.
+    """
+    permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = list_legal_records(request.query_params)
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request)
+            if page is not None:
+                serializer = PropertyLegalSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+            serializer = PropertyLegalSerializer(queryset, many=True)
+            return Response({
+                "success": True,
+                "message": "Property legal records retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error listing legal records")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        try:
+            legal_obj = get_legal_record(pk)
+            serializer = PropertyLegalSerializer(legal_obj)
+            return Response({
+                "success": True,
+                "message": "Property legal record retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except (PropertyLegal.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property legal record not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.exception(f"Error retrieving legal record ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request, *args, **kwargs):
+        serializer = PropertyLegalSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            legal_obj = create_legal_record(serializer.validated_data)
+            response_data = PropertyLegalSerializer(legal_obj).data
+            return Response({
+                "success": True,
+                "message": "Property legal record created successfully.",
+                "data": response_data
+            }, status=status.HTTP_201_CREATED)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception("Error creating property legal record")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        return self._update(request, pk, partial=True)
+
+    def _update(self, request, pk=None, partial=False):
+        try:
+            legal_obj = get_legal_record(pk)
+        except (PropertyLegal.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property legal record not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PropertyLegalSerializer(legal_obj, data=request.data, partial=partial)
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Validation failed.",
+                "data": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            updated_obj = update_legal_record(legal_obj, serializer.validated_data)
+            response_data = PropertyLegalSerializer(updated_obj).data
+            return Response({
+                "success": True,
+                "message": "Property legal record updated successfully.",
+                "data": response_data
+            }, status=status.HTTP_200_OK)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.exception(f"Error updating legal record ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        try:
+            legal_obj = get_legal_record(pk)
+        except (PropertyLegal.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property legal record not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            delete_legal_record(legal_obj)
+            return Response({
+                "success": True,
+                "message": "Property legal record deleted successfully.",
+                "data": {}
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception(f"Error deleting legal record ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+

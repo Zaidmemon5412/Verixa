@@ -1,7 +1,12 @@
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
-from .models import PropertyImage, PropertyDocument, Property, Amenity, PropertyAmenity
+from .models import (
+    PropertyImage, PropertyDocument, Property, Amenity, PropertyAmenity,
+    PropertyListing, PropertyLegal
+)
 from .validators import validate_amenity_name
+from apps.accounts.models import User
+from apps.builders.models import Builder
 
 class PropertyImageSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='image_id', read_only=True)
@@ -197,17 +202,6 @@ class PropertyAmenityCreateSerializer(serializers.ModelSerializer):
         fields = ['id', 'property_id', 'amenity_id']
         read_only_fields = ['id']
 
-    def validate(self, attrs):
-        property_obj = attrs.get('property')
-        amenity_obj = attrs.get('amenity')
-
-        # Prevent duplicate Property-Amenity mapping
-        if PropertyAmenity.objects.filter(property=property_obj, amenity=amenity_obj).exists():
-            raise serializers.ValidationError(
-                "This property-amenity mapping already exists."
-            )
-        return attrs
-
 
 class PropertyAmenityUpdateSerializer(serializers.ModelSerializer):
     """
@@ -245,3 +239,200 @@ class PropertyAmenityUpdateSerializer(serializers.ModelSerializer):
                     "This property-amenity mapping already exists."
                 )
         return attrs
+
+
+class PropertySerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Property model, exposing basic and detailed specifications.
+    """
+    class Meta:
+        model = Property
+        fields = [
+            'property_id', 'builder', 'locality', 'rera_number', 'property_name',
+            'property_type', 'transaction_type', 'price', 'price_per_sqft', 'bhk',
+            'carpet_area', 'builtup_area', 'super_builtup_area', 'bathrooms',
+            'balconies', 'parking_spaces', 'floor_number', 'total_floors',
+            'furnishing_status', 'facing', 'construction_age', 'land_area',
+            'address', 'latitude', 'longitude', 'status', 'launch_date',
+            'completion_date', 'description', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['property_id', 'created_at', 'updated_at']
+
+
+class PropertyListingSerializer(serializers.ModelSerializer):
+    """
+    Serializer for managing property listings, enforcing presence of owner or builder.
+    """
+    listing_id = serializers.UUIDField(read_only=True)
+    property_id = serializers.PrimaryKeyRelatedField(
+        source='property',
+        queryset=Property.objects.all()
+    )
+    owner_id = serializers.PrimaryKeyRelatedField(
+        source='owner',
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    builder_id = serializers.PrimaryKeyRelatedField(
+        source='builder',
+        queryset=Builder.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model = PropertyListing
+        fields = [
+            'listing_id', 'property_id', 'listed_by_type', 'owner_id',
+            'builder_id', 'contact_name', 'contact_phone', 'contact_email',
+            'is_verified', 'listing_status', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['listing_id', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        owner = attrs.get('owner', getattr(self.instance, 'owner', None))
+        builder = attrs.get('builder', getattr(self.instance, 'builder', None))
+
+        if not owner and not builder:
+            raise serializers.ValidationError(
+                "A property listing must have at least one of owner_id or builder_id specified."
+            )
+        return attrs
+
+
+class PropertyLegalSerializer(serializers.ModelSerializer):
+    """
+    Serializer for managing legal information of a property.
+    """
+    legal_id = serializers.UUIDField(read_only=True)
+    property_id = serializers.PrimaryKeyRelatedField(
+        source='property',
+        queryset=Property.objects.all()
+    )
+    verified_by_id = serializers.PrimaryKeyRelatedField(
+        source='verified_by',
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model = PropertyLegal
+        fields = [
+            'legal_id', 'property_id', 'survey_number', 'khata_number',
+            'na_converted', 'verification_status', 'verified_by_id',
+            'verified_at', 'remarks', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['legal_id', 'created_at', 'updated_at']
+
+
+class PropertyCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a new Property.
+    """
+    class Meta:
+        model = Property
+        fields = [
+            'property_id', 'builder', 'locality', 'rera_number', 'property_name',
+            'property_type', 'transaction_type', 'price', 'price_per_sqft', 'bhk',
+            'carpet_area', 'builtup_area', 'super_builtup_area', 'bathrooms',
+            'balconies', 'parking_spaces', 'floor_number', 'total_floors',
+            'furnishing_status', 'facing', 'construction_age', 'land_area',
+            'address', 'latitude', 'longitude', 'status', 'launch_date',
+            'completion_date', 'description'
+        ]
+
+    def validate(self, attrs):
+        price = attrs.get('price')
+        if price is not None and price < 0:
+            raise serializers.ValidationError({"price": "Price cannot be negative."})
+            
+        carpet_area = attrs.get('carpet_area')
+        if carpet_area is not None and carpet_area <= 0:
+            raise serializers.ValidationError({"carpet_area": "Carpet area must be greater than 0."})
+
+        floor_number = attrs.get('floor_number')
+        total_floors = attrs.get('total_floors')
+        if floor_number is not None and total_floors is not None:
+            if floor_number > total_floors:
+                raise serializers.ValidationError({"floor_number": "Floor number cannot exceed total floors."})
+        return attrs
+
+
+class PropertyUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating an existing Property.
+    """
+    class Meta:
+        model = Property
+        fields = [
+            'builder', 'locality', 'rera_number', 'property_name',
+            'property_type', 'transaction_type', 'price', 'price_per_sqft', 'bhk',
+            'carpet_area', 'builtup_area', 'super_builtup_area', 'bathrooms',
+            'balconies', 'parking_spaces', 'floor_number', 'total_floors',
+            'furnishing_status', 'facing', 'construction_age', 'land_area',
+            'address', 'latitude', 'longitude', 'status', 'launch_date',
+            'completion_date', 'description'
+        ]
+
+    def validate(self, attrs):
+        price = attrs.get('price', getattr(self.instance, 'price', None))
+        if price is not None and price < 0:
+            raise serializers.ValidationError({"price": "Price cannot be negative."})
+
+        floor_number = attrs.get('floor_number', getattr(self.instance, 'floor_number', None))
+        total_floors = attrs.get('total_floors', getattr(self.instance, 'total_floors', None))
+        if floor_number is not None and total_floors is not None:
+            if floor_number > total_floors:
+                raise serializers.ValidationError({"floor_number": "Floor number cannot exceed total floors."})
+        return attrs
+
+
+class PropertyListSerializer(serializers.ModelSerializer):
+    """
+    Lightweight list serializer for Property list endpoints.
+    """
+    locality_name = serializers.CharField(source='locality.name', read_only=True)
+    builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    primary_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Property
+        fields = [
+            'property_id', 'property_name', 'locality_name', 'builder_name',
+            'property_type', 'transaction_type', 'price', 'price_per_sqft',
+            'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
+            'primary_image', 'created_at'
+        ]
+
+    def get_primary_image(self, obj):
+        primary_img = obj.images.filter(is_primary=True).first() or obj.images.first()
+        return primary_img.image_url if primary_img else None
+
+
+class PropertyDetailSerializer(serializers.ModelSerializer):
+    """
+    Comprehensive detailed serializer for a Property including nested relations.
+    """
+    locality_name = serializers.CharField(source='locality.name', read_only=True)
+    builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    images = PropertyImageSerializer(many=True, read_only=True)
+    documents = PropertyDocumentSerializer(many=True, read_only=True)
+    listings = PropertyListingSerializer(many=True, read_only=True)
+    legal_info = PropertyLegalSerializer(read_only=True)
+
+    class Meta:
+        model = Property
+        fields = [
+            'property_id', 'builder', 'builder_name', 'locality', 'locality_name',
+            'rera_number', 'property_name', 'property_type', 'transaction_type',
+            'price', 'price_per_sqft', 'bhk', 'carpet_area', 'builtup_area',
+            'super_builtup_area', 'bathrooms', 'balconies', 'parking_spaces',
+            'floor_number', 'total_floors', 'furnishing_status', 'facing',
+            'construction_age', 'land_area', 'address', 'latitude', 'longitude',
+            'status', 'launch_date', 'completion_date', 'description',
+            'images', 'documents', 'listings', 'legal_info', 'created_at', 'updated_at'
+        ]
+
+
