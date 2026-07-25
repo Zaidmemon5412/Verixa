@@ -517,3 +517,209 @@ class PropertyModuleTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(response.data['success'])
         self.assertIn('ocr_status', response.data['errors'])
+
+
+class PropertyModuleAPITests(APITestCase):
+    """
+    Test suite for Property, PropertyListing, and PropertyLegal CRUD operations, filtering, and validations.
+    """
+
+    def setUp(self):
+        self.locality = Locality.objects.create(
+            name="Satellite",
+            city="Ahmedabad",
+            state="Gujarat",
+            pincode="380015",
+            latitude=Decimal("23.030000"),
+            longitude=Decimal("72.510000")
+        )
+        self.property_list_url = reverse('properties:property-list')
+        self.listing_list_url = reverse('properties:property-listing-list')
+        self.legal_list_url = reverse('properties:property-legal-list')
+
+    def test_create_property_success(self):
+        payload = {
+            "locality": str(self.locality.pk),
+            "property_name": "Skyline Heights",
+            "property_type": "apartment",
+            "transaction_type": "new",
+            "price": "7500000.00",
+            "price_per_sqft": "5000.00",
+            "bhk": 3,
+            "carpet_area": "1500.00",
+            "super_builtup_area": "1800.00",
+            "bathrooms": 3,
+            "balconies": 2,
+            "parking_spaces": 1,
+            "floor_number": 5,
+            "total_floors": 12,
+            "furnishing_status": "SEMI_FURNISHED",
+            "facing": "EAST",
+            "construction_age": 2,
+            "address": "Satellite Road, Ahmedabad",
+            "latitude": "23.030000",
+            "longitude": "72.510000",
+            "status": "ready"
+        }
+        response = self.client.post(self.property_list_url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.data["success"])
+        self.assertEqual(response.data["data"]["property_name"], "Skyline Heights")
+
+    def test_create_property_validation_negative_price(self):
+        payload = {
+            "locality": str(self.locality.pk),
+            "property_name": "Invalid Price Tower",
+            "property_type": "apartment",
+            "transaction_type": "new",
+            "price": "-500.00",
+            "price_per_sqft": "5000.00",
+            "bhk": 2,
+            "carpet_area": "1000.00",
+            "address": "Address",
+            "latitude": "23.030000",
+            "longitude": "72.510000",
+            "status": "ready"
+        }
+        response = self.client.post(self.property_list_url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(response.data["success"])
+
+    def test_list_and_filter_properties(self):
+        # Create property
+        prop = Property.objects.create(
+            locality=self.locality,
+            property_name="Green Villa",
+            property_type="villa",
+            transaction_type="new",
+            price=Decimal("12000000.00"),
+            price_per_sqft=Decimal("6000.00"),
+            bhk=4,
+            carpet_area=Decimal("2000.00"),
+            address="Vastrapur",
+            latitude=Decimal("23.035000"),
+            longitude=Decimal("72.525000"),
+            status="ready",
+            furnishing_status="FULLY_FURNISHED"
+        )
+        
+        # Test Filter by property_type
+        response = self.client.get(f"{self.property_list_url}?property_type=villa")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["count"], 1)
+
+        # Test Search
+        response = self.client.get(f"{self.property_list_url}?search=Green")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["count"], 1)
+
+    def test_property_listing_crud(self):
+        prop = Property.objects.create(
+            locality=self.locality,
+            property_name="Royal Residency",
+            property_type="apartment",
+            transaction_type="new",
+            price=Decimal("5000000.00"),
+            price_per_sqft=Decimal("4000.00"),
+            bhk=2,
+            carpet_area=Decimal("1250.00"),
+            address="Bodakdev",
+            latitude=Decimal("23.040000"),
+            longitude=Decimal("72.515000"),
+            status="ready"
+        )
+        User = get_user_model()
+        user = User.objects.create_user(
+            username="owner_user",
+            email="owner@example.com",
+            password="Password123!",
+            full_name="John Doe"
+        )
+
+        # Create listing
+        payload = {
+            "property_id": str(prop.pk),
+            "listed_by_type": "OWNER",
+            "owner_id": str(user.pk),
+            "contact_name": "John Doe",
+            "contact_phone": "+919876543210",
+            "contact_email": "john@example.com",
+            "listing_status": "ACTIVE"
+        }
+        response = self.client.post(self.listing_list_url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        listing_id = response.data["data"]["listing_id"]
+
+        # Retrieve listing
+        detail_url = reverse('properties:property-listing-detail', kwargs={'pk': listing_id})
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["contact_name"], "John Doe")
+
+        # Delete listing
+        response = self.client.delete(detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_property_listing_validation_missing_owner_and_builder(self):
+        prop = Property.objects.create(
+            locality=self.locality,
+            property_name="Orchid Heights",
+            property_type="apartment",
+            transaction_type="new",
+            price=Decimal("6000000.00"),
+            price_per_sqft=Decimal("4500.00"),
+            bhk=3,
+            carpet_area=Decimal("1330.00"),
+            address="Prahlad Nagar",
+            latitude=Decimal("23.010000"),
+            longitude=Decimal("72.500000"),
+            status="ready"
+        )
+        payload = {
+            "property_id": str(prop.pk),
+            "listed_by_type": "AGENCY",
+            "contact_name": "No Owner Agency",
+            "contact_phone": "+919876543210",
+            "contact_email": "agency@example.com",
+            "listing_status": "ACTIVE"
+        }
+        response = self.client.post(self.listing_list_url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_property_legal_crud(self):
+        prop = Property.objects.create(
+            locality=self.locality,
+            property_name="Legal Verified Park",
+            property_type="plot",
+            transaction_type="new",
+            price=Decimal("15000000.00"),
+            price_per_sqft=Decimal("3000.00"),
+            bhk=0,
+            carpet_area=Decimal("5000.00"),
+            address="SG Highway",
+            latitude=Decimal("23.050000"),
+            longitude=Decimal("72.530000"),
+            status="ready"
+        )
+        payload = {
+            "property_id": str(prop.pk),
+            "survey_number": "SY-402",
+            "khata_number": "KH-882",
+            "na_converted": True,
+            "verification_status": "VERIFIED",
+            "remarks": "Clean clear title deed."
+        }
+        response = self.client.post(self.legal_list_url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        legal_id = response.data["data"]["legal_id"]
+
+        # Duplicate legal creation test
+        response_dup = self.client.post(self.legal_list_url, data=payload, format='json')
+        self.assertEqual(response_dup.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Retrieve legal record
+        detail_url = reverse('properties:property-legal-detail', kwargs={'pk': legal_id})
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["data"]["na_converted"])
+

@@ -16,10 +16,10 @@
 | Folder Structure | ✅ Completed | 100% |
 | Database Design | ✅ Completed | 100% |
 | Authentication | ✅ Completed | 100% |
-| Core Property Management | 🟡 In Progress | 70% |
-| Property Module | ⏳ Pending | 0% |
+| Core Property Management | ✅ Completed | 100% |
+| Property Module | ✅ Completed | 100% |
 | User Features | ⏳ Pending | 0% |
-| Frontend | ⏳ Pending | 0% |
+| Frontend | 🟡 In Progress | 20% |
 | Map Integration | ⏳ Pending | 0% |
 | Data Collection | ⏳ Pending | 0% |
 | Machine Learning | ⏳ Pending | 0% |
@@ -85,7 +85,7 @@ Status: ✅ Completed
 
 ---
 
-# 🟡 Milestone 4 — Core Property Management
+# ✅ Milestone 4 — Core Property Management
 
 ## Builders
 
@@ -148,61 +148,77 @@ Status: ✅ Completed
 
 ---
 
-# 🚧 Milestone 5 — Property Module
+# ✅ Milestone 5 — Property Module
 
 ## Properties
 
-- [ ] Property CRUD
-- [ ] Validators
-- [ ] Serializers
-- [ ] Services
-- [ ] Views
-- [ ] URLs
-- [ ] Admin
-- [ ] Postman Testing
+- [x] Property CRUD
+- [x] Extended Model Schema (Area, Floors, Furnishing, Facing, Age)
+- [x] Validators
+- [x] Serializers
+- [x] Services
+- [x] Views
+- [x] URLs
+- [x] Admin
+- [x] Filtering, Search & Sorting
+- [x] Pagination
+- [x] Postman Testing
 
-Status: 🚧 In Progress
+Status: ✅ Completed
+
+---
+
+## Property Listings & Legal Information
+
+- [x] Property Listings CRUD (Owner / Builder support)
+- [x] Property Legal Records CRUD (Survey & Khata numbers)
+- [x] Listing Validation & Constraints
+- [x] OneToOne Legal Record Unicity
+- [x] Serializers, Views, Services & Admin
+- [x] Postman Testing
+
+Status: ✅ Completed
 
 ---
 
 ## Property Images
 
-- [ ] Upload Images
-- [ ] Delete Images
-- [ ] Primary Image
-- [ ] Display Order
+- [x] Upload Images
+- [x] Delete Images
+- [x] Primary Image
+- [x] Display Order
 
-Status: ⏳ Pending
+Status: ✅ Completed
 
 ---
 
 ## Property Documents
 
-- [ ] Upload Documents
-- [ ] OCR Status
-- [ ] Verification Status
+- [x] Upload Documents
+- [x] OCR Status
+- [x] Verification Status
 
-Status: ⏳ Pending
+Status: ✅ Completed
 
 ---
 
 ## Price History
 
-- [ ] Create Price History
-- [ ] Update Price
-- [ ] Price Timeline
+- [x] Create Price History
+- [x] Update Price (Auto-recorded on property price edit)
+- [x] Price Timeline
 
-Status: ⏳ Pending
+Status: ✅ Completed
 
 ---
 
 ## Property Sources
 
-- [ ] Source Tracking
-- [ ] Verification Date
-- [ ] Scraping Metadata
+- [x] Source Tracking
+- [x] Verification Date
+- [x] Scraping Metadata
 
-Status: ⏳ Pending
+Status: ✅ Completed
 
 ---
 
@@ -219,7 +235,7 @@ Status: ⏳ Pending
 
 ---
 
-# ⏳ Milestone 7 — Frontend
+# 🟡 Milestone 7 — Frontend
 
 ## Authentication
 
@@ -242,7 +258,7 @@ Status: ⏳ Pending
 - [ ] Profile
 - [ ] Dashboard
 
-Status: ⏳ Pending
+Status: 🟡 In Progress
 
 ---
 
@@ -335,9 +351,9 @@ Database                  ██████████ 100%
 
 Authentication            ██████████ 100%
 
-Core Property Mgmt        ███████░░░ 70%
+Core Property Mgmt        ██████████ 100%
 
-Property Module           ░░░░░░░░░░ 0%
+Property Module           ██████████ 100%
 
 Frontend                  ██░░░░░░░░ 20%
 
@@ -353,22 +369,22 @@ Deployment                ░░░░░░░░░░ 0%
 
 # 🎯 Current Sprint
 
-Sprint 3 — Property Module
+Sprint 3 — Property Module (COMPLETED ✅)
 
-Current Goal:
+Completed Goals:
 
-✔ Complete Property CRUD
+✔ Complete Property CRUD, Filtering & Pagination
 
-✔ Property Images
+✔ Property Listings & Property Legal Records
 
-✔ Property Documents
+✔ Property Images & Documents Management
 
-✔ Price History
+✔ Price History Tracking
 
-✔ Property Sources
+✔ Property Sources & Admin Integration
 
-After completion:
+Next Sprint:
 
-➡️ Begin Frontend Development
+➡️ Sprint 4 — User Features & Frontend Integration
 ➡️ Start Real Data Collection
 ➡️ Integrate Interactive Map

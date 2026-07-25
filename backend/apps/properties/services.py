@@ -15,7 +15,7 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
-from .models import Property, PropertyImage, PropertyDocument, Amenity, PropertyAmenity
+from .models import Property, PropertyImage, PropertyDocument, Amenity, PropertyAmenity, PropertyListing, PropertyLegal
 from .validators import validate_image_file, validate_document_file
 
 logger = logging.getLogger(__name__)
@@ -385,3 +385,202 @@ class PropertyDocumentService:
             default_storage.delete(storage_path)
             
         return True
+
+
+# ==================================================
+# PROPERTY CRUD SERVICES
+# ==================================================
+
+def create_property(validated_data: dict) -> Property:
+    """
+    Creates a new Property record.
+    """
+    logger.info(f"Creating property: {validated_data.get('property_name')}")
+    property_obj = Property.objects.create(**validated_data)
+    
+    # Automatically track initial price in PriceHistory
+    if property_obj.price is not None:
+        from django.utils import timezone
+        from .models import PriceHistory
+        PriceHistory.objects.create(
+            property=property_obj,
+            price=property_obj.price,
+            recorded_date=timezone.now().date()
+        )
+    return property_obj
+
+
+def get_property(property_id: Union[uuid.UUID, str]) -> Property:
+    """
+    Retrieves a Property by UUID or primary key.
+    """
+    logger.info(f"Retrieving property with ID: {property_id}")
+    return Property.objects.select_related('locality', 'builder').get(property_id=property_id)
+
+
+def list_properties(params: dict = None) -> QuerySet[Property]:
+    """
+    Retrieves list of properties filtered using PropertyFilter.
+    """
+    logger.info("Listing properties with filters")
+    queryset = Property.objects.select_related('locality', 'builder').prefetch_related('images', 'listings', 'legal_info').all()
+    if params:
+        from .filters import PropertyFilter
+        queryset = PropertyFilter.filter_queryset(queryset, params)
+    return queryset
+
+
+def update_property(property_obj: Property, validated_data: dict) -> Property:
+    """
+    Updates an existing Property record.
+    If price changes, automatically records entry in PriceHistory.
+    """
+    old_price = property_obj.price
+    new_price = validated_data.get('price')
+
+    for field, value in validated_data.items():
+        setattr(property_obj, field, value)
+    property_obj.save()
+
+    if new_price is not None and new_price != old_price:
+        from django.utils import timezone
+        from .models import PriceHistory
+        PriceHistory.objects.create(
+            property=property_obj,
+            price=new_price,
+            recorded_date=timezone.now().date()
+        )
+    return property_obj
+
+
+def delete_property(property_obj: Property) -> None:
+    """
+    Deletes a Property record.
+    """
+    logger.info(f"Deleting property: {property_obj.property_name} (ID: {property_obj.property_id})")
+    property_obj.delete()
+
+
+# ==================================================
+# PROPERTY LISTING CRUD SERVICES
+# ==================================================
+
+def create_listing(validated_data: dict) -> PropertyListing:
+    """
+    Creates a new PropertyListing record.
+    Validates that either owner or builder is specified.
+    """
+    from .models import PropertyListing
+    owner = validated_data.get('owner')
+    builder = validated_data.get('builder')
+    if not owner and not builder:
+        raise ValidationError(_("At least one of owner or builder must be specified for a property listing."))
+
+    listing = PropertyListing.objects.create(**validated_data)
+    logger.info(f"Created property listing {listing.listing_id} for property {listing.property.property_name}")
+    return listing
+
+
+def get_listing(listing_id: Union[uuid.UUID, str]) -> PropertyListing:
+    """
+    Retrieves a PropertyListing by UUID.
+    """
+    from .models import PropertyListing
+    logger.info(f"Retrieving listing with ID: {listing_id}")
+    return PropertyListing.objects.select_related('property', 'owner', 'builder').get(listing_id=listing_id)
+
+
+def list_listings(params: dict = None) -> QuerySet[PropertyListing]:
+    """
+    Retrieves list of PropertyListings filtered using PropertyListingFilter.
+    """
+    from .models import PropertyListing
+    from .filters import PropertyListingFilter
+    logger.info("Listing property listings with filters")
+    queryset = PropertyListing.objects.select_related('property', 'owner', 'builder').all()
+    if params:
+        queryset = PropertyListingFilter.filter_queryset(queryset, params)
+    return queryset
+
+
+def update_listing(listing_obj: PropertyListing, validated_data: dict) -> PropertyListing:
+    """
+    Updates an existing PropertyListing record.
+    """
+    from .models import PropertyListing
+    for field, value in validated_data.items():
+        setattr(listing_obj, field, value)
+
+    if not listing_obj.owner and not listing_obj.builder:
+        raise ValidationError(_("At least one of owner or builder must be specified for a property listing."))
+
+    listing_obj.save()
+    return listing_obj
+
+
+def delete_listing(listing_obj: PropertyListing) -> None:
+    """
+    Deletes a PropertyListing record.
+    """
+    logger.info(f"Deleting property listing: {listing_obj.listing_id}")
+    listing_obj.delete()
+
+
+# ==================================================
+# PROPERTY LEGAL CRUD SERVICES
+# ==================================================
+
+def create_legal_record(validated_data: dict) -> PropertyLegal:
+    """
+    Creates a new PropertyLegal record for a property.
+    Enforces OneToOne relationship unicity.
+    """
+    from .models import PropertyLegal
+    property_obj = validated_data.get('property')
+    if PropertyLegal.objects.filter(property=property_obj).exists():
+        raise ValidationError(_("A legal record already exists for this property."))
+
+    legal = PropertyLegal.objects.create(**validated_data)
+    logger.info(f"Created legal record {legal.legal_id} for property {property_obj.property_name}")
+    return legal
+
+
+def get_legal_record(legal_id: Union[uuid.UUID, str]) -> PropertyLegal:
+    """
+    Retrieves a PropertyLegal record by UUID.
+    """
+    from .models import PropertyLegal
+    logger.info(f"Retrieving legal record with ID: {legal_id}")
+    return PropertyLegal.objects.select_related('property', 'verified_by').get(legal_id=legal_id)
+
+
+def list_legal_records(params: dict = None) -> QuerySet[PropertyLegal]:
+    """
+    Retrieves list of PropertyLegal records filtered using PropertyLegalFilter.
+    """
+    from .models import PropertyLegal
+    from .filters import PropertyLegalFilter
+    logger.info("Listing legal records with filters")
+    queryset = PropertyLegal.objects.select_related('property', 'verified_by').all()
+    if params:
+        queryset = PropertyLegalFilter.filter_queryset(queryset, params)
+    return queryset
+
+
+def update_legal_record(legal_obj: PropertyLegal, validated_data: dict) -> PropertyLegal:
+    """
+    Updates an existing PropertyLegal record.
+    """
+    for field, value in validated_data.items():
+        setattr(legal_obj, field, value)
+    legal_obj.save()
+    return legal_obj
+
+
+def delete_legal_record(legal_obj: PropertyLegal) -> None:
+    """
+    Deletes a PropertyLegal record.
+    """
+    logger.info(f"Deleting property legal record: {legal_obj.legal_id}")
+    legal_obj.delete()
+

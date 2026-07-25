@@ -7,6 +7,9 @@ from rest_framework.routers import SimpleRouter
 from .views import (
     AmenityViewSet,
     PropertyAmenityViewSet,
+    PropertyViewSet,
+    PropertyListingViewSet,
+    PropertyLegalViewSet,
     PropertyImageListCreateView,
     PropertyImageDetailView,
     PropertyImageSetPrimaryView,
@@ -20,6 +23,9 @@ app_name = 'properties'
 router = SimpleRouter()
 router.register(r'amenities', AmenityViewSet, basename='amenity')
 router.register(r'property-amenities', PropertyAmenityViewSet, basename='property-amenity')
+router.register(r'properties', PropertyViewSet, basename='property')
+router.register(r'property-listings', PropertyListingViewSet, basename='property-listing')
+router.register(r'property-legals', PropertyLegalViewSet, basename='property-legal')
 
 urlpatterns = [
     path('', include(router.urls)),

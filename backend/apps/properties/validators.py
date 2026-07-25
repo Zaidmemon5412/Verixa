@@ -101,3 +101,62 @@ def validate_document_file(file):
         ]
         if content_type not in valid_mime_types:
             raise ValidationError(f"Unsupported file MIME type '{content_type}'. Allowed MIME types: {', '.join(valid_mime_types)}")
+
+
+def validate_price(value):
+    """Validates that price is a non-negative number."""
+    if value is not None and value < 0:
+        raise ValidationError(_("Price cannot be negative."))
+
+
+def validate_area(value):
+    """Validates that area is greater than 0."""
+    if value is not None and value <= 0:
+        raise ValidationError(_("Area must be greater than 0."))
+
+
+def validate_construction_age(value):
+    """Validates that construction age is between 0 and 150 years."""
+    if value is not None:
+        if value < 0 or value > 150:
+            raise ValidationError(_("Construction age must be between 0 and 150 years."))
+
+
+def validate_positive_integer(value, field_name="Value"):
+    """Validates that an integer field is non-negative."""
+    if value is not None and value < 0:
+        raise ValidationError(_(f"{field_name} cannot be negative."))
+
+
+def validate_floor_number(floor_number, total_floors=None):
+    """Validates that floor number is non-negative and <= total floors if total floors is provided."""
+    if floor_number is not None:
+        if floor_number < 0:
+            raise ValidationError(_("Floor number cannot be negative."))
+        if total_floors is not None and floor_number > total_floors:
+            raise ValidationError(_("Floor number cannot exceed total floors."))
+
+
+def validate_survey_number(value: str) -> str:
+    """Validates survey number formatting."""
+    if value is not None:
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise ValidationError(_("Survey number cannot be blank."))
+        if len(cleaned) > 100:
+            raise ValidationError(_("Survey number cannot exceed 100 characters."))
+        return cleaned
+    return value
+
+
+def validate_khata_number(value: str) -> str:
+    """Validates khata number formatting."""
+    if value is not None:
+        cleaned = str(value).strip()
+        if not cleaned:
+            raise ValidationError(_("Khata number cannot be blank."))
+        if len(cleaned) > 100:
+            raise ValidationError(_("Khata number cannot exceed 100 characters."))
+        return cleaned
+    return value
+

@@ -8,6 +8,8 @@ from .models import (
     PriceHistory,
     PropertyScore,
     PropertySource,
+    PropertyListing,
+    PropertyLegal,
 )
 
 
@@ -36,21 +38,55 @@ class PropertyScoreInline(admin.StackedInline):
     can_delete = False
 
 
+class PropertyListingInline(admin.TabularInline):
+    model = PropertyListing
+    extra = 1
+
+
+class PropertyLegalInline(admin.StackedInline):
+    model = PropertyLegal
+    can_delete = False
+
+
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
     list_display = (
         'property_name', 'locality', 'builder', 'property_type',
-        'price', 'bhk', 'status', 'rera_number'
+        'price', 'bhk', 'furnishing_status', 'facing', 'status', 'rera_number'
     )
-    list_filter = ('property_type', 'transaction_type', 'status', 'locality__city')
+    list_filter = ('property_type', 'transaction_type', 'furnishing_status', 'facing', 'status', 'locality__city')
     search_fields = ('property_name', 'rera_number', 'locality__name', 'builder__builder_name')
     inlines = [
         PropertyAmenityInline,
         PropertyImageInline,
         PropertyDocumentInline,
         PriceHistoryInline,
-        PropertyScoreInline
+        PropertyScoreInline,
+        PropertyListingInline,
+        PropertyLegalInline,
     ]
+    readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(PropertyListing)
+class PropertyListingAdmin(admin.ModelAdmin):
+    list_display = (
+        'listing_id', 'property', 'listed_by_type', 'owner',
+        'builder', 'contact_name', 'is_verified', 'listing_status', 'created_at'
+    )
+    list_filter = ('listed_by_type', 'listing_status', 'is_verified')
+    search_fields = ('property__property_name', 'contact_name', 'contact_email', 'contact_phone')
+    readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(PropertyLegal)
+class PropertyLegalAdmin(admin.ModelAdmin):
+    list_display = (
+        'legal_id', 'property', 'survey_number', 'khata_number',
+        'na_converted', 'verification_status', 'verified_by', 'verified_at', 'created_at'
+    )
+    list_filter = ('verification_status', 'na_converted')
+    search_fields = ('property__property_name', 'survey_number', 'khata_number', 'remarks')
     readonly_fields = ('created_at', 'updated_at')
 
 
@@ -99,7 +135,6 @@ class PropertyDocumentAdmin(admin.ModelAdmin):
         self.message_user(request, f"Triggered verification and updated status to verified for {count} documents.")
 
 
-
 @admin.register(PriceHistory)
 class PriceHistoryAdmin(admin.ModelAdmin):
     list_display = ('property', 'price', 'recorded_date')
@@ -117,3 +152,4 @@ class PropertySourceAdmin(admin.ModelAdmin):
     list_display = ('property', 'source_name', 'scraped_at', 'last_verified_at')
     list_filter = ('source_name',)
     search_fields = ('property__property_name', 'source_name')
+

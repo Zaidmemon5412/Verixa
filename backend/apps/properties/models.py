@@ -1,9 +1,48 @@
 import uuid
 from django.db import models
 from django.db.models import CheckConstraint, Q
+from django.core.exceptions import ValidationError
 from apps.core.models import BaseModel
 from apps.builders.models import Builder
 from apps.locations.models import Locality
+from apps.core.validators import validate_phone_number
+
+
+class FurnishingStatus(models.TextChoices):
+    UNFURNISHED = 'UNFURNISHED', 'Unfurnished'
+    SEMI_FURNISHED = 'SEMI_FURNISHED', 'Semi-Furnished'
+    FULLY_FURNISHED = 'FULLY_FURNISHED', 'Fully Furnished'
+
+
+class FacingDirection(models.TextChoices):
+    NORTH = 'NORTH', 'North'
+    SOUTH = 'SOUTH', 'South'
+    EAST = 'EAST', 'East'
+    WEST = 'WEST', 'West'
+    NORTH_EAST = 'NORTH_EAST', 'North-East'
+    NORTH_WEST = 'NORTH_WEST', 'North-West'
+    SOUTH_EAST = 'SOUTH_EAST', 'South-East'
+    SOUTH_WEST = 'SOUTH_WEST', 'South-West'
+
+
+class ListedByType(models.TextChoices):
+    OWNER = 'OWNER', 'Owner'
+    BUILDER = 'BUILDER', 'Builder'
+    BROKER = 'BROKER', 'Broker'
+    AGENCY = 'AGENCY', 'Agency'
+
+
+class ListingStatus(models.TextChoices):
+    ACTIVE = 'ACTIVE', 'Active'
+    PENDING = 'PENDING', 'Pending'
+    SOLD = 'SOLD', 'Sold'
+    INACTIVE = 'INACTIVE', 'Inactive'
+
+
+class LegalVerificationStatus(models.TextChoices):
+    PENDING = 'PENDING', 'Pending'
+    VERIFIED = 'VERIFIED', 'Verified'
+    REJECTED = 'REJECTED', 'Rejected'
 
 
 class Property(BaseModel):
@@ -97,6 +136,57 @@ class Property(BaseModel):
         null=True,
         verbose_name="Builtup Area (sqft)"
     )
+    super_builtup_area = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="Super Builtup Area (sqft)"
+    )
+    bathrooms = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Bathrooms"
+    )
+    balconies = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Balconies"
+    )
+    parking_spaces = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Parking Spaces"
+    )
+    floor_number = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Floor Number"
+    )
+    total_floors = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Total Floors"
+    )
+    furnishing_status = models.CharField(
+        max_length=20,
+        choices=FurnishingStatus.choices,
+        blank=True,
+        null=True,
+        verbose_name="Furnishing Status"
+    )
+    facing = models.CharField(
+        max_length=20,
+        choices=FacingDirection.choices,
+        blank=True,
+        null=True,
+        verbose_name="Facing"
+    )
+    construction_age = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Construction Age (Years)"
+    )
     land_area = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -162,6 +252,10 @@ class Property(BaseModel):
             CheckConstraint(
                 check=Q(builtup_area__isnull=True) | Q(builtup_area__gt=0),
                 name="check_property_builtup_area_positive"
+            ),
+            CheckConstraint(
+                check=Q(super_builtup_area__isnull=True) | Q(super_builtup_area__gt=0),
+                name="check_property_super_builtup_area_positive"
             ),
             CheckConstraint(
                 check=Q(land_area__isnull=True) | Q(land_area__gte=0),
@@ -539,3 +633,167 @@ class PropertySource(models.Model):
 
     def __str__(self):
         return f"Source {self.source_name} for {self.property.property_name}"
+
+
+class PropertyListing(BaseModel):
+    """
+    Store information about who listed the property (Owner, Builder, Broker, Agency).
+    """
+    listing_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name="Listing ID"
+    )
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='listings',
+        verbose_name="Property"
+    )
+    listed_by_type = models.CharField(
+        max_length=20,
+        choices=ListedByType.choices,
+        verbose_name="Listed By Type"
+    )
+    owner = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='property_listings',
+        verbose_name="Owner"
+    )
+    builder = models.ForeignKey(
+        Builder,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='property_listings',
+        verbose_name="Builder"
+    )
+    contact_name = models.CharField(
+        max_length=255,
+        verbose_name="Contact Name"
+    )
+    contact_phone = models.CharField(
+        max_length=15,
+        validators=[validate_phone_number],
+        verbose_name="Contact Phone"
+    )
+    contact_email = models.EmailField(
+        verbose_name="Contact Email"
+    )
+    is_verified = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name="Is Verified"
+    )
+    listing_status = models.CharField(
+        max_length=20,
+        choices=ListingStatus.choices,
+        default=ListingStatus.ACTIVE,
+        db_index=True,
+        verbose_name="Listing Status"
+    )
+
+    class Meta:
+        db_table = 'properties_propertylisting'
+        verbose_name = "Property Listing"
+        verbose_name_plural = "Property Listings"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['property', 'listing_status'], name='idx_listing_prop_status'),
+            models.Index(fields=['listed_by_type'], name='idx_listing_listed_by_type'),
+            models.Index(fields=['is_verified'], name='idx_listing_is_verified'),
+        ]
+        constraints = [
+            CheckConstraint(
+                check=Q(owner__isnull=False) | Q(builder__isnull=False),
+                name="check_listing_owner_or_builder_required"
+            )
+        ]
+
+    def clean(self):
+        super().clean()
+        if not self.owner and not self.builder:
+            raise ValidationError("At least one of owner or builder must be specified for a property listing.")
+
+    def __str__(self):
+        return f"Listing ({self.listed_by_type}) for {self.property.property_name}"
+
+
+class PropertyLegal(BaseModel):
+    """
+    Store legal information separately from the Property model in a 1-to-1 relationship.
+    """
+    legal_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name="Legal ID"
+    )
+    property = models.OneToOneField(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='legal_info',
+        verbose_name="Property"
+    )
+    survey_number = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="Survey Number"
+    )
+    khata_number = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="Khata Number"
+    )
+    na_converted = models.BooleanField(
+        default=False,
+        verbose_name="NA Converted"
+    )
+    verification_status = models.CharField(
+        max_length=20,
+        choices=LegalVerificationStatus.choices,
+        default=LegalVerificationStatus.PENDING,
+        db_index=True,
+        verbose_name="Verification Status"
+    )
+    verified_by = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='verified_legal_records',
+        verbose_name="Verified By"
+    )
+    verified_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Verified At"
+    )
+    remarks = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Remarks"
+    )
+
+    class Meta:
+        db_table = 'properties_propertylegal'
+        verbose_name = "Property Legal Record"
+        verbose_name_plural = "Property Legal Records"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['verification_status'], name='idx_legal_verif_status'),
+            models.Index(fields=['survey_number'], name='idx_legal_survey_number'),
+            models.Index(fields=['khata_number'], name='idx_legal_khata_number'),
+        ]
+
+    def __str__(self):
+        return f"Legal Record for {self.property.property_name} ({self.verification_status})"
+
