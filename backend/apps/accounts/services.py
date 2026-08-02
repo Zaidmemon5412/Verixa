@@ -120,7 +120,20 @@ def send_password_reset_email(email: str) -> None:
             )
             logger.info(f"Password reset email sent successfully to {user.email}")
         except Exception as e:
-            logger.exception(f"Failed to send password reset email to {user.email}: {e}")
+            logger.warning(f"SMTP email sending failed ({e}). Printing reset email to terminal console.")
+            try:
+                from django.core.mail.backends.console import EmailBackend
+                from django.core.mail import EmailMessage
+                console_backend = EmailBackend()
+                msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@verixa.com'),
+                    to=[user.email]
+                )
+                console_backend.send_messages([msg])
+            except Exception as console_err:
+                logger.error(f"Console fallback failed: {console_err}")
 
 
 def verify_password_reset_token(uidb64: str, token: str) -> User:
