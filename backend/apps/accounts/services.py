@@ -1,13 +1,17 @@
 """
 Services layer for the accounts app.
 Handles core business logic, third-party authentication integrations (e.g. Google OAuth),
-and security operations (e.g. JWT token generation/validation).
+and security operations (e.g. JWT token generation/validation, password reset flows).
 """
 import logging
 from typing import Dict, Any, Optional
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from .models import User
 
@@ -81,6 +85,86 @@ def change_password(user: User, old_password: str, new_password: str) -> None:
     user.save()
 
 
+def send_password_reset_email(email: str) -> None:
+    """
+    Generates a secure, time-limited password reset token and sends a password reset email.
+    If the email does not exist, handles it silently to avoid user enumeration attacks.
+    """
+    logger.info(f"Received password reset request for email: {email}")
+    user = User.objects.filter(email__iexact=email).first()
+
+    if user and user.is_active:
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+
+        frontend_domain = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_domain}/reset-password?uid={uidb64}&token={token}"
+
+        subject = "Verixa — Password Reset Request"
+        message = (
+            f"Hello {user.full_name or 'User'},\n\n"
+            f"We received a request to reset your password for your Verixa account.\n"
+            f"Click the link below to reset your password:\n\n"
+            f"{reset_link}\n\n"
+            f"If you did not request a password reset, please ignore this email.\n\n"
+            f"Regards,\nVerixa Team"
+        )
+
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@verixa.com'),
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            logger.info(f"Password reset email sent successfully to {user.email}")
+        except Exception as e:
+            logger.warning(f"SMTP email sending failed ({e}). Printing reset email to terminal console.")
+            try:
+                from django.core.mail.backends.console import EmailBackend
+                from django.core.mail import EmailMessage
+                console_backend = EmailBackend()
+                msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@verixa.com'),
+                    to=[user.email]
+                )
+                console_backend.send_messages([msg])
+            except Exception as console_err:
+                logger.error(f"Console fallback failed: {console_err}")
+
+
+def verify_password_reset_token(uidb64: str, token: str) -> User:
+    """
+    Verifies the password reset token against the user ID.
+    Returns the User object if valid, or raises ValidationError.
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        raise ValidationError(_("Invalid reset link or user does not exist."), code='invalid_token')
+
+    if not default_token_generator.check_token(user, token):
+        raise ValidationError(_("Password reset token is invalid or has expired."), code='invalid_token')
+
+    return user
+
+
+def reset_password_with_token(uidb64: str, token: str, new_password: str) -> None:
+    """
+    Verifies reset token, updates the user's password securely using set_password(),
+    and invalidates the token.
+    """
+    logger.info("Executing password reset via reset token")
+    user = verify_password_reset_token(uidb64, token)
+    user.set_password(new_password)
+    user.save()
+    logger.info(f"Password successfully reset for user {user.email}")
+
+
 class GoogleOAuthService:
     """
     Service responsible for communicating with Google API endpoints
@@ -92,8 +176,6 @@ class GoogleOAuthService:
         Exchanges a Google OAuth auth code for an access token and retrieves profile data.
         Returns a dict of normalized user profile info or None if verification fails.
         """
-        # Logic to exchange code via requests to https://oauth2.googleapis.com/token
-        # and fetch user info from https://www.googleapis.com/oauth2/v3/userinfo
         logger.info("Verifying Google OAuth authorization code")
         return None
 
@@ -103,7 +185,6 @@ class GoogleOAuthService:
         Verifies a Google ID token directly.
         Returns a dict of normalized user profile info or None if verification fails.
         """
-        # Logic to verify Google ID token using google-auth-library or direct request
         logger.info("Verifying Google OAuth ID Token")
         return None
 

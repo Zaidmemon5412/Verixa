@@ -81,9 +81,18 @@ export const Login = () => {
 
         {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-            Password
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Password
+            </label>
+            <Link
+              to="/forgot-password"
+              className="text-xs text-brand-400 hover:text-brand-300 font-semibold transition-colors select-none"
+              id="forgot-password-link"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <input
             id="password"
             type="password"

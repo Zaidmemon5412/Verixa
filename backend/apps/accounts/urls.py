@@ -1,6 +1,6 @@
 """
 URL Routing for the accounts app.
-Maps accounts authentication, profile, verification, and saved properties endpoints to REST views.
+Maps accounts authentication, profile, verification, saved properties, and password reset endpoints to REST views.
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -15,6 +15,11 @@ from .views import (
     GoogleOAuthView,
 )
 from .saved_properties_views import SavedPropertyViewSet
+from .password_reset_views import (
+    ForgotPasswordView,
+    VerifyResetTokenView,
+    ResetPasswordView,
+)
 
 app_name = 'accounts'
 
@@ -32,6 +37,11 @@ urlpatterns = [
 
     # Security Settings Routes
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+
+    # Password Reset Flow Routes
+    path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
+    path('reset-password/verify/', VerifyResetTokenView.as_view(), name='reset-password-verify'),
+    path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
 
     # Simple JWT Token verification routes
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
