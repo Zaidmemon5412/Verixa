@@ -18,7 +18,7 @@
 | Authentication | ✅ Completed | 100% |
 | Core Property Management | ✅ Completed | 100% |
 | Property Module | ✅ Completed | 100% |
-| User Features | ⏳ Pending | 0% |
+| User Features | ✅ Completed | 100% |
 | Frontend | 🟡 In Progress | 20% |
 | Map Integration | ⏳ Pending | 0% |
 | Data Collection | ⏳ Pending | 0% |
@@ -222,16 +222,16 @@ Status: ✅ Completed
 
 ---
 
-# ⏳ Milestone 6 — User Features
+# ✅ Milestone 6 — User Features
 
-- [ ] Saved Properties
-- [ ] Comparison Sessions
-- [ ] Property Comparison
-- [ ] Reports
-- [ ] Enquiries
-- [ ] Search History
+- [x] Saved Properties
+- [x] Comparison Sessions
+- [x] Property Comparison
+- [x] Reports
+- [x] Enquiries
+- [x] Search History (Search & Filtering parameters across user endpoints)
 
-Status: ⏳ Pending
+Status: ✅ Completed
 
 ---
 

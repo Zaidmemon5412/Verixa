@@ -17,6 +17,15 @@ urlpatterns = [
     # Builders endpoints
     path('api/builders/', include('apps.builders.urls')),
 
+    # Comparison endpoints
+    path('api/comparisons/', include('apps.comparison.urls')),
+
+    # Enquiries endpoints
+    path('api/enquiries/', include('apps.inquiries.urls')),
+
+    # Reports endpoints
+    path('api/reports/', include('apps.reports.urls')),
+
     # Properties endpoints (amenities, property-amenities, images, documents)
     path('api/', include('apps.properties.urls')),
 
