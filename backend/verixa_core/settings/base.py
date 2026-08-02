@@ -189,3 +189,12 @@ TESSERACT_CMD_PATH = env.str('TESSERACT_CMD_PATH', default='/usr/bin/tesseract')
 # Supported locations configuration
 SUPPORTED_CITIES = env.list('SUPPORTED_CITIES', default=['Ahmedabad'])
 SUPPORTED_STATES = env.list('SUPPORTED_STATES', default=['Gujarat'])
+
+# Email Configuration (Defaults to Console in dev, SMTP if EMAIL_HOST is provided)
+EMAIL_BACKEND = env.str('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = env.str('EMAIL_HOST', default='')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='noreply@verixa.com')

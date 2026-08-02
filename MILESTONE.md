@@ -225,7 +225,7 @@ Status: ⏳ Pending
 
 - [x] Login
 - [x] Register
-- [ ] Forgot Password
+- [x] Forgot Password & Reset Password
 
 ## Layout
 

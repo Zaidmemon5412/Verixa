@@ -65,6 +65,39 @@ export const authService = {
     const response = await apiClient.post(API_ENDPOINTS.TOKEN_REFRESH, { refresh });
     return response.data;
   },
+
+  /**
+   * Send a password reset request for a given email address.
+   * @param {string} email - User email address
+   * @returns {Promise<object>} Standardized API response
+   */
+  forgotPassword: async (email) => {
+    const response = await apiClient.post(API_ENDPOINTS.FORGOT_PASSWORD, { email });
+    return response.data;
+  },
+
+  /**
+   * Verify whether a password reset token and user ID (uid) combination is valid.
+   * @param {string} uid - Base64 encoded user ID
+   * @param {string} token - Reset token
+   * @returns {Promise<object>} Verification response
+   */
+  verifyResetToken: async (uid, token) => {
+    const response = await apiClient.get(API_ENDPOINTS.RESET_PASSWORD_VERIFY, {
+      params: { uid, token },
+    });
+    return response.data;
+  },
+
+  /**
+   * Submit new password to reset account password using reset token.
+   * @param {object} payload - { uid, token, new_password, confirm_password }
+   * @returns {Promise<object>} Reset status response
+   */
+  resetPassword: async (payload) => {
+    const response = await apiClient.post(API_ENDPOINTS.RESET_PASSWORD, payload);
+    return response.data;
+  },
 };
 
 export default authService;
