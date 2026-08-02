@@ -1,8 +1,9 @@
 """
 URL Routing for the accounts app.
-Maps accounts authentication, profile, and verification endpoints to REST views.
+Maps accounts authentication, profile, verification, and saved properties endpoints to REST views.
 """
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from .views import (
@@ -13,8 +14,12 @@ from .views import (
     ChangePasswordView,
     GoogleOAuthView,
 )
+from .saved_properties_views import SavedPropertyViewSet
 
 app_name = 'accounts'
+
+router = DefaultRouter()
+router.register(r'saved-properties', SavedPropertyViewSet, basename='saved-property')
 
 urlpatterns = [
     # Core Authentication Routes
@@ -34,4 +39,7 @@ urlpatterns = [
 
     # Third Party OAuth Routes
     path('auth/google/', GoogleOAuthView.as_view(), name='google-oauth'),
+
+    # Router Endpoints (Saved Properties)
+    path('', include(router.urls)),
 ]
