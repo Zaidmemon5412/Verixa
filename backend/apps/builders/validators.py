@@ -146,3 +146,62 @@ def validate_established_year(value: int) -> int:
         )
         
     return year
+
+
+def validate_project_name(value: str) -> str:
+    """
+    Validates project name:
+    - Must be a valid string
+    - Minimum 2 characters, maximum 255 characters
+    """
+    if not value or not isinstance(value, str):
+        raise ValidationError(_("Project name must be a valid string."), code='invalid_type')
+        
+    cleaned_name = " ".join(value.split())
+    if len(cleaned_name) < 2 or len(cleaned_name) > 255:
+        raise ValidationError(
+            _("Project name must be between 2 and 255 characters."),
+            code='invalid_project_name_length'
+        )
+    return cleaned_name
+
+
+def validate_coordinates(lat: float, lon: float) -> tuple:
+    """
+    Validates latitude (-90 to 90) and longitude (-180 to 180).
+    """
+    if lat is not None:
+        try:
+            lat_val = float(lat)
+            if lat_val < -90 or lat_val > 90:
+                raise ValidationError(_("Latitude must be between -90 and 90."), code='invalid_latitude')
+        except (ValueError, TypeError):
+            raise ValidationError(_("Latitude must be a valid number."), code='invalid_latitude_type')
+
+    if lon is not None:
+        try:
+            lon_val = float(lon)
+            if lon_val < -180 or lon_val > 180:
+                raise ValidationError(_("Longitude must be between -180 and 180."), code='invalid_longitude')
+        except (ValueError, TypeError):
+            raise ValidationError(_("Longitude must be a valid number."), code='invalid_longitude_type')
+
+    return (lat, lon)
+
+
+def validate_image_url(value: str) -> str:
+    """
+    Validates image URL format.
+    """
+    if not value or not isinstance(value, str):
+        raise ValidationError(_("Image URL must be a valid string."), code='invalid_type')
+        
+    cleaned_url = value.strip()
+    validator = URLValidator(schemes=['http', 'https'])
+    try:
+        validator(cleaned_url)
+    except ValidationError:
+        raise ValidationError(_("Enter a valid image URL."), code='invalid_url')
+        
+    return cleaned_url
+

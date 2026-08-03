@@ -198,3 +198,9 @@ EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='zaidmemon8156@gmail.com')
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='rkohglmvergrvvai')
 DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='zaidmemon8156@gmail.com')
+
+# Cloudinary Configurations
+CLOUDINARY_CLOUD_NAME = env.str('CLOUDINARY_CLOUD_NAME', default='')
+CLOUDINARY_API_KEY = env.str('CLOUDINARY_API_KEY', default='')
+CLOUDINARY_API_SECRET = env.str('CLOUDINARY_API_SECRET', default='')
+

@@ -159,3 +159,131 @@ class BuilderUpdateSerializer(serializers.ModelSerializer):
             return validate_established_year(value)
         except DjangoValidationError as e:
             raise serializers.ValidationError(list(e.messages))
+
+
+# ============================================================================
+# BUILDER PROJECT & IMAGE SERIALIZERS
+# ============================================================================
+
+from .models import BuilderProject, BuilderProjectImage
+from .validators import validate_project_name, validate_image_url
+
+
+class BuilderProjectImageSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Builder Project gallery images.
+    """
+    class Meta:
+        model = BuilderProjectImage
+        fields = [
+            'image_id',
+            'project',
+            'image_url',
+            'display_order',
+            'is_primary',
+            'created_at',
+        ]
+        read_only_fields = ['image_id', 'created_at']
+
+    def validate_image_url(self, value: str) -> str:
+        try:
+            return validate_image_url(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+
+
+class BuilderProjectSerializer(serializers.ModelSerializer):
+    """
+    Read serializer for Builder Project presenting detailed metadata,
+    nested builder summary, and associated gallery images.
+    """
+    builder_name = serializers.CharField(source='builder.builder_name', read_only=True)
+    company_name = serializers.CharField(source='builder.company_name', read_only=True)
+    images = BuilderProjectImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = BuilderProject
+        fields = [
+            'project_id',
+            'builder',
+            'builder_name',
+            'company_name',
+            'project_name',
+            'property_type',
+            'transaction_type',
+            'project_status',
+            'rera_number',
+            'launch_date',
+            'completion_date',
+            'construction_type',
+            'land_area',
+            'price',
+            'price_per_sqft',
+            'primary_bhk',
+            'bhk_variants',
+            'carpet_area',
+            'super_builtup_area',
+            'builtup_area',
+            'project_description',
+            'amenities',
+            'website_url',
+            'latitude',
+            'longitude',
+            'locality',
+            'city',
+            'state',
+            'pincode',
+            'location',
+            'images',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = fields
+
+
+class BuilderProjectCreateUpdateSerializer(serializers.ModelSerializer):
+    """
+    Write serializer handling validation, creation, and updates for Builder Projects.
+    """
+    class Meta:
+        model = BuilderProject
+        fields = [
+            'project_id',
+            'builder',
+            'project_name',
+            'property_type',
+            'transaction_type',
+            'project_status',
+            'rera_number',
+            'launch_date',
+            'completion_date',
+            'construction_type',
+            'land_area',
+            'price',
+            'price_per_sqft',
+            'primary_bhk',
+            'bhk_variants',
+            'carpet_area',
+            'super_builtup_area',
+            'builtup_area',
+            'project_description',
+            'amenities',
+            'website_url',
+            'latitude',
+            'longitude',
+            'locality',
+            'city',
+            'state',
+            'pincode',
+            'location',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['project_id', 'created_at', 'updated_at']
+
+    def validate_project_name(self, value: str) -> str:
+        try:
+            return validate_project_name(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+
