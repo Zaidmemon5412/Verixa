@@ -245,3 +245,140 @@ class BuilderAPITests(APITestCase):
         # Verify it's gone
         get_response = self.client.get(detail_url)
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class BuilderProjectAPITests(APITestCase):
+    """
+    Integration tests for BuilderProject REST endpoints, search, filtering, and gallery images.
+    """
+
+    def setUp(self):
+        self.builder = Builder.objects.create(
+            builder_name="Sun Builders Group",
+            company_name="Sun Builders Group",
+            rera_registration_no="RERA-SBG-001",
+            office_address="Ahmedabad",
+            phone="+918128828888",
+            email="contact@sunbuilders.in",
+            established_year=1981
+        )
+        self.project_list_url = reverse('builders:builder-project-list')
+
+    def test_create_and_retrieve_project(self):
+        payload = {
+            "builder": str(self.builder.builder_id),
+            "project_name": "Sun Mayfair",
+            "property_type": "Mixed-Use",
+            "transaction_type": "Sale",
+            "project_status": "Under Construction",
+            "rera_number": "RERA-SM-001",
+            "locality": "Sanand",
+            "city": "Ahmedabad",
+            "state": "Gujarat",
+            "pincode": "382115",
+            "primary_bhk": "3 BHK",
+            "amenities": ["Garden", "Parking"]
+        }
+        create_res = self.client.post(self.project_list_url, data=payload, format='json')
+        self.assertEqual(create_res.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(create_res.data["success"])
+        project_id = create_res.data["data"]["project_id"]
+
+        # Detail view
+        detail_url = reverse('builders:builder-project-detail', kwargs={'pk': project_id})
+        get_res = self.client.get(detail_url)
+        self.assertEqual(get_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(get_res.data["data"]["project_name"], "Sun Mayfair")
+        self.assertEqual(get_res.data["data"]["builder_name"], "Sun Builders Group")
+
+    def test_search_and_filtering(self):
+        # Create 2 projects
+        payload1 = {
+            "builder": str(self.builder.builder_id),
+            "project_name": "Sun Mayfair",
+            "city": "Ahmedabad",
+            "locality": "Sanand",
+            "primary_bhk": "3 BHK"
+        }
+        payload2 = {
+            "builder": str(self.builder.builder_id),
+            "project_name": "Sun SkyView",
+            "city": "Ahmedabad",
+            "locality": "Shela",
+            "primary_bhk": "4 BHK"
+        }
+        self.client.post(self.project_list_url, data=payload1, format='json')
+        self.client.post(self.project_list_url, data=payload2, format='json')
+
+        # Filter by locality Shela
+        filter_res = self.client.get(self.project_list_url, {'locality': 'Shela'})
+        self.assertEqual(filter_res.status_code, status.HTTP_200_OK)
+        results = filter_res.data["data"]["results"]
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["project_name"], "Sun SkyView")
+
+        # Search query
+        search_res = self.client.get(self.project_list_url, {'search': 'Mayfair'})
+        self.assertEqual(search_res.status_code, status.HTTP_200_OK)
+        search_results = search_res.data["data"]["results"]
+        self.assertEqual(len(search_results), 1)
+        self.assertEqual(search_results[0]["project_name"], "Sun Mayfair")
+
+    def test_add_and_set_primary_image(self):
+        payload = {
+            "builder": str(self.builder.builder_id),
+            "project_name": "Sun Mayfair",
+            "city": "Ahmedabad"
+        }
+        create_res = self.client.post(self.project_list_url, data=payload, format='json')
+        project_id = create_res.data["data"]["project_id"]
+
+        add_img_url = reverse('builders:builder-project-add-image', kwargs={'pk': project_id})
+        
+        # Add img 1
+        img1_res = self.client.post(add_img_url, data={"image_url": "https://example.com/img1.jpg", "is_primary": True}, format='json')
+        self.assertEqual(img1_res.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(img1_res.data["data"]["is_primary"])
+        img1_id = img1_res.data["data"]["image_id"]
+
+        # Add img 2 (is_primary=True, should unset img1 primary)
+        img2_res = self.client.post(add_img_url, data={"image_url": "https://example.com/img2.jpg", "is_primary": True}, format='json')
+        self.assertEqual(img2_res.status_code, status.HTTP_201_CREATED)
+        img2_id = img2_res.data["data"]["image_id"]
+
+        # Set img1 as primary again
+        set_prim_url = reverse('builders:builder-project-image-set-primary', kwargs={'pk': img1_id})
+        set_res = self.client.post(set_prim_url)
+        self.assertEqual(set_res.status_code, status.HTTP_200_OK)
+        self.assertTrue(set_res.data["data"]["is_primary"])
+
+
+class CloudinaryAndImportPipelineTests(APITestCase):
+    """
+    Unit tests for Cloudinary service helpers and the import pipeline logic.
+    """
+
+    def test_cloudinary_folder_path_generation(self):
+        from .cloudinary_service import get_cloudinary_folder_path
+        folder = get_cloudinary_folder_path("Sun Builders Group", "Sun Mayfair")
+        self.assertEqual(folder, "verixa/builder-projects/sun-builders-group/sun-mayfair")
+
+    def test_is_valid_image_url(self):
+        from .cloudinary_service import is_valid_image_url
+        self.assertTrue(is_valid_image_url("https://example.com/images/1.jpg"))
+        self.assertTrue(is_valid_image_url("https://newprojects.99acres.com/media/xop/1.jpg"))
+        self.assertFalse(is_valid_image_url("invalid-url-string"))
+        self.assertFalse(is_valid_image_url(""))
+
+    def test_import_pipeline_missing_builder_skipped(self):
+        import os
+        from django.conf import settings
+        from .services import import_builder_projects_from_csv
+        csv_path = os.path.join(settings.BASE_DIR.parent.parent, "master_verixa_builder_projects.csv")
+        report = import_builder_projects_from_csv(csv_path, dry_run=True)
+        self.assertGreater(report["total_projects_in_csv"], 0)
+        self.assertEqual(report["dry_run"], True)
+
+
+
+

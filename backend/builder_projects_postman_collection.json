@@ -1,0 +1,303 @@
+{
+  "info": {
+    "_postman_id": "a9876543-b210-4c32-a123-builderprojcol",
+    "name": "Verixa Dedicated Builder Projects API Collection",
+    "description": "Postman API Collection to test the Builder Projects and Gallery Images module for Verixa backend engine.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "YOUR_BEARER_TOKEN_HERE",
+      "type": "string"
+    },
+    {
+      "key": "builderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "projectId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "imageId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Builder Projects CRUD & Listing",
+      "item": [
+        {
+          "name": "List All Builder Projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response structure is valid\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.results).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/?page=1&page_size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", ""],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "page_size", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter & Search Builder Projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/?search=Sun&city=Ahmedabad&primary_bhk=3%20BHK",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", ""],
+              "query": [
+                { "key": "search", "value": "Sun" },
+                { "key": "city", "value": "Ahmedabad" },
+                { "key": "primary_bhk", "value": "3 BHK" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Builder Project Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/{{projectId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "{{projectId}}", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Builder Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.project_id) {",
+                  "        pm.environment.set(\"projectId\", jsonData.data.project_id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"builder\": \"{{builderId}}\",\n  \"project_name\": \"Verixa Horizon\",\n  \"property_type\": \"Luxury Apartments\",\n  \"transaction_type\": \"Sale\",\n  \"project_status\": \"Under Construction\",\n  \"rera_number\": \"PR/GJ/AHMEDABAD/SANAND/AUDA/MAA99999\",\n  \"launch_date\": \"01-01-2026\",\n  \"completion_date\": \"31-12-2029\",\n  \"construction_type\": \"RCC High-Rise\",\n  \"land_area\": \"2.5 Acres\",\n  \"price\": \"7500000 - 12500000\",\n  \"price_per_sqft\": \"5200\",\n  \"primary_bhk\": \"3 BHK\",\n  \"bhk_variants\": \"3 BHK | 4 BHK\",\n  \"carpet_area\": \"1400 - 2100 sqft\",\n  \"super_builtup_area\": \"2100 - 3150 sqft\",\n  \"builtup_area\": \"1750 - 2625 sqft\",\n  \"project_description\": \"Ultra luxury high-rise development with panoramic views.\",\n  \"amenities\": [\"Infinity Pool\", \"Gymnasium\", \"Banquet Hall\"],\n  \"website_url\": \"https://verixa.com/projects/horizon\",\n  \"latitude\": 23.022500,\n  \"longitude\": 72.571400,\n  \"locality\": \"Bodakdev\",\n  \"city\": \"Ahmedabad\",\n  \"state\": \"Gujarat\",\n  \"pincode\": \"380054\",\n  \"location\": \"Off S.G. Highway, Bodakdev, Ahmedabad\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Builder Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_name\": \"Verixa Horizon Sky Towers\",\n  \"project_status\": \"Near Completion\",\n  \"price\": \"8000000 - 13000000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/{{projectId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "{{projectId}}", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Builder Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/{{projectId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "{{projectId}}", ""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Builder Project Gallery & Images",
+      "item": [
+        {
+          "name": "Get Project Gallery Images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/{{projectId}}/gallery/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "{{projectId}}", "gallery", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Gallery Image to Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.image_id) {",
+                  "        pm.environment.set(\"imageId\", jsonData.data.image_id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image_url\": \"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00\",\n  \"display_order\": 1,\n  \"is_primary\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/{{projectId}}/add-image/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "{{projectId}}", "add-image", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Image as Primary",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/project-images/{{imageId}}/set-primary/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "project-images", "{{imageId}}", "set-primary", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Gallery Image",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/project-images/{{imageId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "project-images", "{{imageId}}", ""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CSV Data Import",
+      "item": [
+        {
+          "name": "Trigger CSV Data Import",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"csv_path\": \"master_verixa_builder_projects.csv\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/builders/projects/import-csv/",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "builders", "projects", "import-csv", ""]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
