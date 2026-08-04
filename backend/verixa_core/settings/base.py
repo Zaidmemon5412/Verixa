@@ -74,16 +74,22 @@ TEMPLATES = [
     },
 ]
 
-# Database Config - defaults to Postgres inside Docker if not overridden
-DB_CONN_STR = (
-    f"postgres://{env.str('DB_USER', 'verixa_user')}:"
-    f"{env.str('DB_PASSWORD', 'verixa_secure_password')}@"
-    f"{env.str('DB_HOST', 'localhost')}:{env.int('DB_PORT', 5432)}/"
-    f"{env.str('DB_NAME', 'verixa_db')}"
-)
-DATABASES = {
-    'default': env.db('DATABASE_URL', default=DB_CONN_STR)
-}
+# Database Config - PostgreSQL settings loaded from .env
+if env.str('DATABASE_URL', default=''):
+    DATABASES = {
+        'default': env.db('DATABASE_URL')
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': env.str('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': env.str('DB_NAME', default='verixa_db'),
+            'USER': env.str('DB_USER', default='verixa_user'),
+            'PASSWORD': env.str('DB_PASSWORD', default='verixa_secure_password'),
+            'HOST': env.str('DB_HOST', default='localhost'),
+            'PORT': str(env('DB_PORT', default='5433')),
+        }
+    }
 
 # Custom User Auth settings
 AUTH_USER_MODEL = 'accounts.User'

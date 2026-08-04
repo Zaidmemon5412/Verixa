@@ -82,8 +82,10 @@ backend/verixa_core/settings/local_settings.py
 # ==============================================================================
 # Machine Learning (ML) & Data
 # ==============================================================================
-# Serialized ML Models (weights are too large for git, track via DVC or Cloud Storage)
-ml/models/*
+# Serialized ML Models
+ml/models/*.pkl
+!ml/models/*.pkl
+!ml/models/*.json
 !ml/models/.gitkeep
 ml/config/*.local.json
 

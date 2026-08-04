@@ -1,0 +1,30 @@
+{
+    "model_name": "Gradient Boosting",
+    "test_r2_score": 0.8719,
+    "test_mae_inr": 2122358.71,
+    "test_rmse_inr": 3520627.06,
+    "test_mae_lakhs": 21.22,
+    "feature_columns": [
+        "builder_id",
+        "locality_id",
+        "property_type",
+        "transaction_type",
+        "bhk",
+        "carpet_area",
+        "builtup_area",
+        "super_builtup_area",
+        "bathrooms",
+        "balconies",
+        "parking_spaces",
+        "floor_number",
+        "total_floors",
+        "furnishing_status",
+        "facing",
+        "construction_year",
+        "latitude",
+        "longitude",
+        "status"
+    ],
+    "target_transform": "np.log1p",
+    "saved_model_path": "D:\\Verixa\\Verixa\\ml\\models\\verixa_price_model.joblib"
+}
