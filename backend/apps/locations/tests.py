@@ -295,6 +295,9 @@ class NearbyPlaceSerializerTests(TestCase):
             "name": "Manipal Hospital Whitefield",
             "type": "Hospital",
             "distance": "1.80",
+            "distance_km": "1.80",
+            "address": "HAL Old Airport Rd, Whitefield",
+            "rating": "4.50",
             "travel_time": 8,
             "latitude": "12.9702",
             "longitude": "77.7450",
@@ -305,22 +308,29 @@ class NearbyPlaceSerializerTests(TestCase):
         serializer = NearbyPlaceSerializer(instance=self.nearby_place)
         self.assertEqual(serializer.data["name"], "Manipal Hospital Whitefield")
         self.assertEqual(serializer.data["locality"]["name"], "Whitefield")
+        self.assertEqual(serializer.data["address"], "HAL Old Airport Rd, Whitefield")
+        self.assertEqual(serializer.data["rating"], "4.50")
+        self.assertEqual(serializer.data["distance_km"], "1.80")
 
     def test_nearby_place_create_serializer_success(self):
         data = {
             "locality": self.locality.locality_id,
             "name": "Whitefield Railway Station",
             "type": "Railway Station",
-            "distance": "3.5",
+            "distance_km": "3.50",
+            "address": "Whitefield Main Rd",
+            "rating": "4.20",
             "travel_time": 12,
             "latitude": "12.9800",
             "longitude": "77.7550",
         }
         serializer = NearbyPlaceCreateSerializer(data=data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), serializer.errors)
         place = serializer.save()
         self.assertEqual(place.name, "Whitefield Railway Station")
         self.assertEqual(place.locality, self.locality)
+        self.assertEqual(place.distance_km, Decimal("3.50"))
+        self.assertEqual(place.rating, Decimal("4.20"))
 
     def test_nearby_place_create_serializer_invalid_locality(self):
         import uuid
@@ -343,6 +353,7 @@ class NearbyPlaceSerializerTests(TestCase):
             "name": "Whitefield Railway Station",
             "type": "Railway Station",
             "distance": "-1.5",  # Must be positive
+            "rating": "6.5",     # Out of range 0-5
             "travel_time": -5,  # Cannot be negative
             "latitude": "95.0",  # Out of range
             "longitude": "77.7550",
@@ -350,18 +361,21 @@ class NearbyPlaceSerializerTests(TestCase):
         serializer = NearbyPlaceCreateSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("distance", serializer.errors)
+        self.assertIn("rating", serializer.errors)
         self.assertIn("travel_time", serializer.errors)
         self.assertIn("latitude", serializer.errors)
 
     def test_nearby_place_update_serializer_success(self):
         data = {
-            "distance": "2.25",
+            "distance_km": "2.25",
+            "rating": "4.80",
             "travel_time": 10,
         }
         serializer = NearbyPlaceUpdateSerializer(instance=self.nearby_place, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_place = serializer.save()
-        self.assertEqual(updated_place.distance, Decimal("2.25"))
+        self.assertEqual(updated_place.distance_km, Decimal("2.25"))
+        self.assertEqual(updated_place.rating, Decimal("4.80"))
         self.assertEqual(updated_place.travel_time, 10)
 
     def test_nearby_place_update_serializer_read_only_fields(self):

@@ -294,3 +294,61 @@ def validate_travel_time(value) -> int:
         )
         
     return t_time
+
+
+def validate_distance_km(value) -> Decimal:
+    """
+    Validates distance_km:
+    - Must be a non-negative decimal.
+    """
+    if value is None:
+        return value
+        
+    try:
+        dist = Decimal(str(value))
+    except (ValueError, TypeError, InvalidOperation):
+        raise ValidationError(_("Distance (km) must be a valid decimal number."), code='invalid_distance_km_type')
+        
+    if dist < Decimal('0'):
+        raise ValidationError(
+            _("Distance (km) cannot be negative."),
+            code='distance_km_negative'
+        )
+        
+    return dist
+
+
+def validate_rating(value) -> Decimal:
+    """
+    Validates rating:
+    - Must be between 0.0 and 5.0.
+    """
+    if value is None:
+        return value
+
+    try:
+        r = Decimal(str(value))
+    except (ValueError, TypeError, InvalidOperation):
+        raise ValidationError(_("Rating must be a valid decimal number."), code='invalid_rating_type')
+
+    if r < Decimal('0.0') or r > Decimal('5.0'):
+        raise ValidationError(
+            _("Rating must be between 0.0 and 5.0."),
+            code='rating_out_of_range'
+        )
+
+    return r
+
+
+def validate_address(value: str) -> str:
+    """
+    Validates address:
+    - Must be a string if provided.
+    - Trim whitespace.
+    """
+    if not value:
+        return ""
+    if not isinstance(value, str):
+        raise ValidationError(_("Address must be a valid string."), code='invalid_address_type')
+    return value.strip()
+

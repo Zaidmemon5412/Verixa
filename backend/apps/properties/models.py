@@ -4,7 +4,7 @@ from django.db.models import CheckConstraint, Q
 from django.core.exceptions import ValidationError
 from apps.core.models import BaseModel
 from apps.builders.models import Builder
-from apps.locations.models import Locality
+from apps.locations.models import Locality, NearbyPlace
 from apps.core.validators import validate_phone_number
 
 
@@ -273,6 +273,28 @@ class Property(BaseModel):
 
     def __str__(self):
         return f"{self.property_name} - {self.locality.name} ({self.property_type})"
+
+    @property
+    def nearby_places(self):
+        """
+        Returns nearby places from the property's associated locality.
+        """
+        if self.locality_id:
+            return self.locality.nearby_places.all()
+        return NearbyPlace.objects.none()
+
+    def get_nearby_places_grouped(self):
+        """
+        Returns nearby places grouped by category/type.
+        """
+        places = self.nearby_places
+        grouped = {}
+        for place in places:
+            place_type = place.type
+            if place_type not in grouped:
+                grouped[place_type] = []
+            grouped[place_type].append(place)
+        return grouped
 
 
 class Amenity(models.Model):

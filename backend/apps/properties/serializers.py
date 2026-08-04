@@ -411,6 +411,9 @@ class PropertyListSerializer(serializers.ModelSerializer):
         return primary_img.image_url if primary_img else None
 
 
+from apps.locations.serializers import NearbyPlaceSerializer
+
+
 class PropertyDetailSerializer(serializers.ModelSerializer):
     """
     Comprehensive detailed serializer for a Property including nested relations.
@@ -421,6 +424,7 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
     documents = PropertyDocumentSerializer(many=True, read_only=True)
     listings = PropertyListingSerializer(many=True, read_only=True)
     legal_info = PropertyLegalSerializer(read_only=True)
+    nearby_places_grouped = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
@@ -432,7 +436,15 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
             'floor_number', 'total_floors', 'furnishing_status', 'facing',
             'construction_age', 'land_area', 'address', 'latitude', 'longitude',
             'status', 'launch_date', 'completion_date', 'description',
-            'images', 'documents', 'listings', 'legal_info', 'created_at', 'updated_at'
+            'images', 'documents', 'listings', 'legal_info', 'nearby_places_grouped',
+            'created_at', 'updated_at'
         ]
+
+    def get_nearby_places_grouped(self, obj):
+        grouped = obj.get_nearby_places_grouped()
+        result = {}
+        for place_type, places in grouped.items():
+            result[place_type] = NearbyPlaceSerializer(places, many=True).data
+        return result
 
 
