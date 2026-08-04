@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
+import { AuthProvider } from './app/providers/AuthContext.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
