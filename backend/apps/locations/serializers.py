@@ -18,6 +18,9 @@ from .validators import (
     validate_place_type,
     validate_distance,
     validate_travel_time,
+    validate_distance_km,
+    validate_rating,
+    validate_address,
 )
 
 
@@ -162,6 +165,9 @@ class NearbyPlaceSerializer(serializers.ModelSerializer):
             'name',
             'type',
             'distance',
+            'distance_km',
+            'address',
+            'rating',
             'travel_time',
             'latitude',
             'longitude',
@@ -188,8 +194,32 @@ class NearbyPlaceValidationMixin:
             raise serializers.ValidationError(list(e.messages))
 
     def validate_distance(self, value) -> str:
+        if value is None:
+            return value
         try:
             return validate_distance(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+
+    def validate_distance_km(self, value) -> str:
+        if value is None:
+            return value
+        try:
+            return validate_distance_km(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+
+    def validate_rating(self, value) -> str:
+        if value is None:
+            return value
+        try:
+            return validate_rating(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+
+    def validate_address(self, value: str) -> str:
+        try:
+            return validate_address(value)
         except DjangoValidationError as e:
             raise serializers.ValidationError(list(e.messages))
 
@@ -231,6 +261,9 @@ class NearbyPlaceCreateSerializer(NearbyPlaceValidationMixin, serializers.ModelS
             'name',
             'type',
             'distance',
+            'distance_km',
+            'address',
+            'rating',
             'travel_time',
             'latitude',
             'longitude',
@@ -252,6 +285,9 @@ class NearbyPlaceUpdateSerializer(NearbyPlaceValidationMixin, serializers.ModelS
             'name',
             'type',
             'distance',
+            'distance_km',
+            'address',
+            'rating',
             'travel_time',
             'latitude',
             'longitude',

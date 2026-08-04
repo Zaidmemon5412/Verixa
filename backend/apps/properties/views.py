@@ -6,6 +6,8 @@ import logging
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from apps.locations.serializers import NearbyPlaceSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -897,6 +899,38 @@ class PropertyViewSet(viewsets.ViewSet):
             }, status=status.HTTP_200_OK)
         except Exception as e:
             logger.exception(f"Error deleting property ID {pk}")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['get'], url_path='nearby-places')
+    def nearby_places(self, request, pk=None, *args, **kwargs):
+        """
+        Retrieves nearby places associated with the property's locality, grouped by category type.
+        Endpoint: GET /api/properties/<property_id>/nearby-places/
+        """
+        try:
+            property_obj = get_property(pk)
+            grouped = property_obj.get_nearby_places_grouped()
+            response_data = {
+                place_type: NearbyPlaceSerializer(places, many=True).data
+                for place_type, places in grouped.items()
+            }
+            return Response({
+                "success": True,
+                "message": "Nearby places retrieved successfully.",
+                "data": response_data
+            }, status=status.HTTP_200_OK)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.exception(f"Error retrieving nearby places for property ID {pk}")
             return Response({
                 "success": False,
                 "message": "An internal server error occurred.",

@@ -723,3 +723,59 @@ class PropertyModuleAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data["data"]["na_converted"])
 
+    def test_property_nearby_places_access_and_api(self):
+        from apps.locations.models import NearbyPlace
+        
+        # Create nearby places for locality
+        place1 = NearbyPlace.objects.create(
+            locality=self.locality,
+            name="Apollo Hospital",
+            type="Hospital",
+            distance_km=Decimal("1.20"),
+            rating=Decimal("4.60"),
+            travel_time=5,
+            latitude=Decimal("23.031000"),
+            longitude=Decimal("72.511000")
+        )
+        place2 = NearbyPlace.objects.create(
+            locality=self.locality,
+            name="DPS School",
+            type="School",
+            distance_km=Decimal("2.50"),
+            rating=Decimal("4.40"),
+            travel_time=10,
+            latitude=Decimal("23.032000"),
+            longitude=Decimal("72.512000")
+        )
+
+        prop = Property.objects.create(
+            locality=self.locality,
+            property_name="Vastrapur Residency",
+            property_type="apartment",
+            transaction_type="new",
+            price=Decimal("8000000.00"),
+            price_per_sqft=Decimal("5000.00"),
+            bhk=3,
+            carpet_area=Decimal("1600.00"),
+            address="Vastrapur Lake",
+            latitude=Decimal("23.030000"),
+            longitude=Decimal("72.510000"),
+            status="ready"
+        )
+
+        # Test model methods
+        self.assertEqual(prop.nearby_places.count(), 2)
+        grouped = prop.get_nearby_places_grouped()
+        self.assertIn("Hospital", grouped)
+        self.assertIn("School", grouped)
+        self.assertEqual(len(grouped["Hospital"]), 1)
+
+        # Test nearby places grouped endpoint
+        url = reverse('properties:property-nearby-places', kwargs={'pk': prop.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["success"])
+        self.assertIn("Hospital", response.data["data"])
+        self.assertIn("School", response.data["data"])
+        self.assertEqual(response.data["data"]["Hospital"][0]["name"], "Apollo Hospital")
+
