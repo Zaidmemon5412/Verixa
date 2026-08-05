@@ -196,7 +196,7 @@ EMAIL_HOST = env.str('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = env.int('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='verixa.contact.us@gmail.com')
-EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='').replace(' ', '')
 DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Verixa Support <verixa.contact.us@gmail.com>')
 FRONTEND_URL = env.str('FRONTEND_URL', default='http://localhost:5173')
 

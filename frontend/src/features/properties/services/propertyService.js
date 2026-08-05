@@ -27,7 +27,7 @@ function extractImageUrl(imgObj) {
   return imgObj.image || imgObj.image_url || imgObj.file || null;
 }
 
-function mapApiPropertyToUi(item) {
+export function mapApiPropertyToUi(item) {
   if (!item) return null;
   const legalInfo = item.legal_info || null;
   const legalStatus = legalInfo?.verification_status || 'VERIFIED';

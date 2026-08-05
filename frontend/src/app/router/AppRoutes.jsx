@@ -102,6 +102,15 @@ function LocalityDetailsPageWrapper() {
   );
 }
 
+function ComparisonPageWrapper() {
+  const navigate = useNavigate();
+  return (
+    <ComparisonPage
+      onSelectProject={(id) => navigate(`/properties/${id}`)}
+    />
+  );
+}
+
 
 function LandingPageWrapper() {
   const navigate = useNavigate();
@@ -233,6 +242,14 @@ export const AppRoutes = () => {
             </AppSuspense>
           }
         />
+        <Route
+          path="/comparison"
+          element={
+            <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
+              <ComparisonPageWrapper />
+            </AppSuspense>
+          }
+        />
       </Route>
 
       {/* 2. Public Authentication Routes (Isolated AuthLayout Shell) */}
@@ -297,16 +314,6 @@ export const AppRoutes = () => {
             <ProtectedRoute>
               <AppSuspense fallback={<PageSkeleton />}>
                 <ProfilePage />
-              </AppSuspense>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/comparison"
-          element={
-            <ProtectedRoute>
-              <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
-                <ComparisonPage />
               </AppSuspense>
             </ProtectedRoute>
           }

@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/', include('apps.properties.urls')),
 
     # Locations endpoints (localities, nearby-places)
+    path('api/locations/', include('apps.locations.urls')),
     path('api/', include('apps.locations.urls')),
     # API Documentation (drf-spectacular)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

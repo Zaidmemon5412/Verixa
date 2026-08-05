@@ -16,7 +16,7 @@ import {
 
 import { getBuilderBrandInfo } from '../utils/builderLogos';
 
-export function BuilderHero({ builder }) {
+export function BuilderHero({ builder, onContactBuilder, onScheduleVisit }) {
   const [copied, setCopied] = useState(false);
 
   if (!builder) return null;
@@ -189,6 +189,24 @@ export function BuilderHero({ builder }) {
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
               Audited for Legal & Delivery History
             </p>
+          </div>
+
+          {/* Primary Action CTAs */}
+          <div className="w-full flex flex-col sm:flex-row lg:flex-col gap-2 pt-2 border-t border-sky-100 dark:border-slate-700/80">
+            <button
+              onClick={() => onContactBuilder && onContactBuilder()}
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-sky-600 hover:bg-sky-700 text-white transition-all shadow-md shadow-sky-500/20 flex items-center justify-center gap-2"
+            >
+              <Phone className="w-4 h-4" />
+              <span>Contact Developer</span>
+            </button>
+            <button
+              onClick={() => onScheduleVisit && onScheduleVisit()}
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-extrabold bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+            >
+              <Calendar className="w-4 h-4 text-sky-500" />
+              <span>Schedule Site Visit</span>
+            </button>
           </div>
         </div>
 

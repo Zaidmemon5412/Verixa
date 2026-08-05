@@ -20,8 +20,13 @@ export const getFriendlyErrorMessage = (error) => {
   // Extract nested DRF validation error lists/messages if present
   if (data && typeof data === 'object') {
     // If backend returns a direct response message: { success: false, message: "..." }
-    if (data.message) {
+    if (data.message && typeof data.message === 'string') {
       return data.message;
+    }
+
+    // If backend returns detail in data: { data: { detail: "..." } }
+    if (data.data?.detail && typeof data.data.detail === 'string') {
+      return data.data.detail;
     }
 
     // If backend returns serializing validation list error dictionary: { data: { email: ["..."] } }
@@ -31,20 +36,23 @@ export const getFriendlyErrorMessage = (error) => {
       if (firstFieldKey) {
         const errorsList = fieldErrors[firstFieldKey];
         const errorDetail = Array.isArray(errorsList) ? errorsList[0] : errorsList;
-        // Capitalize key prefix for user presentation
-        const capitalizedField = firstFieldKey.charAt(0).toUpperCase() + firstFieldKey.slice(1).replace('_', ' ');
-        return `${capitalizedField}: ${errorDetail}`;
+        if (typeof errorDetail === 'string') {
+          const capitalizedField = firstFieldKey.charAt(0).toUpperCase() + firstFieldKey.slice(1).replace('_', ' ');
+          return `${capitalizedField}: ${errorDetail}`;
+        }
       }
     }
-    
+
     // Check if errors are in standard serializing validation format directly under response: { email: ["..."] }
     const directKeys = Object.keys(data).filter(key => key !== 'success' && key !== 'message');
     if (directKeys.length > 0) {
       const firstDirectKey = directKeys[0];
       const errorsList = data[firstDirectKey];
       const errorDetail = Array.isArray(errorsList) ? errorsList[0] : errorsList;
-      const capitalizedField = firstDirectKey.charAt(0).toUpperCase() + firstDirectKey.slice(1).replace('_', ' ');
-      return `${capitalizedField}: ${errorDetail}`;
+      if (typeof errorDetail === 'string') {
+        const capitalizedField = firstDirectKey.charAt(0).toUpperCase() + firstDirectKey.slice(1).replace('_', ' ');
+        return `${capitalizedField}: ${errorDetail}`;
+      }
     }
   }
 

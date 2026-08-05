@@ -5,7 +5,7 @@ Encapsulates business logic for managing user saved properties.
 import uuid
 import logging
 from typing import Union
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from apps.properties.models import Property
@@ -17,13 +17,19 @@ logger = logging.getLogger(__name__)
 def save_property(user: User, property_id: Union[uuid.UUID, str]) -> SavedProperty:
     """
     Business logic to save a property for a user.
-    Prevents duplicate entries.
+    Prevents duplicate entries gracefully.
     """
-    logger.info(f"User {user.user_id} attempting to save property {property_id}")
+    val_str = str(property_id).strip()
+    logger.info(f"User {user.user_id} attempting to save property {val_str}")
     
-    try:
-        target_property = Property.objects.get(property_id=property_id)
-    except Property.DoesNotExist:
+    target_property = Property.objects.filter(property_id=val_str).first()
+    if not target_property and val_str:
+        try:
+            target_property = Property.objects.filter(property_id=uuid.UUID(val_str)).first()
+        except (ValueError, AttributeError):
+            pass
+
+    if not target_property:
         raise ValidationError(_("Property not found."), code='not_found')
 
     saved_obj, created = SavedProperty.objects.get_or_create(
@@ -31,13 +37,7 @@ def save_property(user: User, property_id: Union[uuid.UUID, str]) -> SavedProper
         property=target_property
     )
 
-    if not created:
-        raise ValidationError(
-            _("This property is already in your saved list."),
-            code='already_saved'
-        )
-
-    logger.info(f"Successfully saved property {property_id} for user {user.user_id}")
+    logger.info(f"Successfully processed save for property {val_str} (created={created}) for user {user.user_id}")
     return saved_obj
 
 
@@ -46,23 +46,18 @@ def remove_saved_property(user: User, identifier: Union[uuid.UUID, str]) -> None
     Business logic to remove a saved property entry.
     `identifier` can be either the SavedProperty `id` or the `property_id`.
     """
-    logger.info(f"User {user.user_id} attempting to remove saved property: {identifier}")
+    val_str = str(identifier).strip()
+    logger.info(f"User {user.user_id} attempting to remove saved property: {val_str}")
     
-    # Check if identifier matches SavedProperty primary key
-    saved_entry = SavedProperty.objects.filter(user=user, id=identifier).first()
+    saved_entries = SavedProperty.objects.filter(
+        Q(user=user) & (Q(id=val_str) | Q(property_id=val_str))
+    )
     
-    # If not found, check if identifier matches Property primary key
-    if not saved_entry:
-        saved_entry = SavedProperty.objects.filter(user=user, property_id=identifier).first()
-
-    if not saved_entry:
-        raise ValidationError(
-            _("Saved property record not found."),
-            code='not_found'
-        )
-
-    saved_entry.delete()
-    logger.info(f"Successfully removed saved property {identifier} for user {user.user_id}")
+    if saved_entries.exists():
+        saved_entries.delete()
+        logger.info(f"Successfully removed saved property {val_str} for user {user.user_id}")
+    else:
+        logger.info(f"No saved property found for identifier {val_str}, skipping deletion.")
 
 
 def get_user_saved_properties(user: User) -> QuerySet[SavedProperty]:
@@ -77,8 +72,11 @@ def check_property_saved(user: User, property_id: Union[uuid.UUID, str]) -> dict
     """
     Checks if a given property is saved by the specified user.
     """
-    logger.info(f"Checking if property {property_id} is saved by user {user.user_id}")
-    saved_entry = SavedProperty.objects.filter(user=user, property_id=property_id).first()
+    val_str = str(property_id).strip()
+    logger.info(f"Checking if property {val_str} is saved by user {user.user_id}")
+    saved_entry = SavedProperty.objects.filter(
+        Q(user=user) & Q(property_id=val_str)
+    ).first()
     
     if saved_entry:
         return {

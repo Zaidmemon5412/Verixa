@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { 
   Building2, MapPin, Shield, BedDouble, Calendar, 
   Heart, ArrowLeft, Calculator, Phone, CheckCircle, 
@@ -7,19 +9,26 @@ import {
 } from 'lucide-react';
 import { propertyService } from '../services/propertyService';
 import { builderService } from '../../builders/services/builderService';
+import useAuth from '../../auth/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { EMICalculatorModal } from '../components/EMICalculatorModal';
+import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import PropertyMapSection from '../components/PropertyMap';
 
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [project, setProject] = useState(null);
   const [builder, setBuilder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showEMIModal, setShowEMIModal] = useState(false);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
 
   useEffect(() => {
     async function loadDetails() {
@@ -98,6 +107,14 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   const currentImage = selectedImage || project.image;
   const galleryImages = project.images && project.images.length > 0 ? project.images : [project.image];
 
+  const handleRequestVisit = () => {
+    if (!user) {
+      toast.info('Please sign in to schedule a site visit or request a callback.');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setShowInquiryModal(true);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
@@ -382,6 +399,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
                 <span>Calculate Monthly EMI</span>
               </Button>
               <Button
+                onClick={handleRequestVisit}
                 className="w-full rounded-xl gap-2"
                 variant="outline"
               >
@@ -402,9 +420,15 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         onClose={() => setShowEMIModal(false)}
         defaultPrice={project.priceNum}
       />
+
+      {/* Request Site Visit & Callback Modal */}
+      <InquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
+        property={project}
+      />
     </div>
   );
 }
 
 export default PropertyDetailPage;
-

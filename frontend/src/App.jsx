@@ -27,17 +27,16 @@ export default function App() {
         
         {/* Toast Alert stack configured globally */}
         <ToastContainer
-          position="top-right"
-          autoClose={4000}
+          position="bottom-right"
+          autoClose={3500}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
           pauseOnFocusLoss
           draggable
           pauseOnHover
           theme="dark"
-          toastClassName="glass-panel border border-white/5 bg-slate-900/90 text-slate-100 text-sm font-sans"
         />
       </Router>
     </ErrorBoundary>
