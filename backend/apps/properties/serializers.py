@@ -11,7 +11,8 @@ from apps.builders.models import Builder
 class PropertyImageSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='image_id', read_only=True)
     image = serializers.URLField(source='image_url', read_only=True)
-    image_url = serializers.URLField(source='image_url', read_only=True)
+    image_url = serializers.URLField(read_only=True)
+
     descriptions = serializers.CharField(
         source='image_type',
         required=False,
