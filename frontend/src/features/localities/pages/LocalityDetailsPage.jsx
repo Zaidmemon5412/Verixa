@@ -119,12 +119,6 @@ export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProjec
 
               {/* 7. Market Trend Chart */}
               <MarketTrendChart locality={locality} />
-
-              {/* 8. Projects in Locality */}
-              <LocalityProjects
-                locality={locality}
-                onSelectProject={handleSelectProject}
-              />
             </div>
 
             {/* Right 1-Column (Sticky AI Scorecard) */}
@@ -132,8 +126,17 @@ export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProjec
               <LocalityScorecard locality={locality} />
             </div>
           </div>
+
+          {/* 8. Projects in Locality (Full Width 4-Column Responsive Grid) */}
+          <div className="pt-4 border-t">
+            <LocalityProjects
+              locality={locality}
+              onSelectProject={handleSelectProject}
+            />
+          </div>
         </div>
       ) : null}
+
     </div>
   );
 }
