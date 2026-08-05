@@ -25,10 +25,10 @@ export default function App() {
       <Router>
         <AppRoutes />
         
-        {/* Toast Alert stack configured globally */}
+        {/* Toast Alert stack configured globally with black text styling */}
         <ToastContainer
           position="top-right"
-          autoClose={4000}
+          autoClose={3500}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick
@@ -36,8 +36,9 @@ export default function App() {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="dark"
-          toastClassName="glass-panel border border-white/5 bg-slate-900/90 text-slate-100 text-sm font-sans"
+          theme="light"
+          toastClassName="bg-white border border-slate-200 text-slate-900 font-sans shadow-xl rounded-2xl p-4"
+          bodyClassName="text-slate-900 font-semibold text-sm"
         />
       </Router>
     </ErrorBoundary>

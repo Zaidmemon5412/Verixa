@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import useAuth from '../../features/auth/hooks/useAuth';
+import { toast } from 'react-toastify';
 
 export function Navbar({ wishlistCount = 0, isDark, toggleDarkMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,6 +26,9 @@ export function Navbar({ wishlistCount = 0, isDark, toggleDarkMode }) {
   const handleLogout = async () => {
     try {
       await logout();
+      toast.info('Logged out successfully.');
+    } catch (err) {
+      console.error('Logout error:', err);
     } finally {
       navigate('/', { replace: true });
     }

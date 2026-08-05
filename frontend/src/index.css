@@ -154,3 +154,46 @@ input:-webkit-autofill:active {
   animation: spinSlow 8s linear infinite;
 }
 
+/* Custom Toast Notification Overrides - Black/Dark text styling */
+.Toastify__toast {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  padding: 12px 16px !important;
+}
+
+.Toastify__toast-body {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+}
+
+.Toastify__toast-icon {
+  width: 22px !important;
+  margin-right: 12px !important;
+}
+
+.Toastify__close-button {
+  color: #64748b !important;
+  opacity: 0.8 !important;
+}
+
+.Toastify__close-button:hover {
+  color: #0f172a !important;
+}
+
+.dark .Toastify__toast {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.dark .Toastify__toast-body {
+  color: #0f172a !important;
+}
+
+

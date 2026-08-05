@@ -13,6 +13,7 @@ import {
   Sliders,
 } from 'lucide-react';
 import useAuth from '../../features/auth/hooks/useAuth';
+import { toast } from 'react-toastify';
 
 /**
  * Sidebar Component for DashboardLayout.
@@ -24,8 +25,14 @@ export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+    try {
+      await logout();
+      toast.info('Logged out successfully.');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      navigate('/login');
+    }
   };
 
   const navItems = [
