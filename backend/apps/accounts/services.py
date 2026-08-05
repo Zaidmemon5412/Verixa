@@ -87,53 +87,124 @@ def change_password(user: User, old_password: str, new_password: str) -> None:
 
 def send_password_reset_email(email: str) -> None:
     """
-    Generates a secure, time-limited password reset token and sends a password reset email.
-    If the email does not exist, handles it silently to avoid user enumeration attacks.
+    Generates a secure, time-limited password reset token and sends a branded HTML email via SMTP.
+    Validates user account existence and bubbles up SMTP sending errors.
     """
+    from datetime import datetime
+    from django.core.mail import EmailMultiAlternatives
+
     logger.info(f"Received password reset request for email: {email}")
     user = User.objects.filter(email__iexact=email).first()
 
-    if user and user.is_active:
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+    if not user:
+        logger.warning(f"Password reset requested for non-existent email: {email}")
+        raise ValidationError(_("No registered account was found with this email address."), code='user_not_found')
 
-        frontend_domain = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
-        reset_link = f"{frontend_domain}/reset-password?uid={uidb64}&token={token}"
+    if not user.is_active:
+        logger.warning(f"Password reset requested for inactive user: {email}")
+        raise ValidationError(_("This account is currently inactive. Please contact support."), code='user_inactive')
 
-        subject = "Verixa — Password Reset Request"
-        message = (
-            f"Hello {user.full_name or 'User'},\n\n"
-            f"We received a request to reset your password for your Verixa account.\n"
-            f"Click the link below to reset your password:\n\n"
-            f"{reset_link}\n\n"
-            f"If you did not request a password reset, please ignore this email.\n\n"
-            f"Regards,\nVerixa Team"
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+
+    frontend_domain = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+    reset_link = f"{frontend_domain}/reset-password?uid={uidb64}&token={token}"
+
+    subject = "Reset Your Verixa Password"
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'verixa.contact@gmail.com')
+
+    plain_message = (
+        f"Hello {user.full_name or user.username},\n\n"
+        f"We received a request to reset your Verixa account password.\n"
+        f"Click the link below to create a new password:\n\n"
+        f"{reset_link}\n\n"
+        f"This link is valid for 24 hours. If you did not request a password reset, please ignore this email.\n\n"
+        f"Regards,\nVerixa Security Team"
+    )
+
+    html_message = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reset Your Verixa Password</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #090d16; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #e2e8f0;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 30px auto; background-color: #0f172a; border-radius: 16px; border: 1px solid #1e293b; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+        <!-- Header -->
+        <tr>
+          <td style="padding: 30px; text-align: center; background-color: #0b1120; border-bottom: 1px solid #1e293b;">
+            <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.025em;">
+              VERIXA<span style="color: #3b82f6;">.</span>
+            </h1>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">
+              Real Estate Decision Engine
+            </p>
+          </td>
+        </tr>
+
+        <!-- Body Content -->
+        <tr>
+          <td style="padding: 36px 30px;">
+            <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #ffffff;">
+              Reset Your Account Password
+            </h2>
+            <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #cbd5e1;">
+              Hello <strong>{user.full_name or user.username}</strong>,
+            </p>
+            <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #cbd5e1;">
+              We received a request to reset the password for your Verixa account. Click the button below to set up a new password:
+            </p>
+
+            <!-- CTA Button -->
+            <div style="text-align: center; margin: 28px 0;">
+              <a href="{reset_link}" target="_blank" style="display: inline-block; padding: 14px 32px; background-color: #2563eb; color: #ffffff; font-weight: 700; font-size: 14px; text-decoration: none; border-radius: 10px; box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);">
+                Reset Password
+              </a>
+            </div>
+
+            <p style="margin: 24px 0 12px 0; font-size: 12px; color: #94a3b8;">
+              If the button above does not work, copy and paste the link below into your browser:
+            </p>
+            <p style="margin: 0 0 24px 0; font-size: 12px; word-break: break-all;">
+              <a href="{reset_link}" style="color: #60a5fa; text-decoration: underline;">{reset_link}</a>
+            </p>
+
+            <div style="padding: 16px; background-color: #1e293b; border-radius: 10px; border-left: 4px solid #3b82f6; margin-top: 24px;">
+              <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #94a3b8;">
+                🔒 <strong>Security Notice:</strong> This reset link will expire in 24 hours. If you did not request this password change, you can safely ignore this email.
+              </p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 20px 30px; text-align: center; background-color: #0b1120; border-top: 1px solid #1e293b; font-size: 11px; color: #64748b;">
+            © {datetime.now().year} Verixa Real Estate Platform. All rights reserved.<br>
+            Sent from verixa.contact@gmail.com
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+    """
+
+    try:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=plain_message,
+            from_email=from_email,
+            to=[user.email],
         )
+        msg.attach_alternative(html_message, "text/html")
+        msg.send(fail_silently=False)
+        logger.info(f"Password reset email dispatched successfully to {user.email}")
+    except Exception as e:
+        logger.error(f"Failed to dispatch password reset email via SMTP to {user.email}: {e}")
+        raise ValidationError(_(f"Failed to deliver password reset email via SMTP server ({str(e)})"), code='email_send_error')
 
-        try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@verixa.com'),
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
-            logger.info(f"Password reset email sent successfully to {user.email}")
-        except Exception as e:
-            logger.warning(f"SMTP email sending failed ({e}). Printing reset email to terminal console.")
-            try:
-                from django.core.mail.backends.console import EmailBackend
-                from django.core.mail import EmailMessage
-                console_backend = EmailBackend()
-                msg = EmailMessage(
-                    subject=subject,
-                    body=message,
-                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@verixa.com'),
-                    to=[user.email]
-                )
-                console_backend.send_messages([msg])
-            except Exception as console_err:
-                logger.error(f"Console fallback failed: {console_err}")
 
 
 def verify_password_reset_token(uidb64: str, token: str) -> User:

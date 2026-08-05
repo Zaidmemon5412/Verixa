@@ -40,18 +40,25 @@ export const ForgotPasswordForm = () => {
     setLoading(true);
 
     try {
-      await authService.forgotPassword(email.trim());
-      setSubmitted(true);
-      toast.success('Password reset email sent if an account exists.');
+      const response = await authService.forgotPassword(email.trim());
+      if (response.success) {
+        setSubmitted(true);
+        toast.success(response.message || 'Password reset link sent to your email!');
+      } else {
+        const errorMsg = response.message || 'Failed to send reset email.';
+        setEmailError(errorMsg);
+        toast.error(errorMsg);
+      }
     } catch (err) {
       console.error('Forgot password error:', err);
       const msg = getFriendlyErrorMessage(err) || 'Failed to send reset link. Please check your email.';
-      toast.error(msg);
       setEmailError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
+
 
   if (submitted) {
     return (
