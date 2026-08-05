@@ -125,6 +125,9 @@ class NearbyPlace(BaseModel):
         verbose_name="Rating"
     )
     travel_time = models.PositiveIntegerField(
+        default=0,
+        blank=True,
+        null=True,
         verbose_name="Travel Time (minutes)"
     )
     latitude = models.DecimalField(
@@ -136,6 +139,20 @@ class NearbyPlace(BaseModel):
         max_digits=9,
         decimal_places=6,
         verbose_name="Longitude"
+    )
+    source = models.CharField(
+        max_length=100,
+        default='OpenStreetMap',
+        blank=True,
+        null=True,
+        verbose_name="Data Source"
+    )
+    osm_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name="OSM ID"
     )
 
     class Meta:

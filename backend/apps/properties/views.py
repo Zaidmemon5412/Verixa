@@ -823,6 +823,44 @@ class PropertyViewSet(viewsets.ViewSet):
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @action(detail=True, methods=['get'], url_path='nearby')
+    def nearby(self, request, pk=None, *args, **kwargs):
+        """
+        GET /api/properties/<property_id>/nearby/
+        Returns nearby places around the property ordered by distance.
+        Supports query parameters: category, radius, limit.
+        """
+        try:
+            property_obj = get_property(pk)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Property not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        category = request.query_params.get('category')
+        radius = request.query_params.get('radius')
+        limit = request.query_params.get('limit')
+
+        from apps.locations.services import get_property_nearby_places_with_distances
+        nearby_places_list = get_property_nearby_places_with_distances(
+            property_obj=property_obj,
+            category=category,
+            radius=radius,
+            limit=limit
+        )
+
+        return Response({
+            "success": True,
+            "message": "Property nearby places retrieved successfully.",
+            "property_id": str(property_obj.property_id),
+            "property_name": property_obj.property_name,
+            "locality": property_obj.locality.name if property_obj.locality else None,
+            "total_count": len(nearby_places_list),
+            "nearby_places": nearby_places_list
+        }, status=status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         serializer = PropertyCreateSerializer(data=request.data)
         if not serializer.is_valid():

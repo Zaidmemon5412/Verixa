@@ -12,6 +12,7 @@ import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { EMICalculatorModal } from '../components/EMICalculatorModal';
+import PropertyMapSection from '../components/PropertyMap';
 
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const [project, setProject] = useState(null);
@@ -387,6 +388,9 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           </Card>
         </div>
       </div>
+
+      {/* Verixa Spatial Engine & Nearby Ecosystem Section */}
+      <PropertyMapSection property={project} />
 
       {/* EMI Calculator Modal */}
       <EMICalculatorModal
