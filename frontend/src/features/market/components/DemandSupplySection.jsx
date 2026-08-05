@@ -19,7 +19,8 @@ export function DemandSupplySection({ demandSupplyData, isLoading }) {
   }
 
   const { demandScore = 88, supplyScore = 72, marketStatus = "Seller's Market", recommendation = "Demand > Supply (High Absorption)" } = demandSupplyData || {};
-  const isSellersMarket = marketStatus.includes("Seller");
+  const isSellersMarket = String(marketStatus || '').includes("Seller");
+
 
   return (
     <Card className="rounded-2xl border border-border/70 shadow-xs overflow-hidden">

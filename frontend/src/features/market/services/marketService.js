@@ -14,6 +14,7 @@ import {
 
 // Helper to extract strictly DB-backed locality names from property records
 function extractSubLocality(p) {
+  if (!p || typeof p !== 'object') return 'Chandkheda';
   const text = `${p.address || ''} ${p.property_name || ''} ${p.locality_name || ''}`.toLowerCase();
 
   if (text.includes('sindhu bhavan')) return 'Sindhu Bhavan Road';
@@ -31,7 +32,7 @@ function extractSubLocality(p) {
   if (text.includes('panchshlok') || text.includes('panchlok')) return 'Panchshlok Chokdi';
   if (text.includes('chandkheda')) return 'Chandkheda';
 
-  if (p.locality_name) {
+  if (p.locality_name && typeof p.locality_name === 'string') {
     const parts = p.locality_name.split(',');
     if (parts[0] && parts[0].trim() && parts[0].trim() !== 'Ahmedabad') {
       return parts[0].trim();
@@ -40,6 +41,7 @@ function extractSubLocality(p) {
 
   return 'Chandkheda';
 }
+
 
 export const marketService = {
   /**
@@ -104,10 +106,13 @@ export const marketService = {
       }
 
       // Apply client-side filter logic to DB records if filters are specified
+      const activeFilters = filters || {};
       let filteredProps = rawProperties;
-      if (filters.locality && filters.locality !== 'All') {
-        const targetLoc = filters.locality.toLowerCase();
+      
+      if (activeFilters.locality && activeFilters.locality !== 'All') {
+        const targetLoc = String(activeFilters.locality).toLowerCase();
         filteredProps = filteredProps.filter(p => {
+          if (!p) return false;
           const subLoc = extractSubLocality(p).toLowerCase();
           const addr = (p.address || '').toLowerCase();
           const locName = (p.locality_name || '').toLowerCase();
@@ -115,17 +120,18 @@ export const marketService = {
         });
       }
 
-      if (filters.propertyType && filters.propertyType !== 'All') {
+      if (activeFilters.propertyType && activeFilters.propertyType !== 'All') {
+        const targetType = String(activeFilters.propertyType).toLowerCase();
         filteredProps = filteredProps.filter(p => 
-          p.property_type && p.property_type.toLowerCase() === filters.propertyType.toLowerCase()
+          p && p.property_type && String(p.property_type).toLowerCase() === targetType
         );
       }
-      if (filters.bhk && filters.bhk !== 'All') {
-        filteredProps = filteredProps.filter(p => String(p.bhk) === String(filters.bhk));
+      if (activeFilters.bhk && activeFilters.bhk !== 'All') {
+        filteredProps = filteredProps.filter(p => p && String(p.bhk) === String(activeFilters.bhk));
       }
 
       const hasDbData = rawProperties.length > 0 || rawLocalities.length > 0;
-      const activeTimeframe = filters.timeframe || "6M";
+      const activeTimeframe = activeFilters.timeframe || "6M";
 
       // 1. Process Time-Series Price Trends
       let activeTrendChart = HISTORICAL_PRICE_TRENDS[activeTimeframe] || HISTORICAL_PRICE_TRENDS["6M"];
@@ -136,6 +142,7 @@ export const marketService = {
         const locMap = {};
 
         rawProperties.forEach(p => {
+          if (!p) return;
           const name = extractSubLocality(p);
           let priceSqft = parseFloat(p.price_per_sqft);
           if (isNaN(priceSqft) || priceSqft <= 0) {
@@ -182,19 +189,20 @@ export const marketService = {
         // Merge DB baseline localities if missing from list
         const dbNames = new Set(dbLocalityList.map(l => l.name));
         ENRICHED_LOCALITY_HEATMAP.forEach(item => {
-          if (!dbNames.has(item.name)) {
+          if (item && item.name && !dbNames.has(item.name)) {
             dbLocalityList.push(item);
           }
         });
 
-        processedLocalityHeatmap = dbLocalityList.sort((a, b) => b.demandScore - a.demandScore);
+        processedLocalityHeatmap = dbLocalityList.sort((a, b) => (b.demandScore || 0) - (a.demandScore || 0));
       }
 
       // 3. Process Builder Intelligence
       let processedBuilders = [...BUILDER_INTELLIGENCE_DATA];
       if (rawBuilders.length > 0) {
         processedBuilders = rawBuilders.map((b, idx) => {
-          const bProps = rawProperties.filter(p => String(p.builder) === String(b.builder_id) || p.builder_name === b.builder_name);
+          if (!b) return null;
+          const bProps = rawProperties.filter(p => p && (String(p.builder) === String(b.builder_id) || p.builder_name === b.builder_name));
           return {
             name: b.builder_name || b.name || `Developer ${idx + 1}`,
             activeProjects: bProps.length || b.active_projects_count || (14 - idx * 2),
@@ -203,13 +211,13 @@ export const marketService = {
             marketShare: `${(18.5 - idx * 2.8).toFixed(1)}%`,
             rating: b.rating || (4.9 - idx * 0.1).toFixed(1)
           };
-        });
+        }).filter(Boolean);
       }
 
       // 4. Compute Dynamic Locality-Specific KPI Metrics
-      let calculatedAvgPriceLakhs = 85.6;
+      let calculatedAvgPriceLakhs = "85.6 Lakhs";
       let calculatedPricePerSqft = 6980;
-      const selectedLocalityName = filters.locality || 'All';
+      const selectedLocalityName = activeFilters.locality || 'All';
 
       if (filteredProps.length > 0) {
         let validPriceSum = 0;
@@ -218,6 +226,7 @@ export const marketService = {
         let validSqftCount = 0;
 
         filteredProps.forEach(p => {
+          if (!p) return;
           const price = parseFloat(p.price);
           const sqft = parseFloat(p.price_per_sqft);
           if (!isNaN(price) && price > 0) {
@@ -239,11 +248,11 @@ export const marketService = {
         if (validSqftCount > 0) {
           calculatedPricePerSqft = Math.round(validSqftSum / validSqftCount);
         }
-      } else if (filters.locality && filters.locality !== 'All') {
-        const foundHeatmap = processedLocalityHeatmap.find(h => h.name.toLowerCase().includes(filters.locality.toLowerCase()));
+      } else if (activeFilters.locality && activeFilters.locality !== 'All') {
+        const foundHeatmap = processedLocalityHeatmap.find(h => h && h.name && String(h.name).toLowerCase().includes(String(activeFilters.locality).toLowerCase()));
         if (foundHeatmap) {
-          calculatedPricePerSqft = Math.round(foundHeatmap.priceVal * 1000);
-          calculatedAvgPriceLakhs = (foundHeatmap.priceVal * 9.5).toFixed(1) + " Lakhs";
+          calculatedPricePerSqft = Math.round((foundHeatmap.priceVal || 6.8) * 1000);
+          calculatedAvgPriceLakhs = ((foundHeatmap.priceVal || 6.8) * 9.5).toFixed(1) + " Lakhs";
         }
       }
 
@@ -252,12 +261,13 @@ export const marketService = {
       const isSellersMarket = estimatedDemandScore > 80;
 
       const dynamicKpiMetrics = {
-        avgPrice: typeof calculatedAvgPriceLakhs === 'string' && calculatedAvgPriceLakhs.includes('Cr') ? `₹${calculatedAvgPriceLakhs}` : `₹${calculatedAvgPriceLakhs}`,
+        avgPrice: String(calculatedAvgPriceLakhs).startsWith('₹') ? calculatedAvgPriceLakhs : `₹${calculatedAvgPriceLakhs}`,
         pricePerSqft: `₹${calculatedPricePerSqft.toLocaleString('en-IN')}`,
         activeListings: activeListingsCount,
         newListings: `${Math.max(4, Math.round(activeListingsCount * 0.15))}`,
         localityName: selectedLocalityName
       };
+
 
       // 5. Synthesize Executive Market Insights Text
       const topLocalityName = processedLocalityHeatmap[0]?.name || "Chandkheda";

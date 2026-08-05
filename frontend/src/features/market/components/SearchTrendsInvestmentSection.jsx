@@ -125,7 +125,8 @@ export function SearchTrendsInvestmentSection({ searchData, investmentData, isLo
                   <span className="font-extrabold text-primary">{f.score}/100</span>
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full bg-amber-500 rounded-full" style={{ width: `${f.score}%` }} />
+                  <div className="h-full bg-amber-500 rounded-full" style={{ width: `${f.score || 85}%` }} />
+
                 </div>
                 <div className="text-[10px] text-muted-foreground">{f.detail}</div>
               </div>

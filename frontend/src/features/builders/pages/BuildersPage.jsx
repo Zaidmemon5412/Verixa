@@ -31,7 +31,8 @@ export function BuildersPage({ onSelectBuilder }) {
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Delivery & Financial Reliability Audit</span>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Verified Developers</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">Property Developers</h1>
+
         <p className="text-sm text-muted-foreground mt-1">
           Detailed developer profiles, past completion records, and delivery delay benchmarks
         </p>

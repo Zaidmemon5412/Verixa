@@ -48,7 +48,8 @@ function mapApiPropertyToUi(item) {
     amenitiesList = item.amenities.map(a => typeof a === 'string' ? a : (a.amenity_name || a.name)).filter(Boolean);
   }
 
-  const builderName = item.builder_name || item.builder_detail?.builder_name || 'Verified Developer';
+  const builderName = item.builder_name || item.builder_detail?.builder_name || '';
+
   const localityName = item.locality_name || item.locality_detail?.name || item.address || 'Ahmedabad';
 
   return {

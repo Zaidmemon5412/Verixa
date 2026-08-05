@@ -162,11 +162,13 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-6 left-6 text-white space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-400">
-              Cloudinary Verified Property Image
+            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
+              <Shield className="w-3.5 h-3.5 fill-emerald-400/20" /> Verified Property Gallery
             </span>
-            <h2 className="text-2xl font-bold">{project.name} by {project.builder}</h2>
+            <h2 className="text-2xl font-bold">{project.name}{project.builder && project.builder !== 'Verified Developer' ? ` by ${project.builder}` : ''}</h2>
+
           </div>
+
         </div>
 
         {/* Thumbnails Gallery Strip */}
