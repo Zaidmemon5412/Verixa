@@ -44,30 +44,38 @@ export const localityService = {
              l.name.toLowerCase().replace(/\s+/g, '-') === cleanQuery
     );
 
-    // 2. Fetch API endpoint GET /api/locations/localities/:id/
+    // 2. Fetch API live analytics endpoint GET /api/locations/localities/:id/analytics/
     try {
-      const response = await apiClient.get(`/locations/localities/${idOrSlug}/`);
-      const apiItem = response?.data?.data || response?.data || response;
+      const response = await apiClient.get(`/locations/localities/${idOrSlug}/analytics/`);
+      const apiItem = response?.data || response;
 
-      if (apiItem && (apiItem.locality_id || apiItem.id || apiItem.name)) {
+      if (apiItem && (apiItem.locality_id || apiItem.name)) {
         const meta = staticMatch || LOCALITIES.find(
           (l) => l.name.toLowerCase() === (apiItem.name || '').toLowerCase()
         ) || LOCALITIES[0];
 
         return {
           ...meta,
-          id: apiItem.locality_id || apiItem.id || meta.id,
-          slug: apiItem.slug || meta.slug || String(apiItem.name || '').toLowerCase().replace(/\s+/g, '-'),
+          id: apiItem.locality_id || meta.id,
+          slug: meta.slug || String(apiItem.name || '').toLowerCase().replace(/\s+/g, '-'),
           name: apiItem.name || meta.name,
-          city: apiItem.city || meta.city || 'Ahmedabad',
-          state: apiItem.state || meta.state || 'Gujarat',
-          latitude: apiItem.latitude != null ? parseFloat(apiItem.latitude) : meta.latitude,
-          longitude: apiItem.longitude != null ? parseFloat(apiItem.longitude) : meta.longitude,
+          city: apiItem.city || meta.city,
+          state: apiItem.state || meta.state,
+          avgPrice: apiItem.avgPrice || meta.avgPrice,
+          psf: apiItem.psf || meta.psf,
+          growthScore: apiItem.growthScore || meta.growthScore,
+          traffic: apiItem.traffic || meta.traffic,
+          trafficDesc: apiItem.trafficDesc || meta.trafficDesc,
+          scorecard: apiItem.scorecard || meta.scorecard,
+          verdict: apiItem.verdict || meta.verdict,
+          verdictSummary: apiItem.verdictSummary || meta.verdictSummary,
+          infra: apiItem.infra || meta.infra,
         };
       }
     } catch (err) {
       // Endpoint 404 or missing, proceed with static match fallback
     }
+
 
     return staticMatch || LOCALITIES[0];
   }
