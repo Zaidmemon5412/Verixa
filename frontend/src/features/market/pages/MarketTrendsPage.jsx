@@ -68,3 +68,6 @@ export function MarketTrendsPage() {
     </div>
   );
 }
+
+export default MarketTrendsPage;
+

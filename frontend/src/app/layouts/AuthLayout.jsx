@@ -1,33 +1,46 @@
+import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Building2 } from 'lucide-react';
+import { Building2, ArrowLeft } from 'lucide-react';
 
 /**
  * AuthLayout Component.
- * Used for authentication flows: Login, Register, Forgot Password, Reset Password.
- * Structure: Centered Authentication Glass Container + Outlet
+ * Dedicated isolated layout wrapper for authentication pages: Login, Register, Forgot Password, Reset Password.
+ * Displays Brand Logo, Authentication Form (<Outlet />), and Back to Home Link.
+ * Completely hides Main Navbar, Main Footer, and App Shell components.
  */
 export const AuthLayout = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-slate-950 text-slate-100 relative overflow-hidden selection:bg-brand-500 selection:text-white">
-      {/* Dynamic Background Glow Effects */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Ambient Glow */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md space-y-6 z-10">
         {/* Brand Header Emblem */}
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center space-x-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 group-hover:bg-brand-500/30 transition-all shadow-lg shadow-brand-500/10">
-              <Building2 className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary group-hover:bg-primary/30 transition-all shadow-lg">
+              <Building2 className="w-6 h-6" />
             </div>
             <span className="text-2xl font-extrabold text-white tracking-tight">
-              VERIXA<span className="text-brand-400">.</span>
+              VERIXA<span className="text-primary">.</span>
             </span>
           </Link>
         </div>
 
-        {/* Centered Auth Card Container */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl">
+        {/* Back to Home Link */}
+        <div className="flex justify-between items-center text-xs">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Link>
+        </div>
+
+        {/* Auth Form Card Container */}
+        <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl bg-slate-900/80">
           <Outlet />
         </div>
 

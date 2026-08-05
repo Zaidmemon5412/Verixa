@@ -359,3 +359,6 @@ export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
     </div>
   );
 }
+
+export default PropertyDetailPage;
+

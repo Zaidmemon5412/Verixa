@@ -1,5 +1,5 @@
-import { lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { lazy } from 'react';
+import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 
 // Layout wrappers
 import MainLayout from '../layouts/MainLayout';
@@ -22,36 +22,92 @@ const LandingPage = lazy(() => import('../../features/landing/pages/LandingPage'
 const PropertiesPage = lazy(() => import('../../features/properties/pages/PropertiesPage'));
 const PropertyDetailPage = lazy(() => import('../../features/properties/pages/PropertyDetailPage'));
 const BuildersPage = lazy(() => import('../../features/builders/pages/BuildersPage'));
-const BuilderDetailPage = lazy(() => import('../../features/builders/pages/BuilderDetailPage'));
+const LocalitiesPage = lazy(() => import('../../features/localities/pages/LocalitiesPage'));
+const ComparisonPage = lazy(() => import('../../features/comparison/pages/ComparisonPage'));
+const MarketTrendsPage = lazy(() => import('../../features/market/pages/MarketTrendsPage'));
 
 const Dashboard = lazy(() => import('../../features/dashboard/pages/Dashboard'));
 const ProfilePage = lazy(() => import('../../features/profile/pages/ProfilePage'));
-const PropertyComparison = lazy(() => import('../../features/comparison/pages/PropertyComparison'));
 const ReportsPage = lazy(() => import('../../features/reports/pages/ReportsPage'));
 
 const NotFound = lazy(() => import('../../shared/components/NotFound'));
 
-/**
- * AppRoutes configures nested routing structures with route-based code splitting and global Suspense fallbacks.
- */
+// Route Wrapper Components for URL Parameter Passing
+function PropertyDetailPageWrapper() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  return (
+    <PropertyDetailPage
+      projectId={id}
+      onBack={() => navigate('/properties')}
+      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
+    />
+  );
+}
+
+function PropertiesPageWrapper() {
+  const navigate = useNavigate();
+  return (
+    <PropertiesPage
+      onSelectProject={(id) => navigate(`/properties/${id}`)}
+    />
+  );
+}
+
+function BuildersPageWrapper() {
+  const navigate = useNavigate();
+  return (
+    <BuildersPage
+      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
+    />
+  );
+}
+
+function LandingPageWrapper() {
+  const navigate = useNavigate();
+  return (
+    <LandingPage
+      onNavigate={(path, id) => {
+        if (path === 'detail' && id) navigate(`/properties/${id}`);
+        else if (path === 'builder' && id) navigate(`/builders/${id}`);
+        else if (path === 'projects') navigate('/properties');
+        else if (path === 'builders') navigate('/builders');
+        else if (path === 'localities') navigate('/localities');
+        else if (path === 'compare') navigate('/comparison');
+        else if (path === 'market') navigate('/market');
+        else navigate(path.startsWith('/') ? path : `/${path}`);
+      }}
+      onSelectProject={(id) => navigate(`/properties/${id}`)}
+    />
+  );
+}
+
 export const AppRoutes = () => {
   return (
     <Routes>
-      {/* 1. Public Main Layout Routes */}
+      {/* 1. Public Routes Accessible Without Login (MainLayout Shell) */}
       <Route element={<MainLayout />}>
         <Route
           path="/"
           element={
             <AppSuspense fallback={<PageSkeleton />}>
-              <LandingPage />
+              <LandingPageWrapper />
             </AppSuspense>
           }
         />
         <Route
           path="/properties"
           element={
-            <AppSuspense fallback={<CardSkeleton count={3} />}>
-              <PropertiesPage />
+            <AppSuspense fallback={<CardSkeleton count={6} />}>
+              <PropertiesPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/properties/:id"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <PropertyDetailPageWrapper />
             </AppSuspense>
           }
         />
@@ -59,29 +115,53 @@ export const AppRoutes = () => {
           path="/property/:id"
           element={
             <AppSuspense fallback={<PageSkeleton />}>
-              <PropertyDetailPage />
+              <PropertyDetailPageWrapper />
             </AppSuspense>
           }
         />
         <Route
           path="/builders"
           element={
-            <AppSuspense fallback={<CardSkeleton count={3} />}>
-              <BuildersPage />
+            <AppSuspense fallback={<CardSkeleton count={4} />}>
+              <BuildersPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/builders/:id"
+          element={
+            <AppSuspense fallback={<CardSkeleton count={4} />}>
+              <BuildersPageWrapper />
             </AppSuspense>
           }
         />
         <Route
           path="/builder/:id"
           element={
+            <AppSuspense fallback={<CardSkeleton count={4} />}>
+              <BuildersPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/localities"
+          element={
+            <AppSuspense fallback={<CardSkeleton count={4} />}>
+              <LocalitiesPage />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/market"
+          element={
             <AppSuspense fallback={<PageSkeleton />}>
-              <BuilderDetailPage />
+              <MarketTrendsPage />
             </AppSuspense>
           }
         />
       </Route>
 
-      {/* 2. Public Authentication Routes */}
+      {/* 2. Public Authentication Routes (Isolated AuthLayout Shell) */}
       <Route element={<AuthLayout />}>
         <Route
           path="/login"
@@ -125,49 +205,51 @@ export const AppRoutes = () => {
         />
       </Route>
 
-      {/* 3. Protected Dashboard Workspace Routes */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
+      {/* 3. Protected Workspace Routes (Requires Authentication) */}
+      <Route element={<MainLayout />}>
         <Route
           path="/dashboard"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <Dashboard />
-            </AppSuspense>
+            <ProtectedRoute>
+              <AppSuspense fallback={<PageSkeleton />}>
+                <Dashboard />
+              </AppSuspense>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/profile"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <ProfilePage />
-            </AppSuspense>
+            <ProtectedRoute>
+              <AppSuspense fallback={<PageSkeleton />}>
+                <ProfilePage />
+              </AppSuspense>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/comparison"
           element={
-            <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
-              <PropertyComparison />
-            </AppSuspense>
+            <ProtectedRoute>
+              <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
+                <ComparisonPage />
+              </AppSuspense>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/reports"
           element={
-            <AppSuspense fallback={<ListSkeleton rows={4} />}>
-              <ReportsPage />
-            </AppSuspense>
+            <ProtectedRoute>
+              <AppSuspense fallback={<ListSkeleton rows={4} />}>
+                <ReportsPage />
+              </AppSuspense>
+            </ProtectedRoute>
           }
         />
       </Route>
 
-      {/* 4. Fallback Routes */}
+      {/* 4. Fallback Page Not Found */}
       <Route
         path="/404"
         element={

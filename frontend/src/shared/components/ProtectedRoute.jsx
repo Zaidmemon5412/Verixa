@@ -1,25 +1,24 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import useAuth from '../../features/auth/hooks/useAuth';
 import { FullPageLoader } from './Loader';
 
 /**
  * Route protector that restricts page access to authenticated users.
- * Redirects unauthorized requests to /login and saves original query paths.
+ * Redirects unauthorized requests to /login and saves original location state to restore after login.
  */
 export const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, initialized, user } = useAuth();
   const location = useLocation();
 
   if (!initialized) {
-    return <FullPageLoader message="Loading platform credentials..." />;
+    return <FullPageLoader message="Verifying security credentials..." />;
   }
 
   if (!isAuthenticated) {
-    // Redirect to login and save the location state to restore it after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Future-ready Role-Based Authorization
   if (allowedRoles && allowedRoles.length > 0) {
     const userRole = user?.role || 'User';
     const isAuthorized = allowedRoles.some(
@@ -27,12 +26,11 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
     );
     
     if (!isAuthorized) {
-      // Redirect unauthorized users to the main dashboard
       return <Navigate to="/" replace />;
     }
   }
 
-  return children;
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;

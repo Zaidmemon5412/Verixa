@@ -7,7 +7,9 @@ import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 
 /**
  * Registration Screen component.
- * Allows new users to create accounts, providing full credentials.
+ * Allows new users to create accounts.
+ * Required Flow: Register -> Account Created -> Show Success Toast -> Redirect to /login
+ * (Does NOT auto-login, create sessions, or store tokens).
  */
 export const Register = () => {
   const navigate = useNavigate();
@@ -64,14 +66,13 @@ export const Register = () => {
 
     try {
       const response = await register(formData);
-      if (response.success) {
-        toast.success('Registration successful! Please login.');
+      if (response.success || response.data) {
+        toast.success('Account created successfully! Please sign in with your credentials.');
         navigate('/login');
       } else {
         toast.error(response.message || 'Registration failed.');
       }
     } catch (err) {
-      // Map Django nested validation failures to local input field errors
       const dataErrors = err.response?.data?.data || err.response?.data;
       if (dataErrors && typeof dataErrors === 'object') {
         const errorList = {};
@@ -105,7 +106,7 @@ export const Register = () => {
             value={formData.full_name}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.full_name ? 'border-red-500/80' : 'border-slate-800'
             }`}
             placeholder="John Doe"
@@ -127,10 +128,10 @@ export const Register = () => {
             value={formData.username}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.username ? 'border-red-500/80' : 'border-slate-800'
             }`}
-            placeholder="johndoe12"
+            placeholder="johndoe"
             required
           />
           {validationErrors.username && (
@@ -138,7 +139,7 @@ export const Register = () => {
           )}
         </div>
 
-        {/* Email */}
+        {/* Email Address */}
         <div>
           <label htmlFor="email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
             Email Address
@@ -149,10 +150,10 @@ export const Register = () => {
             value={formData.email}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.email ? 'border-red-500/80' : 'border-slate-800'
             }`}
-            placeholder="name@domain.com"
+            placeholder="john@domain.com"
             required
           />
           {validationErrors.email && (
@@ -163,7 +164,7 @@ export const Register = () => {
         {/* Phone */}
         <div>
           <label htmlFor="phone" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-            Phone Number
+            Phone Number (Optional)
           </label>
           <input
             id="phone"
@@ -171,14 +172,9 @@ export const Register = () => {
             value={formData.phone}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
-              validationErrors.phone ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="+1 (555) 000-0000"
+            className="w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm"
+            placeholder="+91 9876543210"
           />
-          {validationErrors.phone && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.phone}</p>
-          )}
         </div>
 
         {/* Password */}
@@ -192,10 +188,10 @@ export const Register = () => {
             value={formData.password}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.password ? 'border-red-500/80' : 'border-slate-800'
             }`}
-            placeholder="••••••••"
+            placeholder="Min 8 characters"
             required
           />
           {validationErrors.password && (
@@ -214,10 +210,10 @@ export const Register = () => {
             value={formData.confirm_password}
             onChange={handleChange}
             disabled={loading}
-            className={`w-full px-4 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.confirm_password ? 'border-red-500/80' : 'border-slate-800'
             }`}
-            placeholder="••••••••"
+            placeholder="Repeat password"
             required
           />
           {validationErrors.confirm_password && (
@@ -225,25 +221,22 @@ export const Register = () => {
           )}
         </div>
 
-        {/* Submit Action */}
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 active:bg-brand-700 disabled:bg-brand-500/50 text-white font-bold text-sm tracking-wide transition-all shadow-md shadow-brand-500/10 flex items-center justify-center cursor-pointer select-none"
-          id="register-submit-button"
+          className="w-full py-3 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
         >
-          {loading ? <ButtonLoader label="Creating Account..." /> : 'Sign Up'}
+          {loading ? <ButtonLoader text="Creating Account..." /> : <span>Create Account</span>}
         </button>
       </form>
 
-      {/* Redirect Link */}
-      <div className="mt-6 text-center select-none">
-        <p className="text-xs text-slate-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
-            Sign In here
-          </Link>
-        </p>
+      {/* Sign In Navigation */}
+      <div className="mt-6 text-center text-xs text-slate-400">
+        Already have an account?{' '}
+        <Link to="/login" className="text-primary font-bold hover:underline">
+          Sign In
+        </Link>
       </div>
     </div>
   );

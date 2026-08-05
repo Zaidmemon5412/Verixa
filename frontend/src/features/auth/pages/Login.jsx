@@ -7,7 +7,7 @@ import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 
 /**
  * Login Screen component.
- * Validates credentials and logs in users, redirecting them to protected screens.
+ * Validates credentials and logs in users, redirecting back to previous location or homepage root.
  */
 export const Login = () => {
   const { login, loading } = useAuth();
@@ -17,8 +17,6 @@ export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
-
-  const from = location.state?.from?.pathname || '/';
 
   /**
    * Run local validation tests before triggering service logins.
@@ -44,7 +42,11 @@ export const Login = () => {
     try {
       await login(email, password);
       toast.success('Access granted. Welcome back!');
-      navigate(from, { replace: true });
+      
+      // Case A: Redirect back to protected page if state.from exists.
+      // Case B: Direct login -> Redirect to '/' (homepage root).
+      const destination = location.state?.from || '/';
+      navigate(destination, { replace: true });
     } catch (err) {
       const errorMessage = getFriendlyErrorMessage(err);
       toast.error(errorMessage);
@@ -68,7 +70,7 @@ export const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className={`w-full px-4 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-4 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.email ? 'border-red-500/80' : 'border-slate-800'
             }`}
             placeholder="name@domain.com"
@@ -87,7 +89,7 @@ export const Login = () => {
             </label>
             <Link
               to="/forgot-password"
-              className="text-xs text-brand-400 hover:text-brand-300 font-semibold transition-colors select-none"
+              className="text-xs text-primary hover:underline font-semibold transition-colors select-none"
               id="forgot-password-link"
             >
               Forgot password?
@@ -99,7 +101,7 @@ export const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            className={`w-full px-4 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
+            className={`w-full px-4 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
               validationErrors.password ? 'border-red-500/80' : 'border-slate-800'
             }`}
             placeholder="••••••••"
@@ -110,25 +112,22 @@ export const Login = () => {
           )}
         </div>
 
-        {/* Submit Action */}
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 active:bg-brand-700 disabled:bg-brand-500/50 text-white font-bold text-sm tracking-wide transition-all shadow-md shadow-brand-500/10 flex items-center justify-center cursor-pointer select-none"
-          id="login-submit-button"
+          className="w-full py-3 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
         >
-          {loading ? <ButtonLoader label="Logging in..." /> : 'Sign In'}
+          {loading ? <ButtonLoader text="Authenticating..." /> : <span>Sign In</span>}
         </button>
       </form>
 
-      {/* Redirect Option */}
-      <div className="mt-6 text-center select-none">
-        <p className="text-xs text-slate-400">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
-            Register here
-          </Link>
-        </p>
+      {/* Footer Navigation */}
+      <div className="mt-6 text-center text-xs text-slate-400">
+        Don't have an account?{' '}
+        <Link to="/register" className="text-primary font-bold hover:underline">
+          Create Account
+        </Link>
       </div>
     </div>
   );

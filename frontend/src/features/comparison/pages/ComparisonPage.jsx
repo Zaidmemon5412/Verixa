@@ -98,3 +98,6 @@ export function ComparisonPage({ selectedIds = ["1", "2"], onSelectProject }) {
     </div>
   );
 }
+
+export default ComparisonPage;
+

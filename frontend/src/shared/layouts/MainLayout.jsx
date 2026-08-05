@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
+import { Outlet } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { Skeleton } from '../components/ui/skeleton';
 
 function PageLoadingFallback() {
@@ -30,7 +31,7 @@ export function MainLayout({ children, activeTab, onNavigate, wishlistCount, isD
       
       <main className="flex-1">
         <Suspense fallback={<PageLoadingFallback />}>
-          {children}
+          {children ? children : <Outlet />}
         </Suspense>
       </main>
 
@@ -38,3 +39,5 @@ export function MainLayout({ children, activeTab, onNavigate, wishlistCount, isD
     </div>
   );
 }
+
+export default MainLayout;
