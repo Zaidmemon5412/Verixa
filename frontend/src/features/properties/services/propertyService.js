@@ -144,6 +144,11 @@ export const propertyService = {
   },
 
   async getPropertyById(id) {
+    if (!id || id === 'undefined' || id === 'null') {
+      return null;
+    }
+
+    // Attempt 1: Direct backend detail endpoint GET /api/properties/:id/
     try {
       const response = await apiClient.get(`/properties/${id}/`);
       const rawData = response?.data?.data || response?.data || response;
@@ -151,15 +156,32 @@ export const propertyService = {
       if (rawData && (rawData.property_id || rawData.id)) {
         return mapApiPropertyToUi(rawData);
       }
-      
-      const found = PROJECTS.find((p) => String(p.id) === String(id));
-      return found || null;
     } catch (error) {
-      console.warn('Property detail service API error:', error);
-      const found = PROJECTS.find((p) => String(p.id) === String(id));
-      return found || null;
+      console.warn(`Backend detail API lookup for "${id}" failed, trying active list & static fallback:`, error?.message || error);
     }
+
+    // Attempt 2: Search active database properties list by ID or slugified name
+    try {
+      const allDbProperties = await this.getProperties();
+      if (Array.isArray(allDbProperties) && allDbProperties.length > 0) {
+        const match = allDbProperties.find(
+          (p) => String(p.id).toLowerCase() === String(id).toLowerCase() ||
+                 String(p.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
+        );
+        if (match) return match;
+      }
+    } catch (e) {
+      console.warn('Database properties list fallback search failed:', e);
+    }
+
+    // Attempt 3: Search static fallback PROJECTS by ID or slugified name
+    const foundStatic = PROJECTS.find(
+      (p) => String(p.id).toLowerCase() === String(id).toLowerCase() ||
+             String(p.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
+    );
+    return foundStatic || null;
   },
+
 
   async getFilterOptions() {
     try {

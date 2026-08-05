@@ -414,29 +414,51 @@ def create_property(validated_data: dict) -> Property:
 
 def get_property(property_id: Union[uuid.UUID, str]) -> Property:
     """
-    Retrieves a Property by UUID, primary key, or slug.
+    Retrieves a Property by UUID, primary key, or slugified name.
     """
     logger.info(f"Retrieving property with identifier: {property_id}")
     qs = Property.objects.select_related('locality', 'builder').prefetch_related(
         'images', 'property_amenities__amenity', 'listings', 'legal_info', 'documents'
     )
     
-    # Try UUID lookup first
+    clean_id = str(property_id).strip()
+
+    # 1. Try UUID lookup
     try:
-        val = uuid.UUID(str(property_id))
+        val = uuid.UUID(clean_id)
         return qs.get(property_id=val)
-    except (ValueError, TypeError, DjangoValidationError):
+    except (ValueError, TypeError, DjangoValidationError, Property.DoesNotExist):
         pass
 
-    # Try slug lookup if attribute exists
+    # 2. Try integer primary key if numeric string
+    try:
+        if clean_id.isdigit():
+            return qs.get(pk=int(clean_id))
+    except (Property.DoesNotExist, ValueError):
+        pass
+
+    # 3. Try slug lookup if column exists
     if hasattr(Property, 'slug'):
         try:
-            return qs.get(slug=property_id)
-        except Property.DoesNotExist:
+            return qs.get(slug=clean_id)
+        except (Property.DoesNotExist, DjangoValidationError):
             pass
 
-    # Fall back to matching string or primary key
-    return qs.get(property_id=property_id)
+    # 4. Try matching slugified property_name or property_id string
+    try:
+        from django.utils.text import slugify
+        for p in qs.all()[:200]:
+            if str(p.property_id).lower() == clean_id.lower() or slugify(p.property_name) == clean_id.lower():
+                return p
+    except Exception:
+        pass
+
+    # 5. Last resort fallback
+    try:
+        return qs.get(property_id=clean_id)
+    except Exception:
+        raise Property.DoesNotExist(f"Property matching query does not exist for identifier '{property_id}'")
+
 
 
 def get_filter_options() -> dict:

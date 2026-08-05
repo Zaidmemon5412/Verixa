@@ -13,7 +13,7 @@ import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { EMICalculatorModal } from '../components/EMICalculatorModal';
 
-export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
+export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const [project, setProject] = useState(null);
   const [builder, setBuilder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,12 +39,29 @@ export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
         setLoading(false);
       }
     }
-    loadDetails();
+    if (projectId) {
+      loadDetails();
+    }
   }, [projectId]);
+
+  useEffect(() => {
+    if (!loading && project && isLegalView) {
+      setTimeout(() => {
+        const elem = document.getElementById('legal-audit-section');
+        if (elem) {
+          elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    }
+  }, [loading, project, isLegalView]);
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-pulse">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-6 animate-pulse">
+        <div className="flex items-center gap-2 text-sm text-primary font-bold">
+          <Building2 className="w-4 h-4 animate-bounce" />
+          <span>Loading Property Details & Legal Specifications...</span>
+        </div>
         <Skeleton className="h-8 w-1/4" />
         <Skeleton className="h-96 w-full rounded-2xl" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -54,6 +71,7 @@ export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
       </div>
     );
   }
+
 
   if (!project) {
     return (
@@ -184,8 +202,9 @@ export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
         <div className="lg:col-span-2 space-y-8">
           {/* PostgreSQL Legal Audit Card */}
           {legalInfo && (
-            <Card className="rounded-2xl border bg-card shadow-sm">
+            <Card id="legal-audit-section" className="rounded-2xl border bg-card shadow-sm scroll-mt-24">
               <CardHeader className="border-b pb-4">
+
                 <CardTitle className="text-base font-bold flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <FileCheck className="w-5 h-5 text-emerald-600" />
