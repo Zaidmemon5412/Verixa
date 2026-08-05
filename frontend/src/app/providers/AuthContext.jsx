@@ -7,7 +7,7 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessTokenState] = useState(null);
+  const [accessToken, setAccessTokenState] = useState(() => getAccessToken());
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Register a new user account.
+   * NOTE: Does NOT set auth tokens or create an authenticated session.
    * @param {object} userData - User registration details
    * @returns {Promise<object>} Registered user data response
    */
@@ -136,41 +137,50 @@ export const AuthProvider = ({ children }) => {
     const token = getAccessToken();
     const refresh = getRefreshToken();
 
-    if (!token) {
+    if (!token && !refresh) {
+      setUser(null);
+      setAccessTokenState(null);
       setInitialized(true);
       return;
     }
 
     try {
-      // Validate access token by making an authenticated request to get user profile details
-      const response = await authService.getProfile();
-      if (response.success && response.data) {
-        setUser(response.data);
-        setAccessTokenState(token);
+      if (token) {
+        const response = await authService.getProfile();
+        if (response.success && response.data) {
+          setUser(response.data);
+          setAccessTokenState(token);
+          setInitialized(true);
+          return;
+        }
       }
-    } catch (err) {
-      console.warn('Initial access token stale, attempting token refresh...', err);
+
       if (refresh) {
-        try {
-          const response = await authService.refreshToken(refresh);
-          if (response.success && response.data) {
-            const { access } = response.data;
-            setAccessToken(access);
-            setAccessTokenState(access);
-            
-            // Re-fetch profile with the new token
-            const profileResponse = await authService.getProfile();
-            if (profileResponse.success && profileResponse.data) {
-              setUser(profileResponse.data);
-            }
+        const refreshResp = await authService.refreshToken(refresh);
+        if (refreshResp.success && refreshResp.data) {
+          const { access } = refreshResp.data;
+          setAccessToken(access);
+          setAccessTokenState(access);
+          
+          const profileResp = await authService.getProfile();
+          if (profileResp.success && profileResp.data) {
+            setUser(profileResp.data);
           }
-        } catch (refreshErr) {
-          console.error('Automatic startup token refresh failed:', refreshErr);
+        } else {
           clearTokens();
+          setUser(null);
+          setAccessTokenState(null);
         }
       } else {
         clearTokens();
+        setUser(null);
+        setAccessTokenState(null);
       }
+    } catch (err) {
+      console.warn('Initial session restore failed, clearing tokens:', err);
+      clearTokens();
+      setUser(null);
+      setAccessTokenState(null);
     } finally {
       setInitialized(true);
     }
@@ -179,8 +189,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     initializeAuth();
 
-    // Event listener for interceptor logout signals
     const handleLogoutEvent = () => {
+      clearTokens();
       setUser(null);
       setAccessTokenState(null);
     };
@@ -194,7 +204,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     accessToken,
-    isAuthenticated: !!user,
+    isAuthenticated: Boolean(user && accessToken),
     loading,
     initialized,
     register,

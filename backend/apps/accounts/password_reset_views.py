@@ -44,16 +44,23 @@ class ForgotPasswordView(APIView):
             send_password_reset_email(email)
             return Response({
                 "success": True,
-                "message": "If an account with this email exists, a password reset link has been sent.",
+                "message": "Password reset instructions have been sent to your email address.",
                 "data": {}
             }, status=status.HTTP_200_OK)
+        except DjangoValidationError as e:
+            return Response({
+                "success": False,
+                "message": e.message if hasattr(e, 'message') else str(e),
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.exception("Error processing forgot password request")
             return Response({
                 "success": False,
-                "message": "An internal server error occurred.",
+                "message": f"Failed to deliver email: {str(e)}",
                 "data": {"detail": str(e)}
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class VerifyResetTokenView(APIView):

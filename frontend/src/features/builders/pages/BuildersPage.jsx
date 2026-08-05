@@ -62,3 +62,6 @@ export function BuildersPage({ onSelectBuilder }) {
     </div>
   );
 }
+
+export default BuildersPage;
+

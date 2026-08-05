@@ -99,3 +99,6 @@ export function Footer({ onNavigate }) {
     </footer>
   );
 }
+
+export default Footer;
+

@@ -530,3 +530,6 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
     </div>
   );
 }
+
+export default LandingPage;
+

@@ -93,3 +93,6 @@ export function LocalitiesPage({ onSelectLocality }) {
     </div>
   );
 }
+
+export default LocalitiesPage;
+

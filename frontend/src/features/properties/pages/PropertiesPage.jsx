@@ -201,3 +201,6 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     </div>
   );
 }
+
+export default PropertiesPage;
+
