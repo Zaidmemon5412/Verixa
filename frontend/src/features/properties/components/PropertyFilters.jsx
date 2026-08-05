@@ -1,7 +1,8 @@
-import React from 'react';
-import { Search, Filter, RotateCcw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Filter, RotateCcw, ChevronDown, ChevronUp, SlidersHorizontal, Check } from 'lucide-react';
 import { Input } from '../../../shared/components/ui/input';
 import { Button } from '../../../shared/components/ui/button';
+import { Badge } from '../../../shared/components/ui/badge';
 
 export function PropertyFilters({
   searchQuery,
@@ -10,67 +11,279 @@ export function PropertyFilters({
   setSelectedLocality,
   selectedStatus,
   setSelectedStatus,
+  selectedType,
+  setSelectedType,
+  selectedBhk = [],
+  setSelectedBhk,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
+  minArea,
+  setMinArea,
+  maxArea,
+  setMaxArea,
+  selectedBuilder,
+  setSelectedBuilder,
+  selectedOrdering,
+  setSelectedOrdering,
   localities = [],
+  builders = [],
   onReset
 }) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const bhkOptions = ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK'];
+  const propertyTypes = ['All', 'Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
+  const statusOptions = ['All', 'Ready to Move', 'Under Construction', 'New Launch'];
+  const orderingOptions = [
+    { label: 'Newest Listings', value: 'newest' },
+    { label: 'Price: Low to High', value: 'price_asc' },
+    { label: 'Price: High to Low', value: 'price_desc' },
+    { label: 'Area: Small to Large', value: 'carpet_area_asc' },
+    { label: 'Area: Large to Small', value: 'carpet_area_desc' },
+    { label: 'Most Popular', value: 'popular' }
+  ];
+
+  const handleBhkToggle = (option) => {
+    if (!setSelectedBhk) return;
+    if (selectedBhk.includes(option)) {
+      setSelectedBhk(selectedBhk.filter((b) => b !== option));
+    } else {
+      setSelectedBhk([...selectedBhk, option]);
+    }
+  };
+
+  const activeFiltersCount = [
+    searchQuery ? 1 : 0,
+    selectedLocality !== 'All' ? 1 : 0,
+    selectedStatus !== 'All' ? 1 : 0,
+    selectedType !== 'All' ? 1 : 0,
+    selectedBhk.length > 0 ? 1 : 0,
+    minPrice || maxPrice ? 1 : 0,
+    minArea || maxArea ? 1 : 0,
+    selectedBuilder !== 'All' ? 1 : 0
+  ].reduce((a, b) => a + b, 0);
+
   return (
-    <div className="bg-card border rounded-2xl p-4 shadow-sm space-y-4">
-      <div className="flex flex-col md:flex-row items-center gap-3">
+    <div className="bg-card border rounded-2xl p-4 md:p-5 shadow-sm space-y-4">
+      {/* Top Search & Controls Row */}
+      <div className="flex flex-col lg:flex-row items-center gap-3">
         {/* Search Bar */}
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by project name, builder, or location (e.g. Adani, Shela)..."
+            placeholder="Search by project name, builder, or city (e.g. Adani, Shela, Ahmedabad)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-11 rounded-xl bg-background"
           />
         </div>
 
-        {/* Locality Filter */}
-        <div className="w-full md:w-48">
+        {/* Property Type Filter */}
+        <div className="w-full sm:w-44">
           <select
-            value={selectedLocality}
-            onChange={(e) => setSelectedLocality(e.target.value)}
-            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            value={selectedType || 'All'}
+            onChange={(e) => setSelectedType && setSelectedType(e.target.value)}
+            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium"
           >
-            <option value="All">All Localities</option>
-            {localities.map((loc) => (
-              <option key={loc.id || loc.name} value={loc.name}>
-                {loc.name}
+            <option value="All">All Types</option>
+            {propertyTypes.filter(t => t !== 'All').map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Status Filter */}
-        <div className="w-full md:w-48">
+        {/* Sorting Dropdown */}
+        <div className="w-full sm:w-48">
           <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            value={selectedOrdering || 'newest'}
+            onChange={(e) => setSelectedOrdering && setSelectedOrdering(e.target.value)}
+            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium text-foreground"
           >
-            <option value="All">All Statuses</option>
-            <option value="Ready to Move">Ready to Move</option>
-            <option value="Under Construction">Under Construction</option>
-            <option value="New Launch">New Launch</option>
+            {orderingOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
 
-        {/* Reset Button */}
-        {onReset && (
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-end">
           <Button
-            variant="ghost"
-            onClick={onReset}
-            className="h-11 px-3 text-muted-foreground hover:text-foreground"
-            title="Reset Filters"
+            variant={showAdvanced ? 'default' : 'outline'}
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="h-11 rounded-xl gap-2 font-semibold flex-1 sm:flex-none"
           >
-            <RotateCcw className="w-4 h-4 mr-1.5" />
-            Reset
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>Filters</span>
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary" className="ml-1 bg-primary/20 text-primary hover:bg-primary/20">
+                {activeFiltersCount}
+              </Badge>
+            )}
+            {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </Button>
-        )}
+
+          {onReset && activeFiltersCount > 0 && (
+            <Button
+              variant="ghost"
+              onClick={onReset}
+              className="h-11 px-3 text-muted-foreground hover:text-foreground"
+              title="Reset All Filters"
+            >
+              <RotateCcw className="w-4 h-4 mr-1.5" />
+              Reset
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* Advanced Expandable Filter Panel */}
+      {showAdvanced && (
+        <div className="pt-4 border-t space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
+          {/* 1. BHK Multi-Select Pills */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+              BHK Configuration
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              {bhkOptions.map((option) => {
+                const isSelected = selectedBhk.includes(option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => handleBhkToggle(option)}
+                    className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                        : 'bg-background hover:bg-muted text-foreground border-input'
+                    }`}
+                  >
+                    {isSelected && <Check className="w-3.5 h-3.5" />}
+                    <span>{option}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 2. Grid Filters: Builder, Locality & Status */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Builder Filter */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                Builder / Developer
+              </label>
+              <select
+                value={selectedBuilder || 'All'}
+                onChange={(e) => setSelectedBuilder && setSelectedBuilder(e.target.value)}
+                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="All">All Builders</option>
+                {builders.map((b) => (
+                  <option key={b.builder_id || b.builder_name} value={b.builder_name}>
+                    {b.builder_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Locality Filter */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                Locality / Area
+              </label>
+              <select
+                value={selectedLocality}
+                onChange={(e) => setSelectedLocality(e.target.value)}
+                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="All">All Localities</option>
+                {localities.map((loc) => (
+                  <option key={loc.id || loc.locality_id || loc.name} value={loc.name}>
+                    {loc.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Possession Status Filter */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                Possession Status
+              </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {statusOptions.map((st) => (
+                  <option key={st} value={st}>
+                    {st === 'All' ? 'All Statuses' : st}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* 3. Range Inputs: Price Range & Area Range */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
+            {/* Price Range */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                Price Range (₹)
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min Price (e.g. 5000000)"
+                  value={minPrice || ''}
+                  onChange={(e) => setMinPrice && setMinPrice(e.target.value)}
+                  className="h-10 text-xs rounded-xl bg-background"
+                />
+                <span className="text-muted-foreground text-xs font-semibold">to</span>
+                <Input
+                  type="number"
+                  placeholder="Max Price (e.g. 20000000)"
+                  value={maxPrice || ''}
+                  onChange={(e) => setMaxPrice && setMaxPrice(e.target.value)}
+                  className="h-10 text-xs rounded-xl bg-background"
+                />
+              </div>
+            </div>
+
+            {/* Area Range */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                Area Range (Sq Ft)
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min Sq Ft (e.g. 800)"
+                  value={minArea || ''}
+                  onChange={(e) => setMinArea && setMinArea(e.target.value)}
+                  className="h-10 text-xs rounded-xl bg-background"
+                />
+                <span className="text-muted-foreground text-xs font-semibold">to</span>
+                <Input
+                  type="number"
+                  placeholder="Max Sq Ft (e.g. 3500)"
+                  value={maxArea || ''}
+                  onChange={(e) => setMaxArea && setMaxArea(e.target.value)}
+                  className="h-10 text-xs rounded-xl bg-background"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

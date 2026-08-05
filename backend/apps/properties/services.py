@@ -412,10 +412,73 @@ def create_property(validated_data: dict) -> Property:
 
 def get_property(property_id: Union[uuid.UUID, str]) -> Property:
     """
-    Retrieves a Property by UUID or primary key.
+    Retrieves a Property by UUID, primary key, or slug.
     """
-    logger.info(f"Retrieving property with ID: {property_id}")
-    return Property.objects.select_related('locality', 'builder').get(property_id=property_id)
+    logger.info(f"Retrieving property with identifier: {property_id}")
+    qs = Property.objects.select_related('locality', 'builder').prefetch_related(
+        'images', 'property_amenities__amenity', 'listings', 'legal_info', 'documents'
+    )
+    
+    # Try UUID lookup first
+    try:
+        val = uuid.UUID(str(property_id))
+        return qs.get(property_id=val)
+    except (ValueError, TypeError, DjangoValidationError):
+        pass
+
+    # Try slug lookup if attribute exists
+    if hasattr(Property, 'slug'):
+        try:
+            return qs.get(slug=property_id)
+        except Property.DoesNotExist:
+            pass
+
+    # Fall back to matching string or primary key
+    return qs.get(property_id=property_id)
+
+
+def get_filter_options() -> dict:
+    """
+    Retrieves dynamic filter metadata from the active database records.
+    """
+    from django.db.models import Min, Max
+    from apps.builders.models import Builder
+    from apps.locations.models import Locality
+
+    price_stats = Property.objects.aggregate(min_p=Min('price'), max_p=Max('price'))
+    area_stats = Property.objects.aggregate(min_a=Min('carpet_area'), max_a=Max('carpet_area'))
+    
+    property_types = list(
+        Property.objects.values_list('property_type', flat=True)
+        .distinct().exclude(property_type__isnull=True).exclude(property_type='')
+    )
+    statuses = list(
+        Property.objects.values_list('status', flat=True)
+        .distinct().exclude(status__isnull=True).exclude(status='')
+    )
+    bhks = sorted(list(
+        Property.objects.values_list('bhk', flat=True)
+        .distinct().exclude(bhk__isnull=True)
+    ))
+
+    builders = list(Builder.objects.values('builder_id', 'builder_name'))
+    localities = list(Locality.objects.values('locality_id', 'name', 'city'))
+
+    return {
+        "property_types": property_types or ['Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'],
+        "statuses": statuses or ['Ready to Move', 'Under Construction', 'New Launch'],
+        "bhks": bhks or [1, 2, 3, 4, 5],
+        "builders": builders,
+        "localities": localities,
+        "price_range": {
+            "min": float(price_stats['min_p']) if price_stats['min_p'] is not None else 1000000,
+            "max": float(price_stats['max_p']) if price_stats['max_p'] is not None else 100000000
+        },
+        "area_range": {
+            "min": float(area_stats['min_a']) if area_stats['min_a'] is not None else 500,
+            "max": float(area_stats['max_a']) if area_stats['max_a'] is not None else 10000
+        }
+    }
 
 
 def list_properties(params: dict = None) -> QuerySet[Property]:
@@ -428,6 +491,7 @@ def list_properties(params: dict = None) -> QuerySet[Property]:
         from .filters import PropertyFilter
         queryset = PropertyFilter.filter_queryset(queryset, params)
     return queryset
+
 
 
 def update_property(property_obj: Property, validated_data: dict) -> Property:

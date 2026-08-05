@@ -12,30 +12,65 @@ const BATCH_SIZE = 30;
 export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlist }) {
   const [projects, setProjects] = useState([]);
   const [localities, setLocalities] = useState([]);
+  const [builders, setBuilders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(BATCH_SIZE);
+
+  // Filter States
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocality, setSelectedLocality] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedType, setSelectedType] = useState('All');
+  const [selectedBhk, setSelectedBhk] = useState([]);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [minArea, setMinArea] = useState('');
+  const [maxArea, setMaxArea] = useState('');
+  const [selectedBuilder, setSelectedBuilder] = useState('All');
+  const [selectedOrdering, setSelectedOrdering] = useState('newest');
 
   const bottomSentinelRef = useRef(null);
 
+  // Initial Filter Options Data Fetching (Builders & Localities)
+  useEffect(() => {
+    async function loadMeta() {
+      try {
+        const [locsData, metaOptions] = await Promise.all([
+          localityService.getLocalities(),
+          propertyService.getFilterOptions()
+        ]);
+        setLocalities(locsData || []);
+        if (metaOptions && metaOptions.builders) {
+          setBuilders(metaOptions.builders || []);
+        }
+      } catch (err) {
+        console.warn('Failed to load filter options metadata:', err);
+      }
+    }
+    loadMeta();
+  }, []);
+
+  // Main Property List Data Fetching on Filter Changes
   useEffect(() => {
     async function loadData() {
       setLoading(true);
       setDisplayLimit(BATCH_SIZE);
       try {
-        const [propsData, locsData] = await Promise.all([
-          propertyService.getProperties({
-            search: searchQuery,
-            locality: selectedLocality,
-            status: selectedStatus,
-          }),
-          localityService.getLocalities(),
-        ]);
-        setProjects(propsData);
-        setLocalities(locsData);
+        const propsData = await propertyService.getProperties({
+          search: searchQuery,
+          locality: selectedLocality,
+          status: selectedStatus,
+          property_type: selectedType,
+          bhk: selectedBhk.length > 0 ? selectedBhk : undefined,
+          min_price: minPrice || undefined,
+          max_price: maxPrice || undefined,
+          min_area: minArea || undefined,
+          max_area: maxArea || undefined,
+          builder: selectedBuilder,
+          ordering: selectedOrdering
+        });
+        setProjects(propsData || []);
       } catch (err) {
         console.error('Failed to load property list:', err);
       } finally {
@@ -43,7 +78,19 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       }
     }
     loadData();
-  }, [searchQuery, selectedLocality, selectedStatus]);
+  }, [
+    searchQuery,
+    selectedLocality,
+    selectedStatus,
+    selectedType,
+    selectedBhk,
+    minPrice,
+    maxPrice,
+    minArea,
+    maxArea,
+    selectedBuilder,
+    selectedOrdering
+  ]);
 
   // Infinite Scroll Observer
   useEffect(() => {
@@ -78,15 +125,37 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     setSearchQuery('');
     setSelectedLocality('All');
     setSelectedStatus('All');
+    setSelectedType('All');
+    setSelectedBhk([]);
+    setMinPrice('');
+    setMaxPrice('');
+    setMinArea('');
+    setMaxArea('');
+    setSelectedBuilder('All');
+    setSelectedOrdering('newest');
     setDisplayLimit(BATCH_SIZE);
   };
 
-  const hasActiveFilters = searchQuery || selectedLocality !== 'All' || selectedStatus !== 'All';
+  const hasActiveFilters = Boolean(
+    searchQuery ||
+    selectedLocality !== 'All' ||
+    selectedStatus !== 'All' ||
+    selectedType !== 'All' ||
+    selectedBhk.length > 0 ||
+    minPrice ||
+    maxPrice ||
+    minArea ||
+    maxArea ||
+    selectedBuilder !== 'All'
+  );
 
   const filterSummaryText = [
     searchQuery ? `Search: "${searchQuery}"` : null,
     selectedLocality !== 'All' ? `Locality: ${selectedLocality}` : null,
     selectedStatus !== 'All' ? `Status: ${selectedStatus}` : null,
+    selectedType !== 'All' ? `Type: ${selectedType}` : null,
+    selectedBhk.length > 0 ? `BHK: ${selectedBhk.join(', ')}` : null,
+    selectedBuilder !== 'All' ? `Builder: ${selectedBuilder}` : null,
   ]
     .filter(Boolean)
     .join(' • ');
@@ -103,14 +172,14 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
             <Sparkles className="w-3.5 h-3.5" />
             <span>RERA & Title Audited Registry</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Verified Properties</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Verified Properties</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Explore verified residential projects backed by ML decision analytics and legal title search
           </p>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
+      {/* Advanced Filter Toolbar */}
       <PropertyFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -118,7 +187,24 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         setSelectedLocality={setSelectedLocality}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+        selectedBhk={selectedBhk}
+        setSelectedBhk={setSelectedBhk}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+        minArea={minArea}
+        setMinArea={setMinArea}
+        maxArea={maxArea}
+        setMaxArea={setMaxArea}
+        selectedBuilder={selectedBuilder}
+        setSelectedBuilder={setSelectedBuilder}
+        selectedOrdering={selectedOrdering}
+        setSelectedOrdering={setSelectedOrdering}
         localities={localities}
+        builders={builders}
         onReset={handleReset}
       />
 
@@ -132,7 +218,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
             {hasActiveFilters && (
               <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
                 <span>Matching:</span>
-                <span className="font-bold">{filterSummaryText}</span>
+                <span className="font-bold">{filterSummaryText || 'Active Filters'}</span>
               </span>
             )}
           </div>
@@ -143,7 +229,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
               className="text-xs text-muted-foreground hover:text-foreground underline flex items-center gap-1 w-fit"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>Clear Filter</span>
+              <span>Clear All Filters</span>
             </button>
           )}
         </div>
@@ -153,7 +239,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="border rounded-2xl p-4 space-y-3">
+            <div key={i} className="border rounded-2xl p-4 space-y-3 bg-card shadow-sm">
               <Skeleton className="h-48 w-full rounded-xl" />
               <Skeleton className="h-6 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
@@ -161,17 +247,21 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
           ))}
         </div>
       ) : projects.length === 0 ? (
-        <div className="border border-dashed rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto bg-card">
+        <div className="border border-dashed rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto bg-card shadow-sm">
           <div className="p-4 rounded-full bg-muted w-fit mx-auto text-muted-foreground">
             <Building2 className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold">No Matching Properties Found</h3>
+          <h3 className="text-lg font-bold text-foreground">No Matching Properties Found</h3>
           <p className="text-xs text-muted-foreground">
-            No properties found matching your search filter "{filterSummaryText}". Try resetting your filters.
+            {hasActiveFilters
+              ? `No properties found matching your search filter "${filterSummaryText}". Try adjusting or resetting your filters.`
+              : 'No properties available in the database currently.'}
           </p>
-          <Button onClick={handleReset} variant="outline" className="rounded-xl">
-            Reset Filters
-          </Button>
+          {hasActiveFilters && (
+            <Button onClick={handleReset} variant="outline" className="rounded-xl font-semibold">
+              Reset Filters
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-8">
@@ -203,4 +293,5 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 }
 
 export default PropertiesPage;
+
 

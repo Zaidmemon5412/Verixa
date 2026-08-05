@@ -55,11 +55,30 @@ export function PropertyDetailPage({ projectId, onBack, onSelectBuilder }) {
     );
   }
 
-  if (!project) return null;
+  if (!project) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+        <div className="mx-auto w-20 h-20 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-xl">
+          <Building2 className="w-10 h-10" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-extrabold text-foreground">Property Not Found</h2>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto">
+            The property you requested could not be located in our real estate database or has been unlisted.
+          </p>
+        </div>
+        <Button onClick={onBack} size="lg" className="gap-2 font-semibold">
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Properties</span>
+        </Button>
+      </div>
+    );
+  }
 
   const legalInfo = project.legalInfo;
   const currentImage = selectedImage || project.image;
-  const galleryImages = project.images || [project.image];
+  const galleryImages = project.images && project.images.length > 0 ? project.images : [project.image];
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">

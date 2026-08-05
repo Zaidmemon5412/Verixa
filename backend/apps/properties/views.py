@@ -44,6 +44,7 @@ from .services import (
     PropertyDocumentService,
     create_property,
     get_property,
+    get_filter_options,
     list_properties,
     update_property,
     delete_property,
@@ -757,7 +758,25 @@ class PropertyViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
     pagination_class = PropertyPagination
 
+    @action(detail=False, methods=['get'], url_path='filter-options')
+    def filter_options(self, request, *args, **kwargs):
+        try:
+            options = get_filter_options()
+            return Response({
+                "success": True,
+                "message": "Filter options retrieved successfully.",
+                "data": options
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error retrieving filter options")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def list(self, request, *args, **kwargs):
+
         try:
             queryset = list_properties(request.query_params)
             paginator = self.pagination_class()
