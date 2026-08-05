@@ -191,16 +191,22 @@ def send_password_reset_email(email: str) -> None:
     </html>
     """
 
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'Verixa Support <verixa.contact.us@gmail.com>')
+    reply_to = [getattr(settings, 'EMAIL_HOST_USER', 'verixa.contact.us@gmail.com')]
+
     try:
         msg = EmailMultiAlternatives(
             subject=subject,
             body=plain_message,
             from_email=from_email,
             to=[user.email],
+            reply_to=reply_to,
+            headers={'X-Mailer': 'Verixa Security Platform'}
         )
         msg.attach_alternative(html_message, "text/html")
         msg.send(fail_silently=False)
         logger.info(f"Password reset email dispatched successfully via SMTP to {user.email}")
+
     except Exception as e:
         logger.warning(f"SMTP email dispatch encountered an error ({e}). Printing password reset link to server terminal console.")
         print("\n" + "=" * 80)
