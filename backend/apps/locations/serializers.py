@@ -295,3 +295,22 @@ class NearbyPlaceUpdateSerializer(NearbyPlaceValidationMixin, serializers.ModelS
             'updated_at',
         ]
         read_only_fields = ['place_id', 'locality', 'created_at', 'updated_at']
+
+
+class NearbyPlaceDistanceSerializer(serializers.Serializer):
+    """
+    Serializer formatting calculated nearby places with distance_m and distance_km.
+    """
+    place_id = serializers.CharField(required=False, allow_null=True)
+    name = serializers.CharField()
+    category = serializers.CharField()
+    type = serializers.CharField()
+    distance_m = serializers.IntegerField()
+    distance_km = serializers.FloatField()
+    travel_time = serializers.IntegerField(default=0)
+    address = serializers.CharField(allow_blank=True, default="")
+    latitude = serializers.FloatField()
+    longitude = serializers.FloatField()
+    source = serializers.CharField(default="OpenStreetMap")
+    rating = serializers.FloatField(required=False, allow_null=True)
+

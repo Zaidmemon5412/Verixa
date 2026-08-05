@@ -1,32 +1,31 @@
 # ==============================================================================
-# Verixa Backend Service Python Requirements
+# Verixa Backend Service Python Requirements (Pinned Versions)
 # ==============================================================================
 
 # Core Web Framework
-Django>=4.2.0,<5.0.0
-djangorestframework>=3.14.0
-djangorestframework-simplejwt>=5.3.1
-django-cors-headers>=4.3.0
-django-environ>=0.11.0
+Django==4.2.30
+djangorestframework==3.17.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+django-environ==0.14.0
 
 # Database Engine
-psycopg2-binary>=2.9.9
+psycopg2-binary==2.9.12
 
 # Task Queues & Caching
-celery>=5.3.6
-redis>=5.0.1
+celery==5.6.3
+redis==8.0.1
 
 # Document Verification / OCR
-pytesseract>=0.3.10
-Pillow>=10.1.0
+pytesseract==0.3.13
+Pillow==12.3.0
 
 # API Documentation & REST Helpers
-drf-spectacular>=0.27.0
-requests>=2.31.0
-cloudinary>=1.45.0
-
+drf-spectacular==0.29.0
+requests==2.34.2
+cloudinary==1.45.0
 
 # Code Quality & Testing (Dev)
-flake8>=6.1.0
-black>=23.11.0
-pytest-django>=4.7.0
+flake8==7.3.0
+black==26.5.1
+pytest-django==4.12.0
