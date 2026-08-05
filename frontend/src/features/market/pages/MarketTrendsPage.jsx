@@ -1,73 +1,127 @@
-import React from 'react';
-import { TrendingUp, BarChart3, Shield, Zap } from 'lucide-react';
-import { 
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer 
-} from 'recharts';
-import { MARKET_TREND_DATA, LOCALITY_PRICE_DATA } from '../constants/marketData';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/components/ui/card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { marketService } from '../services/marketService';
+
+import { MarketHeroHeader } from '../components/MarketHeroHeader';
+import { MarketKpiCards } from '../components/MarketKpiCards';
+import { PriceTrendChart } from '../components/PriceTrendChart';
+import { MarketHeatMapTable } from '../components/MarketHeatMapTable';
+import { DemandSupplySection } from '../components/DemandSupplySection';
+import { BuilderIntelligenceSection } from '../components/BuilderIntelligenceSection';
+import { PropertyTypeRentalSection } from '../components/PropertyTypeRentalSection';
+import { SearchTrendsInvestmentSection } from '../components/SearchTrendsInvestmentSection';
 
 export function MarketTrendsPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Global Smart Filters State
+  const [filters, setFilters] = useState({
+    city: 'Ahmedabad',
+    locality: 'All',
+    propertyType: 'All',
+    bhk: 'All',
+    budget: 'All',
+    timeframe: '6M'
+  });
+
+  // Market Intelligence Data State
+  const [marketData, setMarketData] = useState(null);
+
+  const fetchAnalytics = useCallback(async (activeFilters) => {
+    setIsLoading(true);
+    try {
+      const data = await marketService.getMarketTrends(activeFilters);
+      setMarketData(data);
+    } catch (error) {
+      console.warn("Market analytics fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAnalytics(filters);
+  }, [filters, fetchAnalytics]);
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      city: 'Ahmedabad',
+      locality: 'All',
+      propertyType: 'All',
+      bhk: 'All',
+      budget: 'All',
+      timeframe: '6M'
+    });
+  };
+
+  const handleTimeframeChange = (timeframe) => {
+    setFilters(prev => ({ ...prev, timeframe }));
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2">
-          <BarChart3 className="w-3.5 h-3.5" />
-          <span>Real-Time Market Analytics & Yield Radar</span>
-        </div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Market Trend Intelligence</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Quarterly new launches vs sales velocity and price per sqft trajectory across key micro-markets
-        </p>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+      {/* 1. Hero Header & Global Smart Filters */}
+      <MarketHeroHeader 
+        healthData={marketData?.marketHealth}
+        marketInsights={marketData?.marketInsights || marketData?.aiInsights}
+        isLiveDb={marketData?.isLiveDb}
+        totalDbRecords={marketData?.totalDbRecords}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onResetFilters={handleResetFilters}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Chart 1: Sales Velocity */}
-        <Card className="rounded-2xl border">
-          <CardHeader>
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-500" />
-              New Property Launches vs Sales Velocity
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={MARKET_TREND_DATA}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="month" fontSize={12} />
-                <YAxis fontSize={12} />
-                <Tooltip />
-                <Bar dataKey="launches" fill="#93C5FD" name="New Launches" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="sales" fill="#2563EB" name="Units Sold" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* 2. Key Market Metrics Cards */}
+      <MarketKpiCards 
+        isLoading={isLoading} 
+        totalListings={marketData?.totalDbRecords}
+        kpiMetrics={marketData?.kpiMetrics}
+      />
 
-        {/* Chart 2: Price per sqft by Locality */}
-        <Card className="rounded-2xl border">
-          <CardHeader>
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-primary" />
-              Average Price (₹/sqft) by Key Locality
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={LOCALITY_PRICE_DATA} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis type="number" fontSize={12} unit="k" />
-                <YAxis dataKey="name" type="category" fontSize={12} />
-                <Tooltip />
-                <Bar dataKey="price" fill="#10B981" name="Avg Price (k/sqft)" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+      {/* 3. Interactive Price Trend Trajectory Chart */}
+      <PriceTrendChart 
+        trendData={marketData?.historicalTrends}
+        isLoading={isLoading}
+        activeTimeframe={filters.timeframe}
+        onTimeframeChange={handleTimeframeChange}
+      />
+
+      {/* 4. Demand vs Supply Analytics */}
+      <DemandSupplySection 
+        demandSupplyData={marketData?.demandSupply}
+        isLoading={isLoading}
+      />
+
+      {/* 5. Locality Performance Heat Map Table */}
+      <MarketHeatMapTable 
+        localityData={marketData?.localityHeatmap}
+        isLoading={isLoading}
+      />
+
+      {/* 6. Builder Intelligence & Market Share */}
+      <BuilderIntelligenceSection 
+        buildersData={marketData?.builderIntelligence}
+        isLoading={isLoading}
+      />
+
+      {/* 7. Property Asset Class & Rental Analytics */}
+      <PropertyTypeRentalSection 
+        propertyTypes={marketData?.propertyTypes}
+        rentalData={marketData?.rentalAnalytics}
+        isLoading={isLoading}
+      />
+
+      {/* 8. Consumer Search Trends & Investment Opportunity Scoring */}
+      <SearchTrendsInvestmentSection 
+        searchData={marketData?.searchTrends}
+        investmentData={marketData?.investmentScore}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
 
 export default MarketTrendsPage;
-
