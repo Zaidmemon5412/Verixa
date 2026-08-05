@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import authService from '../services/authService';
 import PasswordStrength from './PasswordStrength';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 
 /**
- * ResetPasswordForm component.
- * Manages entering new passwords, password strength, confirmation, and submission.
+ * ResetPasswordForm Component.
+ * Manages entering new passwords with visibility toggles, strength indicators,
+ * error state styling, and countdown redirect to login.
  */
 export const ResetPasswordForm = ({ uid, token }) => {
   const navigate = useNavigate();
@@ -32,21 +33,13 @@ export const ResetPasswordForm = ({ uid, token }) => {
     if (!newPassword) {
       errs.newPassword = 'New password is required.';
     } else if (newPassword.length < 8) {
-      errs.newPassword = 'Password must be at least 8 characters.';
-    } else if (!/[A-Z]/.test(newPassword)) {
-      errs.newPassword = 'Password must contain at least one uppercase letter.';
-    } else if (!/[a-z]/.test(newPassword)) {
-      errs.newPassword = 'Password must contain at least one lowercase letter.';
-    } else if (!/\d/.test(newPassword)) {
-      errs.newPassword = 'Password must contain at least one digit.';
-    } else if (!/[^a-zA-Z0-9]/.test(newPassword)) {
-      errs.newPassword = 'Password must contain at least one special character.';
+      errs.newPassword = 'Password must be at least 8 characters long.';
     }
 
     if (!confirmPassword) {
-      errs.confirmPassword = 'Confirm password is required.';
+      errs.confirmPassword = 'Please confirm your password.';
     } else if (newPassword !== confirmPassword) {
-      errs.confirmPassword = 'Passwords do not match.';
+      errs.confirmPassword = 'Confirm password does not match.';
     }
 
     setErrors(errs);
@@ -67,10 +60,12 @@ export const ResetPasswordForm = ({ uid, token }) => {
       });
 
       setSuccess(true);
-      toast.success('Password reset successfully!');
+      toast.success('Password reset successfully! Redirecting to login...');
     } catch (err) {
-      const msg = getFriendlyErrorMessage(err);
+      console.error('Reset password error:', err);
+      const msg = getFriendlyErrorMessage(err) || 'Failed to reset password. Token may be expired.';
       toast.error(msg);
+      setErrors({ auth: msg });
     } finally {
       setLoading(false);
     }
@@ -98,31 +93,28 @@ export const ResetPasswordForm = ({ uid, token }) => {
 
   if (success) {
     return (
-      <div className="text-[#00ffff] bg-[#000000] p-4 text-center py-4 space-y-5 select-none" id="reset-password-success">
-        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
+      <div className="text-center py-6 space-y-5 select-none" id="reset-password-success-card">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-xl">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
           <h3 className="text-xl font-extrabold text-white tracking-tight">Password Reset Complete</h3>
-          <p className="text-sm text-slate-300 max-w-sm mx-auto leading-relaxed">
-            Your password has been updated successfully. You can now log in using your new password.
+          <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+            Your security password has been updated successfully. You can now sign in with your new password.
           </p>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-white/5 max-w-xs mx-auto">
-          <p className="text-xs text-slate-400">
-            Redirecting to <span className="font-semibold text-brand-400">Sign In</span> page in{' '}
-            <span className="font-extrabold text-white text-sm">{countdown}</span> seconds...
-          </p>
+        <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-medium max-w-xs mx-auto">
+          Redirecting to Sign In in <span className="font-bold text-primary">{countdown}s</span>...
         </div>
 
         <div className="pt-2">
           <Link
             to="/login"
-            className="w-full py-3 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold text-sm tracking-wide transition-all shadow-md shadow-brand-500/10 inline-flex items-center justify-center cursor-pointer"
+            className="inline-flex items-center justify-center w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl transition-all"
           >
-            Go to Sign In Now
+            <span>Sign In Now</span>
           </Link>
         </div>
       </div>
@@ -131,9 +123,16 @@ export const ResetPasswordForm = ({ uid, token }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate id="reset-password-form">
-      {/* New Password Field */}
+      {errors.auth && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-start gap-2 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+          <span>{errors.auth}</span>
+        </div>
+      )}
+
+      {/* New Password Input */}
       <div>
-        <label htmlFor="new-password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+        <label htmlFor="new-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
           New Password
         </label>
         <div className="relative">
@@ -149,33 +148,41 @@ export const ResetPasswordForm = ({ uid, token }) => {
               if (errors.newPassword) setErrors((prev) => ({ ...prev, newPassword: null }));
             }}
             disabled={loading}
-            autoFocus
-            className={`w-full pl-10 pr-10 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
-              errors.newPassword ? 'border-red-500/80' : 'border-slate-800'
+            aria-invalid={Boolean(errors.newPassword)}
+            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              errors.newPassword
+                ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
-            placeholder="••••••••"
+            placeholder="Min 8 characters"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            tabIndex={-1}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+            disabled={loading}
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+            title={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         {errors.newPassword && (
-          <p className="text-xs text-red-400 mt-1.5 font-medium">{errors.newPassword}</p>
+          <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>{errors.newPassword}</span>
+          </p>
         )}
 
-        {/* Live Password Strength Meter */}
-        <PasswordStrength password={newPassword} />
+        {/* Password Strength Indicator */}
+        <div className="mt-3">
+          <PasswordStrength password={newPassword} />
+        </div>
       </div>
 
-      {/* Confirm Password Field */}
-      <div className="pt-1">
-        <label htmlFor="confirm-password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+      {/* Confirm Password Input */}
+      <div>
+        <label htmlFor="confirm-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
           Confirm New Password
         </label>
         <div className="relative">
@@ -191,23 +198,30 @@ export const ResetPasswordForm = ({ uid, token }) => {
               if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: null }));
             }}
             disabled={loading}
-            className={`w-full pl-10 pr-10 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
-              errors.confirmPassword ? 'border-red-500/80' : 'border-slate-800'
+            aria-invalid={Boolean(errors.confirmPassword)}
+            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              errors.confirmPassword
+                ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
-            placeholder="••••••••"
+            placeholder="Repeat new password"
             required
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            tabIndex={-1}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+            disabled={loading}
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+            title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
           >
             {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-xs text-red-400 mt-1.5 font-medium">{errors.confirmPassword}</p>
+          <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>{errors.confirmPassword}</span>
+          </p>
         )}
       </div>
 
@@ -215,10 +229,16 @@ export const ResetPasswordForm = ({ uid, token }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 active:bg-brand-700 disabled:bg-brand-500/50 text-white font-bold text-sm tracking-wide transition-all shadow-md shadow-brand-500/10 flex items-center justify-center cursor-pointer select-none"
-        id="reset-password-submit-button"
+        className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
-        {loading ? <ButtonLoader label="Updating Password..." /> : 'Reset Password'}
+        {loading ? (
+          <ButtonLoader text="Resetting Password..." />
+        ) : (
+          <span className="flex items-center gap-2">
+            <span>Reset Password</span>
+            <ArrowRight className="w-4 h-4" />
+          </span>
+        )}
       </button>
     </form>
   );

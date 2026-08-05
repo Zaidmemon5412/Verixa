@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff, User, Mail, Phone, Lock, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
@@ -9,7 +10,6 @@ import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
  * Registration Screen component.
  * Allows new users to create accounts.
  * Required Flow: Register -> Account Created -> Show Success Toast -> Redirect to /login
- * (Does NOT auto-login, create sessions, or store tokens).
  */
 export const Register = () => {
   const navigate = useNavigate();
@@ -24,6 +24,8 @@ export const Register = () => {
     confirm_password: '',
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
   const handleChange = (e) => {
@@ -32,30 +34,42 @@ export const Register = () => {
       ...prev,
       [id]: value,
     }));
+    if (validationErrors[id]) {
+      setValidationErrors((prev) => ({ ...prev, [id]: null }));
+    }
   };
 
   /**
-   * Run local criteria checks prior to backend submission.
+   * Run local validation checks prior to backend submission.
    */
   const validate = () => {
     const errors = {};
     if (!formData.full_name.trim()) {
-      errors.full_name = 'Full name is required';
+      errors.full_name = 'Full name is required.';
     }
+
     if (!formData.username.trim()) {
-      errors.username = 'Username is required';
+      errors.username = 'Username is required.';
     }
-    if (!formData.email) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email address is required.';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email.trim())) {
+      errors.email = 'Please enter a valid email address.';
     }
-    if (formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long';
+
+    if (!formData.password) {
+      errors.password = 'Password is required.';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must contain at least 8 characters.';
     }
-    if (formData.password !== formData.confirm_password) {
-      errors.confirm_password = 'Passwords do not match';
+
+    if (!formData.confirm_password) {
+      errors.confirm_password = 'Please confirm your password.';
+    } else if (formData.password !== formData.confirm_password) {
+      errors.confirm_password = 'Confirm password does not match.';
     }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -73,151 +87,236 @@ export const Register = () => {
         toast.error(response.message || 'Registration failed.');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       const dataErrors = err.response?.data?.data || err.response?.data;
       if (dataErrors && typeof dataErrors === 'object') {
         const errorList = {};
         Object.keys(dataErrors).forEach((key) => {
           if (key !== 'success' && key !== 'message') {
             const errorVal = dataErrors[key];
-            errorList[key] = Array.isArray(errorVal) ? errorVal[0] : errorVal;
+            errorList[key] = Array.isArray(errorVal) ? errorVal[0] : String(errorVal);
           }
         });
         setValidationErrors(errorList);
       }
-      const errorMessage = getFriendlyErrorMessage(err);
+      const errorMessage = getFriendlyErrorMessage(err) || 'Registration failed. Please check field details.';
       toast.error(errorMessage);
     }
   };
 
   return (
-    <div id="register-page">
-      <h2 className="text-xl font-extrabold text-white mb-6 text-center select-none tracking-tight">
-        Create Your Account
-      </h2>
+    <div id="register-page" className="space-y-6">
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-extrabold text-white select-none tracking-tight">
+          Create Your Account
+        </h2>
+        <p className="text-xs text-slate-400">
+          Join Verixa to unlock RERA legal audits, builder delay indices & ML price tools
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {/* Full Name */}
+        {/* Full Name Field */}
         <div>
-          <label htmlFor="full_name" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="full_name" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Full Name
           </label>
-          <input
-            id="full_name"
-            type="text"
-            value={formData.full_name}
-            onChange={handleChange}
-            disabled={loading}
-            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
-              validationErrors.full_name ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="John Doe"
-            required
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <User className="w-4 h-4" />
+            </div>
+            <input
+              id="full_name"
+              type="text"
+              value={formData.full_name}
+              onChange={handleChange}
+              disabled={loading}
+              aria-invalid={Boolean(validationErrors.full_name)}
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+                validationErrors.full_name
+                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+              }`}
+              placeholder="John Doe"
+              required
+            />
+          </div>
           {validationErrors.full_name && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.full_name}</p>
+            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{validationErrors.full_name}</span>
+            </p>
           )}
         </div>
 
-        {/* Username */}
+        {/* Username Field */}
         <div>
-          <label htmlFor="username" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="username" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Username
           </label>
-          <input
-            id="username"
-            type="text"
-            value={formData.username}
-            onChange={handleChange}
-            disabled={loading}
-            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
-              validationErrors.username ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="johndoe"
-            required
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <User className="w-4 h-4" />
+            </div>
+            <input
+              id="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              disabled={loading}
+              aria-invalid={Boolean(validationErrors.username)}
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+                validationErrors.username
+                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+              }`}
+              placeholder="johndoe"
+              required
+            />
+          </div>
           {validationErrors.username && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.username}</p>
+            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{validationErrors.username}</span>
+            </p>
           )}
         </div>
 
-        {/* Email Address */}
+        {/* Email Address Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="email" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Email Address
           </label>
-          <input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            disabled={loading}
-            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
-              validationErrors.email ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="john@domain.com"
-            required
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <Mail className="w-4 h-4" />
+            </div>
+            <input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={loading}
+              aria-invalid={Boolean(validationErrors.email)}
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+                validationErrors.email
+                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+              }`}
+              placeholder="john@domain.com"
+              required
+            />
+          </div>
           {validationErrors.email && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.email}</p>
+            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{validationErrors.email}</span>
+            </p>
           )}
         </div>
 
-        {/* Phone */}
+        {/* Phone Field */}
         <div>
-          <label htmlFor="phone" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="phone" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Phone Number (Optional)
           </label>
-          <input
-            id="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm"
-            placeholder="+91 9876543210"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <Phone className="w-4 h-4" />
+            </div>
+            <input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              disabled={loading}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-sm"
+              placeholder="+91 9876543210"
+            />
+          </div>
         </div>
 
-        {/* Password */}
+        {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={loading}
-            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
-              validationErrors.password ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="Min 8 characters"
-            required
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <Lock className="w-4 h-4" />
+            </div>
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+              aria-invalid={Boolean(validationErrors.password)}
+              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+                validationErrors.password
+                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+              }`}
+              placeholder="Min 8 characters"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+              title={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
           {validationErrors.password && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.password}</p>
+            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{validationErrors.password}</span>
+            </p>
           )}
         </div>
 
-        {/* Confirm Password */}
+        {/* Confirm Password Field */}
         <div>
-          <label htmlFor="confirm_password" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+          <label htmlFor="confirm_password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Confirm Password
           </label>
-          <input
-            id="confirm_password"
-            type="password"
-            value={formData.confirm_password}
-            onChange={handleChange}
-            disabled={loading}
-            className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors text-sm ${
-              validationErrors.confirm_password ? 'border-red-500/80' : 'border-slate-800'
-            }`}
-            placeholder="Repeat password"
-            required
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <Lock className="w-4 h-4" />
+            </div>
+            <input
+              id="confirm_password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={formData.confirm_password}
+              onChange={handleChange}
+              disabled={loading}
+              aria-invalid={Boolean(validationErrors.confirm_password)}
+              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+                validationErrors.confirm_password
+                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+              }`}
+              placeholder="Repeat password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              disabled={loading}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+              title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
           {validationErrors.confirm_password && (
-            <p className="text-xs text-red-500 mt-1 font-medium">{validationErrors.confirm_password}</p>
+            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{validationErrors.confirm_password}</span>
+            </p>
           )}
         </div>
 
@@ -225,14 +324,21 @@ export const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
+          className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-3"
         >
-          {loading ? <ButtonLoader text="Creating Account..." /> : <span>Create Account</span>}
+          {loading ? (
+            <ButtonLoader text="Creating Account..." />
+          ) : (
+            <span className="flex items-center gap-2">
+              <span>Create Account</span>
+              <ArrowRight className="w-4 h-4" />
+            </span>
+          )}
         </button>
       </form>
 
-      {/* Sign In Navigation */}
-      <div className="mt-6 text-center text-xs text-slate-400">
+      {/* Sign In Link */}
+      <div className="mt-6 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-5">
         Already have an account?{' '}
         <Link to="/login" className="text-primary font-bold hover:underline">
           Sign In

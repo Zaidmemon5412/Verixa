@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Mail, CheckCircle2, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Mail, CheckCircle2, ArrowLeft, RefreshCw, AlertCircle, ArrowRight } from 'lucide-react';
 import authService from '../services/authService';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 
 /**
- * ForgotPasswordForm component.
- * Manages entering email, form validation, submit loading state, error handling,
- * and displaying success message upon submission.
+ * ForgotPasswordForm Component.
+ * Manages email submission for password reset links with error borders,
+ * loading feedback, and success confirmation state.
  */
 export const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export const ForgotPasswordForm = () => {
   const [emailError, setEmailError] = useState('');
 
   const validateEmail = (val) => {
-    if (!val) {
+    if (!val.trim()) {
       return 'Email address is required.';
     }
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,10 +42,12 @@ export const ForgotPasswordForm = () => {
     try {
       await authService.forgotPassword(email.trim());
       setSubmitted(true);
-      toast.success('Password reset email sent if account exists.');
+      toast.success('Password reset email sent if an account exists.');
     } catch (err) {
-      const msg = getFriendlyErrorMessage(err);
+      console.error('Forgot password error:', err);
+      const msg = getFriendlyErrorMessage(err) || 'Failed to send reset link. Please check your email.';
       toast.error(msg);
+      setEmailError(msg);
     } finally {
       setLoading(false);
     }
@@ -54,34 +56,34 @@ export const ForgotPasswordForm = () => {
   if (submitted) {
     return (
       <div className="text-center py-4 space-y-5 select-none" id="forgot-password-success-card">
-        <div className="mx-auto w-14 h-14 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shadow-lg shadow-brand-500/10">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-xl">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
           <h3 className="text-xl font-extrabold text-white tracking-tight">Check Your Inbox</h3>
-          <p className="text-sm text-slate-300 max-w-sm mx-auto leading-relaxed">
-            If an account exists for <span className="font-semibold text-brand-300">{email}</span>, we have sent a password reset link to your email address.
+          <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+            If an account exists for <span className="font-semibold text-primary">{email}</span>, we have sent password reset instructions to your email address.
           </p>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-950/60 border border-white/5 text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-          Did not receive the email? Check your spam folder or try resending.
+        <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+          Did not receive the email? Check your spam folder or try resending below.
         </div>
 
         <div className="pt-2 space-y-3">
           <button
             type="button"
             onClick={() => setSubmitted(false)}
-            className="w-full py-3 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+            className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-colors flex items-center justify-center space-x-2 cursor-pointer"
           >
             <RefreshCw className="w-4 h-4" />
-            <span>Resend Email</span>
+            <span>Resend Reset Email</span>
           </button>
 
           <Link
             to="/login"
-            className="inline-flex items-center justify-center w-full py-2.5 text-xs text-slate-400 hover:text-slate-200 font-semibold transition-colors space-x-1.5"
+            className="inline-flex items-center justify-center w-full py-2.5 text-xs text-slate-400 hover:text-white font-semibold transition-colors space-x-1.5"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Sign In</span>
@@ -95,7 +97,7 @@ export const ForgotPasswordForm = () => {
     <form onSubmit={handleSubmit} className="space-y-5" noValidate id="forgot-password-form">
       {/* Email Input Field */}
       <div>
-        <label htmlFor="forgot-email" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+        <label htmlFor="forgot-email" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
           Email Address
         </label>
         <div className="relative">
@@ -111,16 +113,21 @@ export const ForgotPasswordForm = () => {
               if (emailError) setEmailError('');
             }}
             disabled={loading}
-            autoFocus
-            className={`w-full pl-10 pr-4 py-3 rounded-lg bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition-colors text-sm ${
-              emailError ? 'border-red-500/80' : 'border-slate-800'
+            aria-invalid={Boolean(emailError)}
+            className={`w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              emailError
+                ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
+                : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
-            placeholder="name@example.com"
+            placeholder="name@domain.com"
             required
           />
         </div>
         {emailError && (
-          <p className="text-xs text-red-400 mt-1.5 font-medium">{emailError}</p>
+          <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>{emailError}</span>
+          </p>
         )}
       </div>
 
@@ -128,18 +135,21 @@ export const ForgotPasswordForm = () => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 active:bg-brand-700 disabled:bg-brand-500/50 text-white font-bold text-sm tracking-wide transition-all shadow-md shadow-brand-500/10 flex items-center justify-center cursor-pointer select-none"
-        id="forgot-password-submit-button"
+        className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
-        {loading ? <ButtonLoader label="Sending Reset Link..." /> : 'Send Reset Link'}
+        {loading ? (
+          <ButtonLoader text="Sending Reset Link..." />
+        ) : (
+          <span className="flex items-center gap-2">
+            <span>Send Reset Instructions</span>
+            <ArrowRight className="w-4 h-4" />
+          </span>
+        )}
       </button>
 
-      {/* Back to Login Link */}
-      <div className="text-center pt-2">
-        <Link
-          to="/login"
-          className="inline-flex items-center text-xs text-slate-400 hover:text-slate-200 font-semibold transition-colors space-x-1.5"
-        >
+      {/* Back to Sign In */}
+      <div className="mt-4 text-center border-t border-slate-800/80 pt-4">
+        <Link to="/login" className="inline-flex items-center text-xs font-semibold text-slate-400 hover:text-white transition-colors gap-1.5">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Sign In</span>
         </Link>
