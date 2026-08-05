@@ -118,7 +118,7 @@ export const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Full Name Field */}
         <div>
-          <label htmlFor="full_name" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
+          <label htmlFor="full_name" className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${validationErrors.full_name ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Full Name
           </label>
           <div className="relative">
@@ -134,7 +134,7 @@ export const Register = () => {
               aria-invalid={Boolean(validationErrors.full_name)}
               className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.full_name
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="John Doe"
@@ -142,8 +142,8 @@ export const Register = () => {
             />
           </div>
           {validationErrors.full_name && (
-            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.full_name}</span>
             </p>
           )}
@@ -151,7 +151,7 @@ export const Register = () => {
 
         {/* Username Field */}
         <div>
-          <label htmlFor="username" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
+          <label htmlFor="username" className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${validationErrors.username ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Username
           </label>
           <div className="relative">
@@ -167,7 +167,7 @@ export const Register = () => {
               aria-invalid={Boolean(validationErrors.username)}
               className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.username
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="johndoe"
@@ -175,8 +175,8 @@ export const Register = () => {
             />
           </div>
           {validationErrors.username && (
-            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.username}</span>
             </p>
           )}
@@ -184,7 +184,7 @@ export const Register = () => {
 
         {/* Email Address Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
+          <label htmlFor="email" className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${validationErrors.email ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Email Address
           </label>
           <div className="relative">
@@ -200,7 +200,7 @@ export const Register = () => {
               aria-invalid={Boolean(validationErrors.email)}
               className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.email
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="john@domain.com"
@@ -208,8 +208,8 @@ export const Register = () => {
             />
           </div>
           {validationErrors.email && (
-            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.email}</span>
             </p>
           )}
@@ -238,7 +238,7 @@ export const Register = () => {
 
         {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
+          <label htmlFor="password" className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${validationErrors.password ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Password
           </label>
           <div className="relative">
@@ -254,7 +254,7 @@ export const Register = () => {
               aria-invalid={Boolean(validationErrors.password)}
               className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.password
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="Min 8 characters"
@@ -272,8 +272,8 @@ export const Register = () => {
             </button>
           </div>
           {validationErrors.password && (
-            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.password}</span>
             </p>
           )}
@@ -281,7 +281,7 @@ export const Register = () => {
 
         {/* Confirm Password Field */}
         <div>
-          <label htmlFor="confirm_password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
+          <label htmlFor="confirm_password" className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${validationErrors.confirm_password ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Confirm Password
           </label>
           <div className="relative">
@@ -297,7 +297,7 @@ export const Register = () => {
               aria-invalid={Boolean(validationErrors.confirm_password)}
               className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.confirm_password
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="Repeat password"
@@ -315,8 +315,8 @@ export const Register = () => {
             </button>
           </div>
           {validationErrors.confirm_password && (
-            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.confirm_password}</span>
             </p>
           )}

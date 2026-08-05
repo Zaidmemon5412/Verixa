@@ -94,7 +94,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
   if (success) {
     return (
       <div className="text-center py-6 space-y-5 select-none" id="reset-password-success-card">
-        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shadow-xl">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-xl">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
@@ -105,7 +105,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
           </p>
         </div>
 
-        <div className="p-3 rounded-xl bg-background border border-border text-xs text-muted-foreground font-medium max-w-xs mx-auto">
+        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-300 font-medium max-w-xs mx-auto">
           Redirecting to Sign In in <span className="font-bold text-primary">{countdown}s</span>...
         </div>
 
@@ -124,15 +124,15 @@ export const ResetPasswordForm = ({ uid, token }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate id="reset-password-form">
       {errors.auth && (
-        <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold flex items-start gap-2 animate-in fade-in">
-          <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <span>{errors.auth}</span>
         </div>
       )}
 
       {/* New Password Input */}
       <div>
-        <label htmlFor="new-password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+        <label htmlFor="new-password" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${errors.newPassword ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
           New Password
         </label>
         <div className="relative">
@@ -151,7 +151,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
             aria-invalid={Boolean(errors.newPassword)}
             className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
               errors.newPassword
-                ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                 : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
             placeholder="Min 8 characters"
@@ -169,8 +169,8 @@ export const ResetPasswordForm = ({ uid, token }) => {
           </button>
         </div>
         {errors.newPassword && (
-          <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" />
+          <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             <span>{errors.newPassword}</span>
           </p>
         )}
@@ -183,7 +183,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
 
       {/* Confirm Password Input */}
       <div>
-        <label htmlFor="confirm-password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+        <label htmlFor="confirm-password" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${errors.confirmPassword ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
           Confirm New Password
         </label>
         <div className="relative">
@@ -202,7 +202,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
             aria-invalid={Boolean(errors.confirmPassword)}
             className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
               errors.confirmPassword
-                ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                 : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
             placeholder="Repeat new password"
@@ -220,8 +220,8 @@ export const ResetPasswordForm = ({ uid, token }) => {
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" />
+          <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             <span>{errors.confirmPassword}</span>
           </p>
         )}

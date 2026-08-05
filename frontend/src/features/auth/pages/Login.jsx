@@ -83,8 +83,8 @@ export const Login = () => {
       </div>
 
       {validationErrors.auth && (
-        <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
-          <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <span>{validationErrors.auth}</span>
         </div>
       )}
@@ -92,7 +92,7 @@ export const Login = () => {
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Email Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+          <label htmlFor="email" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${validationErrors.email ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
             Email Address
           </label>
           <div className="relative">
@@ -113,7 +113,7 @@ export const Login = () => {
               aria-invalid={Boolean(validationErrors.email)}
               className={`w-full pl-10 pr-4 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.email
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="name@domain.com"
@@ -121,8 +121,8 @@ export const Login = () => {
             />
           </div>
           {validationErrors.email && validationErrors.email.trim() && (
-            <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.email}</span>
             </p>
           )}
@@ -131,7 +131,7 @@ export const Login = () => {
         {/* Password Field */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label htmlFor="password" className="block text-xs font-bold text-foreground uppercase tracking-wider">
+            <label htmlFor="password" className={`block text-xs font-bold uppercase tracking-wider ${validationErrors.password ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
               Password
             </label>
             <Link
@@ -160,7 +160,7 @@ export const Login = () => {
               aria-invalid={Boolean(validationErrors.password)}
               className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.password
-                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                   : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="••••••••"
@@ -171,15 +171,15 @@ export const Login = () => {
               tabIndex={0}
               onClick={() => setShowPassword(!showPassword)}
               disabled={loading}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md my-auto h-7 my-auto"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md my-auto h-7"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {validationErrors.password && validationErrors.password.trim() && (
-            <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-semibold flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
               <span>{validationErrors.password}</span>
             </p>
           )}

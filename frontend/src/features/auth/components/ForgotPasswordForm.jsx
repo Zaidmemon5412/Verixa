@@ -56,7 +56,7 @@ export const ForgotPasswordForm = () => {
   if (submitted) {
     return (
       <div className="text-center py-4 space-y-5 select-none" id="forgot-password-success-card">
-        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shadow-xl">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-xl">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
@@ -67,7 +67,7 @@ export const ForgotPasswordForm = () => {
           </p>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-background border border-border text-xs text-muted-foreground leading-relaxed max-w-xs mx-auto font-medium">
+        <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed max-w-xs mx-auto font-medium">
           Did not receive the email? Check your spam folder or try resending below.
         </div>
 
@@ -85,7 +85,7 @@ export const ForgotPasswordForm = () => {
             to="/login"
             className="inline-flex items-center justify-center w-full py-2.5 text-xs text-muted-foreground hover:text-foreground font-semibold transition-colors space-x-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-3.5 h-3.5 text-primary" />
             <span>Back to Sign In</span>
           </Link>
         </div>
@@ -97,7 +97,7 @@ export const ForgotPasswordForm = () => {
     <form onSubmit={handleSubmit} className="space-y-5" noValidate id="forgot-password-form">
       {/* Email Input Field */}
       <div>
-        <label htmlFor="forgot-email" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+        <label htmlFor="forgot-email" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${emailError ? 'text-rose-600 dark:text-rose-400' : 'text-foreground'}`}>
           Email Address
         </label>
         <div className="relative">
@@ -116,7 +116,7 @@ export const ForgotPasswordForm = () => {
             aria-invalid={Boolean(emailError)}
             className={`w-full pl-10 pr-4 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
               emailError
-                ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                ? 'border-rose-500 dark:border-rose-400 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
                 : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
             placeholder="name@domain.com"
@@ -124,8 +124,8 @@ export const ForgotPasswordForm = () => {
           />
         </div>
         {emailError && (
-          <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" />
+          <p className="text-xs text-rose-600 dark:text-rose-400 mt-1.5 font-semibold flex items-center gap-1">
+            <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             <span>{emailError}</span>
           </p>
         )}
