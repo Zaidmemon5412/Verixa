@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, RotateCcw, ChevronDown, ChevronUp, SlidersHorizontal, Check } from 'lucide-react';
+import { Search, Filter, RotateCcw, ChevronDown, ChevronUp, SlidersHorizontal, Check, Maximize2, Home } from 'lucide-react';
 import { Input } from '../../../shared/components/ui/input';
 import { Button } from '../../../shared/components/ui/button';
 import { Badge } from '../../../shared/components/ui/badge';
@@ -45,6 +45,14 @@ export function PropertyFilters({
     { label: 'Most Popular', value: 'popular' }
   ];
 
+  const areaPresets = [
+    { label: 'All Areas', min: '', max: '' },
+    { label: '< 1,000 Sq Ft', min: '', max: '1000' },
+    { label: '1,000 – 2,000 Sq Ft', min: '1000', max: '2000' },
+    { label: '2,000 – 3,000 Sq Ft', min: '2000', max: '3000' },
+    { label: '3,000+ Sq Ft', min: '3000', max: '' },
+  ];
+
   const handleBhkToggle = (option) => {
     if (!setSelectedBhk) return;
     if (selectedBhk.includes(option)) {
@@ -52,6 +60,19 @@ export function PropertyFilters({
     } else {
       setSelectedBhk([...selectedBhk, option]);
     }
+  };
+
+  const handleBhkSelectAll = () => {
+    if (setSelectedBhk) setSelectedBhk([]);
+  };
+
+  const handleAreaPresetSelect = (preset) => {
+    if (setMinArea) setMinArea(preset.min);
+    if (setMaxArea) setMaxArea(preset.max);
+  };
+
+  const isAreaPresetActive = (preset) => {
+    return (minArea || '') === preset.min && (maxArea || '') === preset.max;
   };
 
   const activeFiltersCount = [
@@ -66,10 +87,10 @@ export function PropertyFilters({
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="bg-card border rounded-2xl p-4 md:p-5 shadow-sm space-y-4">
-      {/* Top Search & Controls Row */}
+    <div className="bg-card border rounded-2xl p-4 md:p-5 shadow-sm space-y-5">
+      {/* 1. Primary Row: Search Bar, Property Type, Sorting & Drawer Toggle */}
       <div className="flex flex-col lg:flex-row items-center gap-3">
-        {/* Search Bar */}
+        {/* Intelligent Search Bar */}
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
@@ -88,7 +109,7 @@ export function PropertyFilters({
             onChange={(e) => setSelectedType && setSelectedType(e.target.value)}
             className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium"
           >
-            <option value="All">All Types</option>
+            <option value="All">All Property Types</option>
             {propertyTypes.filter(t => t !== 'All').map((type) => (
               <option key={type} value={type}>
                 {type}
@@ -120,7 +141,7 @@ export function PropertyFilters({
             className="h-11 rounded-xl gap-2 font-semibold flex-1 sm:flex-none"
           >
             <SlidersHorizontal className="w-4 h-4" />
-            <span>Filters</span>
+            <span>More Filters</span>
             {activeFiltersCount > 0 && (
               <Badge variant="secondary" className="ml-1 bg-primary/20 text-primary hover:bg-primary/20">
                 {activeFiltersCount}
@@ -143,37 +164,101 @@ export function PropertyFilters({
         </div>
       </div>
 
-      {/* Advanced Expandable Filter Panel */}
+      {/* 2. Prominent BHK-Wise Filter Bar */}
+      <div className="pt-2 border-t space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Home className="w-3.5 h-3.5 text-primary" />
+            BHK Wise Filter
+          </span>
+          {selectedBhk.length > 0 && (
+            <button
+              onClick={handleBhkSelectAll}
+              className="text-[11px] font-semibold text-primary hover:underline"
+            >
+              Clear BHK Selection
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleBhkSelectAll}
+            className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+              selectedBhk.length === 0
+                ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                : 'bg-background hover:bg-muted text-foreground border-input'
+            }`}
+          >
+            {selectedBhk.length === 0 && <Check className="w-3.5 h-3.5" />}
+            <span>All BHK</span>
+          </button>
+          {bhkOptions.map((option) => {
+            const isSelected = selectedBhk.includes(option);
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleBhkToggle(option)}
+                className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                    : 'bg-background hover:bg-muted text-foreground border-input'
+                }`}
+              >
+                {isSelected && <Check className="w-3.5 h-3.5" />}
+                <span>{option}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Prominent Area-Wise Filter Bar */}
+      <div className="pt-2 border-t space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Maximize2 className="w-3.5 h-3.5 text-primary" />
+            Area Wise Filter (Sq Ft)
+          </span>
+          {(minArea || maxArea) && (
+            <button
+              onClick={() => {
+                if (setMinArea) setMinArea('');
+                if (setMaxArea) setMaxArea('');
+              }}
+              className="text-[11px] font-semibold text-primary hover:underline"
+            >
+              Clear Area Filter
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {areaPresets.map((preset, idx) => {
+            const active = isAreaPresetActive(preset);
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleAreaPresetSelect(preset)}
+                className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                  active
+                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                    : 'bg-background hover:bg-muted text-foreground border-input'
+                }`}
+              >
+                {active && <Check className="w-3.5 h-3.5" />}
+                <span>{preset.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 4. Advanced Expandable Filter Panel (Price, Builder, Locality, Status & Exact Area Inputs) */}
       {showAdvanced && (
         <div className="pt-4 border-t space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
-          {/* 1. BHK Multi-Select Pills */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-              BHK Configuration
-            </label>
-            <div className="flex flex-wrap items-center gap-2">
-              {bhkOptions.map((option) => {
-                const isSelected = selectedBhk.includes(option);
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => handleBhkToggle(option)}
-                    className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                        : 'bg-background hover:bg-muted text-foreground border-input'
-                    }`}
-                  >
-                    {isSelected && <Check className="w-3.5 h-3.5" />}
-                    <span>{option}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 2. Grid Filters: Builder, Locality & Status */}
+          {/* Grid Filters: Builder, Locality & Status */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Builder Filter */}
             <div className="space-y-1.5">
@@ -232,7 +317,7 @@ export function PropertyFilters({
             </div>
           </div>
 
-          {/* 3. Range Inputs: Price Range & Area Range */}
+          {/* Price Range & Custom Exact Area Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
             {/* Price Range */}
             <div className="space-y-1.5">
@@ -258,10 +343,10 @@ export function PropertyFilters({
               </div>
             </div>
 
-            {/* Area Range */}
+            {/* Custom Exact Area Range */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                Area Range (Sq Ft)
+                Custom Exact Area Range (Sq Ft)
               </label>
               <div className="flex items-center gap-2">
                 <Input

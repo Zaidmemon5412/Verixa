@@ -108,16 +108,19 @@ class PropertyFilter:
         min_area = params.get('min_area') or params.get('min_carpet_area')
         if min_area is not None and str(min_area) != '':
             try:
-                queryset = queryset.filter(carpet_area__gte=float(min_area))
+                val = float(min_area)
+                queryset = queryset.filter(Q(carpet_area__gte=val) | Q(builtup_area__gte=val))
             except (ValueError, TypeError):
                 pass
 
         max_area = params.get('max_area') or params.get('max_carpet_area')
         if max_area is not None and str(max_area) != '':
             try:
-                queryset = queryset.filter(carpet_area__lte=float(max_area))
+                val = float(max_area)
+                queryset = queryset.filter(Q(carpet_area__lte=val) | Q(builtup_area__lte=val))
             except (ValueError, TypeError):
                 pass
+
 
         # 6. Search Keyword (property_name, rera_number, address, locality name, builder name)
         search = params.get('search') or params.get('q')

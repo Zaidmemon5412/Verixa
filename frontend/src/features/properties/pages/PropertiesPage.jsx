@@ -149,16 +149,26 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     selectedBuilder !== 'All'
   );
 
+  const areaSummary = minArea && maxArea 
+    ? `Area: ${minArea}-${maxArea} sq ft`
+    : minArea 
+    ? `Area: ≥ ${minArea} sq ft`
+    : maxArea 
+    ? `Area: ≤ ${maxArea} sq ft` 
+    : null;
+
   const filterSummaryText = [
     searchQuery ? `Search: "${searchQuery}"` : null,
     selectedLocality !== 'All' ? `Locality: ${selectedLocality}` : null,
     selectedStatus !== 'All' ? `Status: ${selectedStatus}` : null,
     selectedType !== 'All' ? `Type: ${selectedType}` : null,
     selectedBhk.length > 0 ? `BHK: ${selectedBhk.join(', ')}` : null,
+    areaSummary,
     selectedBuilder !== 'All' ? `Builder: ${selectedBuilder}` : null,
   ]
     .filter(Boolean)
     .join(' • ');
+
 
   const visibleProjects = projects.slice(0, displayLimit);
   const hasMore = displayLimit < projects.length;
