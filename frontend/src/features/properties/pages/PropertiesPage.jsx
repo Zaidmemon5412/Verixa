@@ -4,12 +4,26 @@ import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilters } from '../components/PropertyFilters';
 import { propertyService } from '../services/propertyService';
 import { localityService } from '../../localities/services/localityService';
+import useWishlist from '../hooks/useWishlist';
+import usePropertyComparison from '../../comparison/hooks/usePropertyComparison';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
 
 const BATCH_SIZE = 30;
 
 export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlist }) {
+  const { isWishlisted: checkIsWishlisted, toggleWishlist: defaultToggleWishlist } = useWishlist();
+  const { selectedIds, addProperty, removeProperty } = usePropertyComparison();
+
+  const handleToggleCompare = (propertyId) => {
+    const targetId = String(propertyId);
+    if (selectedIds.includes(targetId)) {
+      removeProperty(targetId);
+    } else {
+      addProperty(targetId);
+    }
+  };
+
   const [projects, setProjects] = useState([]);
   const [localities, setLocalities] = useState([]);
   const [builders, setBuilders] = useState([]);
@@ -281,8 +295,10 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
                 key={project.id}
                 project={project}
                 onSelect={onSelectProject}
-                onToggleWishlist={onToggleWishlist}
-                isWishlisted={wishlist.includes(project.id)}
+                onToggleWishlist={onToggleWishlist || defaultToggleWishlist}
+                isWishlisted={checkIsWishlisted(project.id)}
+                onToggleCompare={handleToggleCompare}
+                isCompared={selectedIds.includes(String(project.id))}
               />
             ))}
           </div>

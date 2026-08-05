@@ -136,13 +136,9 @@ class LocalityViewSet(viewsets.ViewSet):
     def analytics(self, request, pk=None, *args, **kwargs):
         """
         GET /localities/<locality_id>/analytics/
-        Calculates live database metrics for locality:
-          - Avg price & price_per_sqft from Property table
-          - Infrastructure counts from NearbyPlace table
-          - Traffic congestion based on spatial transit & commercial density
+        Calculates live database metrics and dynamic scorecard for locality using LocalityScorecardEngine.
         """
-        from django.db.models import Avg, Min, Count
-        from apps.properties.models import Property
+        from .scorecard_engine import LocalityScorecardEngine
 
         try:
             locality = get_locality(pk)
@@ -153,80 +149,11 @@ class LocalityViewSet(viewsets.ViewSet):
                 "data": {}
             }, status=status.HTTP_404_NOT_FOUND)
 
-        # 1. Calculate live averages from Property DB records
-        props_qs = Property.objects.filter(locality=locality)
-        prop_count = props_qs.count()
-        avg_price = props_qs.aggregate(Avg('price'))['price__avg']
-        avg_psf = props_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
+        engine = LocalityScorecardEngine(locality)
+        scorecard_data = engine.calculate_metrics_and_scores()
+        scorecard_data["success"] = True
 
-        # Format price strings
-        if avg_price is not None:
-            if avg_price >= 10000000:
-                avg_price_str = f"₹{round(avg_price / 10000000.0, 2)}Cr"
-            else:
-                avg_price_str = f"₹{round(avg_price / 100000.0, 1)}L"
-        else:
-            avg_price_str = "₹58L"
-
-        psf_str = f"₹{int(avg_psf):,}" if avg_psf is not None else "₹4,800"
-
-        # 2. Calculate live Infrastructure Counts from NearbyPlace DB records
-        schools = NearbyPlace.objects.filter(locality=locality, category='school').count()
-        hospitals = NearbyPlace.objects.filter(locality=locality, category='hospital').count()
-        shopping = NearbyPlace.objects.filter(locality=locality, category__in=['mall', 'shopping', 'commercial']).count()
-        transit_count = NearbyPlace.objects.filter(locality=locality, category__in=['subway_station', 'metro', 'bus_station']).count()
-        
-        min_metro_dist = NearbyPlace.objects.filter(locality=locality, category__in=['subway_station', 'metro', 'bus_station']).aggregate(Min('distance_km'))['distance_km__min']
-        metro_dist_str = f"{round(float(min_metro_dist), 1)} km" if min_metro_dist is not None else "2.4 km"
-
-        # 3. Predict Traffic Congestion from Transit + Commercial Spatial Density
-        if transit_count >= 15 or shopping >= 12:
-            traffic = "High"
-            traffic_desc = "Heavy transit & commercial corridor"
-        elif transit_count >= 5 or shopping >= 4:
-            traffic = "Medium"
-            traffic_desc = "Peak hour traffic analysis"
-        else:
-            traffic = "Low"
-            traffic_desc = "Smooth arterial connectivity"
-
-        # 4. Scorecard calculation
-        connectivity_score = min(98, max(50, 60 + transit_count * 2))
-        social_infra_score = min(98, max(40, (schools + hospitals + shopping) * 3))
-        growth_score = min(98, max(50, 70 + (int(avg_psf) // 600 if avg_psf else 6)))
-
-        return Response({
-            "success": True,
-            "locality_id": str(locality.locality_id),
-            "name": locality.name,
-            "city": locality.city,
-            "state": locality.state,
-            "avgPrice": avg_price_str,
-            "psf": psf_str,
-            "rentalYield": "3.8%",
-            "growthScore": growth_score,
-            "traffic": traffic,
-            "trafficDesc": traffic_desc,
-            "safety": "Safe Area",
-            "safetyDesc": "Based on public safety records",
-            "scorecard": {
-                "overallGrowth": growth_score,
-                "connectivity": connectivity_score,
-                "socialInfra": social_infra_score,
-                "priceAppreciation": min(95, growth_score + 2),
-                "rentalDemand": min(95, connectivity_score - 5),
-                "safetyScore": 88
-            },
-            "verdict": "Good Investment" if growth_score >= 70 else "Average Investment",
-            "verdictSummary": f"Locality with {schools} schools, {hospitals} hospitals, {shopping} shopping hubs, and average pricing of {psf_str}/sqft.",
-            "infra": {
-                "schools": schools if schools > 0 else 12,
-                "hospitals": hospitals if hospitals > 0 else 6,
-                "metro": metro_dist_str,
-                "shopping": shopping if shopping > 0 else 8
-            },
-            "properties_count": prop_count
-        }, status=status.HTTP_200_OK)
+        return Response(scorecard_data, status=status.HTTP_200_OK)
 
 
     def create(self, request, *args, **kwargs):

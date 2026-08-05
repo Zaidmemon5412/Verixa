@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ArrowLeft, ChevronRight, Building2, ShieldCheck } from 'lucide-react';
+import useAuth from '../../auth/hooks/useAuth';
 import { builderService } from '../services/builderService';
 import BuilderHero from '../components/BuilderHero';
 import BuilderStats from '../components/BuilderStats';
 import BuilderFilters from '../components/BuilderFilters';
 import BuilderProjects from '../components/BuilderProjects';
 import BuilderSkeleton from '../components/BuilderSkeleton';
+import BuilderInquiryModal from '../components/BuilderInquiryModal';
 import ErrorState from '../components/ErrorState';
 
 export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, onBack }) {
+  const { user } = useAuth();
   const { id: urlParamId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const targetId = propBuilderId || urlParamId;
 
@@ -21,6 +26,19 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Inquiry Modal State
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
+  const [inquiryType, setInquiryType] = useState('general');
+
+  // Reopen Inquiry Modal after Login
+  useEffect(() => {
+    if (user && location.state?.reopenInquiry) {
+      const savedType = location.state?.inquiryType || 'general';
+      setInquiryType(savedType);
+      setShowInquiryModal(true);
+    }
+  }, [user, location.state]);
 
   // Loading and Error States
   const [loadingBuilder, setLoadingBuilder] = useState(true);
@@ -119,6 +137,26 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
     }
   };
 
+  const handleContactBuilder = () => {
+    if (!user) {
+      toast.info('Please sign in to contact the developer.');
+      navigate('/login', { state: { from: location.pathname, reopenInquiry: true, inquiryType: 'general' } });
+      return;
+    }
+    setInquiryType('general');
+    setShowInquiryModal(true);
+  };
+
+  const handleScheduleVisit = () => {
+    if (!user) {
+      toast.info('Please sign in to schedule a site visit.');
+      navigate('/login', { state: { from: location.pathname, reopenInquiry: true, inquiryType: 'site_visit' } });
+      return;
+    }
+    setInquiryType('site_visit');
+    setShowInquiryModal(true);
+  };
+
   if (loadingBuilder) {
     return <BuilderSkeleton />;
   }
@@ -162,8 +200,12 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
           </button>
         </div>
 
-        {/* Section 1: Hero */}
-        <BuilderHero builder={builder} />
+        {/* Section 1: Hero Banner & Action CTAs */}
+        <BuilderHero 
+          builder={builder} 
+          onContactBuilder={handleContactBuilder}
+          onScheduleVisit={handleScheduleVisit}
+        />
 
         {/* Section 2: Statistics */}
         <BuilderStats builder={builder} projectsCount={totalCount || projects.length} />
@@ -202,6 +244,15 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
         )}
 
       </div>
+
+      {/* Builder Inquiry & Site Visit Modal */}
+      <BuilderInquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
+        builder={builder}
+        initialType={inquiryType}
+        firstProjectId={projects[0]?.id}
+      />
     </div>
   );
 }

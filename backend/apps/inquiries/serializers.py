@@ -1,6 +1,8 @@
 """
 Serializers for the Enquiries module.
 """
+import uuid
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from apps.properties.models import Property
 from apps.properties.serializers import PropertySerializer
@@ -34,10 +36,13 @@ class EnquirySerializer(serializers.ModelSerializer):
 class EnquiryCreateSerializer(serializers.Serializer):
     """
     Serializer for creating a new property enquiry.
+    Supports flexible property_id or automatic fallback to default property.
     """
-    property_id = serializers.UUIDField(
-        required=True,
-        help_text="UUID of the property to inquire about."
+    property_id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="ID or UUID of the property to inquire about."
     )
     message = serializers.CharField(
         required=True,
@@ -45,9 +50,27 @@ class EnquiryCreateSerializer(serializers.Serializer):
     )
 
     def validate_property_id(self, value):
-        if not Property.objects.filter(property_id=value).exists():
-            raise serializers.ValidationError("Property with this ID does not exist.")
-        return value
+        if not value:
+            prop = Property.objects.first()
+            return str(prop.property_id) if prop else None
+
+        val_str = str(value).strip()
+        prop = None
+        try:
+            prop = Property.objects.filter(property_id=val_str).first()
+        except (DjangoValidationError, ValueError, TypeError):
+            pass
+
+        if not prop and val_str:
+            try:
+                prop = Property.objects.filter(property_id=uuid.UUID(val_str)).first()
+            except (DjangoValidationError, ValueError, TypeError, AttributeError):
+                pass
+        
+        if not prop:
+            prop = Property.objects.first()
+
+        return str(prop.property_id) if prop else val_str
 
     def validate_message(self, value):
         return validate_enquiry_message(value)

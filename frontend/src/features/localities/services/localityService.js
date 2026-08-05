@@ -6,8 +6,15 @@ export const localityService = {
   async getLocalities() {
     try {
       const response = await apiClient.get('/locations/localities/');
-      const rawData = response?.data?.results || response?.data || response;
-      if (Array.isArray(rawData) && rawData.length > 0) {
+      const rawData = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response?.results)
+        ? response.results
+        : [];
+
+      if (rawData.length > 0) {
         return rawData.map((item, idx) => {
           const matchMeta = LOCALITIES.find(
             (l) => l.name.toLowerCase() === (item.name || '').toLowerCase() || l.slug === (item.name || '').toLowerCase().replace(/\s+/g, '-')
@@ -47,7 +54,7 @@ export const localityService = {
     // 2. Fetch API live analytics endpoint GET /api/locations/localities/:id/analytics/
     try {
       const response = await apiClient.get(`/locations/localities/${idOrSlug}/analytics/`);
-      const apiItem = response?.data || response;
+      const apiItem = (response?.locality_id || response?.name) ? response : (response?.data || response);
 
       if (apiItem && (apiItem.locality_id || apiItem.name)) {
         const meta = staticMatch || LOCALITIES.find(
@@ -73,7 +80,7 @@ export const localityService = {
         };
       }
     } catch (err) {
-      // Endpoint 404 or missing, proceed with static match fallback
+      // Endpoint error or missing, proceed with static match fallback
     }
 
 

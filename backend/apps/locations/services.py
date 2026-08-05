@@ -63,11 +63,45 @@ def create_locality(validated_data: dict) -> Locality:
 
 def get_locality(locality_id: Union[uuid.UUID, str]) -> Locality:
     """
-    Business logic to retrieve a locality by ID.
+    Business logic to retrieve a locality by UUID, name, slug, or numeric ID.
     Raises Locality.DoesNotExist if not found.
     """
-    logger.info(f"Retrieving locality with ID: {locality_id}")
-    return Locality.objects.get(locality_id=locality_id)
+    logger.info(f"Retrieving locality with identifier: {locality_id}")
+    if isinstance(locality_id, uuid.UUID):
+        return Locality.objects.get(locality_id=locality_id)
+
+    # Try parsing string as UUID
+    try:
+        val_uuid = uuid.UUID(str(locality_id))
+        return Locality.objects.get(locality_id=val_uuid)
+    except (ValueError, TypeError):
+        pass
+
+    # Try name or slug match
+    clean_id = str(locality_id).strip().lower().replace('-', ' ')
+    loc = Locality.objects.filter(name__iexact=clean_id).first()
+    if loc:
+        return loc
+
+    loc = Locality.objects.filter(name__icontains=clean_id).first()
+    if loc:
+        return loc
+
+    # Support static frontend IDs ("1", "2", "3", "4", "5")
+    id_map = {
+        "1": "Satellite",
+        "2": "Thaltej",
+        "3": "Gota",
+        "4": "Chandkheda",
+        "5": "Sola",
+    }
+    if str(locality_id) in id_map:
+        target_name = id_map[str(locality_id)]
+        loc = Locality.objects.filter(name__iexact=target_name).first()
+        if loc:
+            return loc
+
+    raise Locality.DoesNotExist(f"Locality not found for query '{locality_id}'")
 
 
 def get_all_localities() -> QuerySet[Locality]:

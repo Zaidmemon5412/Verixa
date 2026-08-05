@@ -98,11 +98,11 @@ def send_password_reset_email(email: str) -> None:
 
     if not user:
         logger.warning(f"Password reset requested for non-existent email: {email}")
-        raise ValidationError(_("No registered account was found with this email address."), code='user_not_found')
+        return
 
     if not user.is_active:
         logger.warning(f"Password reset requested for inactive user: {email}")
-        raise ValidationError(_("This account is currently inactive. Please contact support."), code='user_inactive')
+        return
 
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
@@ -110,7 +110,7 @@ def send_password_reset_email(email: str) -> None:
     frontend_domain = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
     reset_link = f"{frontend_domain}/reset-password?uid={uidb64}&token={token}"
 
-    subject = "Reset Your Verixa Password"
+    subject = "Reset Your Verixa Password - Password Reset Request"
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'verixa.contact@gmail.com')
 
     plain_message = (

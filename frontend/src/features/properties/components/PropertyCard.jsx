@@ -1,13 +1,21 @@
 import React from 'react';
 import { 
   Building2, MapPin, Shield, BedDouble, Calendar, 
-  Heart, ArrowRight, Star, ExternalLink 
+  Heart, ArrowRight, Star, ExternalLink, ArrowLeftRight 
 } from 'lucide-react';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 
-export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlist, isWishlisted }) {
+export function PropertyCard({ 
+  project, 
+  onSelect, 
+  onSelectLegal, 
+  onToggleWishlist, 
+  isWishlisted,
+  onToggleCompare,
+  isCompared 
+}) {
   if (!project) return null;
 
   const targetId = project.id || project.property_id;
@@ -46,16 +54,20 @@ export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlis
             ))}
           </div>
 
-          {/* Wishlist Action Button */}
+          {/* Wishlist Action Button (Heart Icon) */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               onToggleWishlist && onToggleWishlist(targetId);
             }}
-            className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-rose-600 transition-colors z-10"
-            title="Add to Wishlist"
+            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${
+              isWishlisted
+                ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
+                : "bg-black/40 text-white hover:bg-white hover:text-rose-600"
+            }`}
+            title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
           >
-            <Heart className={`w-4 h-4 ${isWishlisted ? "fill-rose-600 text-rose-600" : ""}`} />
+            <Heart className={`w-4 h-4 ${isWishlisted ? "fill-white text-white" : ""}`} />
           </button>
 
           {/* Price & Location Overlay */}
@@ -108,19 +120,35 @@ export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlis
         </CardContent>
       </div>
 
-      {/* Card Footer Dual Action Buttons */}
-      <div className="p-4 pt-0 grid grid-cols-2 gap-2">
+      {/* Card Footer Action Buttons (Details | Compare | Legal) */}
+      <div className="p-4 pt-0 grid grid-cols-3 gap-1.5">
         <Button
           onClick={(e) => {
             e.stopPropagation();
             onSelect && onSelect(targetId);
           }}
-          className="w-full flex items-center justify-center gap-1.5 rounded-xl text-xs font-semibold"
+          className="w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold"
           variant="outline"
         >
-          <span>View Details</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <span>Details</span>
         </Button>
+
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleCompare && onToggleCompare(targetId);
+          }}
+          className={`w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold ${
+            isCompared 
+              ? "bg-primary text-primary-foreground border-primary shadow-sm"
+              : "bg-muted/40 text-foreground border-border hover:bg-muted"
+          }`}
+          variant="outline"
+        >
+          <ArrowLeftRight className="w-3 h-3" />
+          <span>{isCompared ? "Compared" : "Compare"}</span>
+        </Button>
+
         <Button
           onClick={(e) => {
             e.stopPropagation();
@@ -130,15 +158,15 @@ export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlis
               onSelect(targetId, 'legal');
             }
           }}
-          className="w-full flex items-center justify-center gap-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+          className="w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
           variant="outline"
         >
-          <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Legal Specs</span>
+          <Shield className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span>Legal</span>
         </Button>
       </div>
     </Card>
   );
 }
 
-
+export default PropertyCard;

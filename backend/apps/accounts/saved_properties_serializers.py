@@ -1,6 +1,7 @@
 """
 Serializers for the Saved Properties feature within the accounts app.
 """
+import uuid
 from rest_framework import serializers
 from apps.properties.models import Property
 from apps.properties.serializers import PropertySerializer
@@ -28,8 +29,9 @@ class SavedPropertySerializer(serializers.ModelSerializer):
 class SavedPropertyCreateSerializer(serializers.Serializer):
     """
     Serializer for saving a property to user favorites.
+    Validates target property by property_id.
     """
-    property_id = serializers.UUIDField(
+    property_id = serializers.CharField(
         required=True,
         help_text="UUID of the property to be saved."
     )
@@ -38,6 +40,16 @@ class SavedPropertyCreateSerializer(serializers.Serializer):
         """
         Validate that the target property exists in the database.
         """
-        if not Property.objects.filter(property_id=value).exists():
+        val_str = str(value).strip()
+        target = Property.objects.filter(property_id=val_str).first()
+        
+        if not target and val_str:
+            try:
+                target = Property.objects.filter(property_id=uuid.UUID(val_str)).first()
+            except (ValueError, AttributeError):
+                pass
+
+        if not target:
             raise serializers.ValidationError("Property with this ID does not exist.")
-        return value
+        
+        return str(target.property_id)

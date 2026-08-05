@@ -48,10 +48,11 @@ class ForgotPasswordView(APIView):
                 "data": {}
             }, status=status.HTTP_200_OK)
         except DjangoValidationError as e:
+            error_msg = e.messages[0] if hasattr(e, 'messages') and e.messages else str(e).strip("[]'")
             return Response({
                 "success": False,
-                "message": e.message if hasattr(e, 'message') else str(e),
-                "data": {"detail": str(e)}
+                "message": error_msg,
+                "data": {"detail": error_msg}
             }, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.exception("Error processing forgot password request")

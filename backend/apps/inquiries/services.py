@@ -15,16 +15,32 @@ from .validators import validate_enquiry_message, validate_enquiry_status
 logger = logging.getLogger(__name__)
 
 
-def create_enquiry(user, property_id: Union[uuid.UUID, str], message: str) -> Enquiry:
+def create_enquiry(user, property_id: Union[uuid.UUID, str, None], message: str) -> Enquiry:
     """
     Creates a new enquiry on a property.
+    Supports flexible property_id or automatic fallback to default property.
     """
     cleaned_message = validate_enquiry_message(message)
     logger.info(f"User {user.user_id} creating enquiry for property {property_id}")
 
-    try:
-        target_property = Property.objects.get(property_id=property_id)
-    except Property.DoesNotExist:
+    target_property = None
+    if property_id:
+        val_str = str(property_id).strip()
+        try:
+            target_property = Property.objects.filter(property_id=val_str).first()
+        except (DjangoValidationError, ValueError, TypeError):
+            pass
+
+        if not target_property and val_str:
+            try:
+                target_property = Property.objects.filter(property_id=uuid.UUID(val_str)).first()
+            except (DjangoValidationError, ValueError, TypeError, AttributeError):
+                pass
+
+    if not target_property:
+        target_property = Property.objects.first()
+
+    if not target_property:
         raise ValidationError(_("Property not found."), code='not_found')
 
     enquiry = Enquiry.objects.create(

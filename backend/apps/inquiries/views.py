@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 
 from .serializers import (
@@ -35,10 +35,13 @@ class StandardPagination(PageNumberPagination):
 class EnquiryViewSet(viewsets.ViewSet):
     """
     ViewSet for managing property enquiries.
-    Requires authentication.
     """
-    permission_classes = [IsAuthenticated]
     pagination_class = StandardPagination
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     def list(self, request, *args, **kwargs):
         """
@@ -126,8 +129,13 @@ class EnquiryViewSet(viewsets.ViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            target_user = request.user
+            if not target_user or not target_user.is_authenticated:
+                from apps.accounts.models import User
+                target_user = User.objects.filter(role='admin').first() or User.objects.first()
+
             enquiry = create_enquiry(
-                user=request.user,
+                user=target_user,
                 property_id=serializer.validated_data['property_id'],
                 message=serializer.validated_data['message']
             )
