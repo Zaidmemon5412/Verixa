@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, RotateCcw, ChevronDown, ChevronUp, SlidersHorizontal, Check, Maximize2, Home } from 'lucide-react';
+import { Search, Filter, RotateCcw, ChevronDown, ChevronUp, SlidersHorizontal, Check, MapPin, Home, Maximize2 } from 'lucide-react';
 import { Input } from '../../../shared/components/ui/input';
 import { Button } from '../../../shared/components/ui/button';
 import { Badge } from '../../../shared/components/ui/badge';
@@ -33,7 +33,18 @@ export function PropertyFilters({
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const bhkOptions = ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK'];
+  // 1. BHK Options (1, 2, 3, 4 BHK - 5+ BHK removed per request)
+  const bhkOptions = ['1 BHK', '2 BHK', '3 BHK', '4 BHK'];
+
+  // 2. Area/Locality Options (Gota, Chandkheda, Shela, Bopal, Satellite, Thaltej, SG Highway)
+  const defaultPopularAreas = ['Gota', 'Chandkheda', 'Shela', 'Bopal', 'Satellite', 'Thaltej', 'SG Highway'];
+  const dbAreaNames = Array.isArray(localities) && localities.length > 0
+    ? localities.map(l => typeof l === 'string' ? l : l.name).filter(Boolean)
+    : defaultPopularAreas;
+
+  // Unique area names list starting with popular ones
+  const areaOptions = Array.from(new Set([...defaultPopularAreas, ...dbAreaNames])).slice(0, 10);
+
   const propertyTypes = ['All', 'Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
   const statusOptions = ['All', 'Ready to Move', 'Under Construction', 'New Launch'];
   const orderingOptions = [
@@ -43,14 +54,6 @@ export function PropertyFilters({
     { label: 'Area: Small to Large', value: 'carpet_area_asc' },
     { label: 'Area: Large to Small', value: 'carpet_area_desc' },
     { label: 'Most Popular', value: 'popular' }
-  ];
-
-  const areaPresets = [
-    { label: 'All Areas', min: '', max: '' },
-    { label: '< 1,000 Sq Ft', min: '', max: '1000' },
-    { label: '1,000 – 2,000 Sq Ft', min: '1000', max: '2000' },
-    { label: '2,000 – 3,000 Sq Ft', min: '2000', max: '3000' },
-    { label: '3,000+ Sq Ft', min: '3000', max: '' },
   ];
 
   const handleBhkToggle = (option) => {
@@ -66,13 +69,10 @@ export function PropertyFilters({
     if (setSelectedBhk) setSelectedBhk([]);
   };
 
-  const handleAreaPresetSelect = (preset) => {
-    if (setMinArea) setMinArea(preset.min);
-    if (setMaxArea) setMaxArea(preset.max);
-  };
-
-  const isAreaPresetActive = (preset) => {
-    return (minArea || '') === preset.min && (maxArea || '') === preset.max;
+  const handleAreaSelect = (areaName) => {
+    if (setSelectedLocality) {
+      setSelectedLocality(areaName);
+    }
   };
 
   const activeFiltersCount = [
@@ -95,7 +95,7 @@ export function PropertyFilters({
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by project name, builder, or city (e.g. Adani, Shela, Ahmedabad)..."
+            placeholder="Search by project name, builder, or city (e.g. Adani, Shela, Gota, Ahmedabad)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-11 rounded-xl bg-background"
@@ -164,7 +164,7 @@ export function PropertyFilters({
         </div>
       </div>
 
-      {/* 2. Prominent BHK-Wise Filter Bar */}
+      {/* 2. Prominent BHK-Wise Filter Bar (1 BHK, 2 BHK, 3 BHK, 4 BHK) */}
       <div className="pt-2 border-t space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -214,19 +214,16 @@ export function PropertyFilters({
         </div>
       </div>
 
-      {/* 3. Prominent Area-Wise Filter Bar */}
+      {/* 3. Prominent Area-Wise / Locality Filter Bar (Gota, Chandkheda, Shela, Bopal, etc.) */}
       <div className="pt-2 border-t space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <Maximize2 className="w-3.5 h-3.5 text-primary" />
-            Area Wise Filter (Sq Ft)
+            <MapPin className="w-3.5 h-3.5 text-primary" />
+            Area Wise Filter (Gota, Chandkheda, Shela...)
           </span>
-          {(minArea || maxArea) && (
+          {selectedLocality !== 'All' && (
             <button
-              onClick={() => {
-                if (setMinArea) setMinArea('');
-                if (setMaxArea) setMaxArea('');
-              }}
+              onClick={() => handleAreaSelect('All')}
               className="text-[11px] font-semibold text-primary hover:underline"
             >
               Clear Area Filter
@@ -234,13 +231,25 @@ export function PropertyFilters({
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {areaPresets.map((preset, idx) => {
-            const active = isAreaPresetActive(preset);
+          <button
+            type="button"
+            onClick={() => handleAreaSelect('All')}
+            className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+              selectedLocality === 'All'
+                ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                : 'bg-background hover:bg-muted text-foreground border-input'
+            }`}
+          >
+            {selectedLocality === 'All' && <Check className="w-3.5 h-3.5" />}
+            <span>All Areas</span>
+          </button>
+          {areaOptions.map((areaName) => {
+            const active = selectedLocality.toLowerCase() === areaName.toLowerCase();
             return (
               <button
-                key={idx}
+                key={areaName}
                 type="button"
-                onClick={() => handleAreaPresetSelect(preset)}
+                onClick={() => handleAreaSelect(areaName)}
                 className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary shadow-sm'
@@ -248,14 +257,14 @@ export function PropertyFilters({
                 }`}
               >
                 {active && <Check className="w-3.5 h-3.5" />}
-                <span>{preset.label}</span>
+                <span>{areaName}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* 4. Advanced Expandable Filter Panel (Price, Builder, Locality, Status & Exact Area Inputs) */}
+      {/* 4. Advanced Expandable Filter Panel (Price, Sq Ft Size, Builder, Status) */}
       {showAdvanced && (
         <div className="pt-4 border-t space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
           {/* Grid Filters: Builder, Locality & Status */}
@@ -279,10 +288,10 @@ export function PropertyFilters({
               </select>
             </div>
 
-            {/* Locality Filter */}
+            {/* Locality Dropdown */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                Locality / Area
+                Locality Dropdown
               </label>
               <select
                 value={selectedLocality}
@@ -317,7 +326,7 @@ export function PropertyFilters({
             </div>
           </div>
 
-          {/* Price Range & Custom Exact Area Inputs */}
+          {/* Price Range & Carpet Area Size Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
             {/* Price Range */}
             <div className="space-y-1.5">
@@ -343,10 +352,10 @@ export function PropertyFilters({
               </div>
             </div>
 
-            {/* Custom Exact Area Range */}
+            {/* Carpet/Built-up Area Size (Sq Ft) */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                Custom Exact Area Range (Sq Ft)
+                Carpet / Built-up Size (Sq Ft)
               </label>
               <div className="flex items-center gap-2">
                 <Input

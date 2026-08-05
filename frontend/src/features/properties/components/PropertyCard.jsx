@@ -15,8 +15,13 @@ export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlis
   return (
     <Card 
       onClick={() => onSelect && onSelect(targetId)}
-      className="group overflow-hidden border bg-card hover:shadow-xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
+      className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
     >
+      {/* Diagonal Light Sweep Shine Effect on Hover */}
+      <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden rounded-2xl">
+        <div className="w-1/2 h-[250%] bg-gradient-to-r from-transparent via-white/35 dark:via-white/15 to-transparent -rotate-45 -translate-x-[200%] -translate-y-1/2 group-hover:translate-x-[350%] group-hover:translate-y-1/2 transition-transform duration-1000 ease-in-out" />
+      </div>
+
       <div>
         {/* Card Media Header */}
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
