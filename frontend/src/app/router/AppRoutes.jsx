@@ -25,7 +25,9 @@ const PropertyDetailPage = lazy(() => import('../../features/properties/pages/Pr
 const BuildersPage = lazy(() => import('../../features/builders/pages/BuildersPage'));
 const BuilderDetailsPage = lazy(() => import('../../features/builders/pages/BuilderDetailsPage'));
 const LocalitiesPage = lazy(() => import('../../features/localities/pages/LocalitiesPage'));
+const LocalityDetailsPage = lazy(() => import('../../features/localities/pages/LocalityDetailsPage'));
 const ComparisonPage = lazy(() => import('../../features/comparison/pages/ComparisonPage'));
+
 const MarketTrendsPage = lazy(() => import('../../features/market/pages/MarketTrendsPage'));
 
 const Dashboard = lazy(() => import('../../features/dashboard/pages/Dashboard'));
@@ -87,6 +89,19 @@ function BuilderDetailsPageWrapper() {
     />
   );
 }
+
+function LocalityDetailsPageWrapper() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  return (
+    <LocalityDetailsPage
+      localityId={id}
+      onSelectProject={(pId) => navigate(`/properties/${pId}`)}
+    />
+  );
+}
+
 
 function LandingPageWrapper() {
   const navigate = useNavigate();
@@ -193,6 +208,23 @@ export const AppRoutes = () => {
             </AppSuspense>
           }
         />
+        <Route
+          path="/locality/:id"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <LocalityDetailsPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/localities/:id"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <LocalityDetailsPageWrapper />
+            </AppSuspense>
+          }
+        />
+
         <Route
           path="/market"
           element={
