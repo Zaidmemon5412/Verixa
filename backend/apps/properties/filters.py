@@ -12,74 +12,117 @@ class PropertyFilter:
     """
     @staticmethod
     def filter_queryset(queryset: QuerySet, params: dict) -> QuerySet:
-        # 1. Builder & Locality
+        # 1. Builder & Locality & City
         builder = params.get('builder')
-        if builder:
-            queryset = queryset.filter(builder_id=builder)
+        if builder and builder != 'All':
+            try:
+                import uuid
+                val = uuid.UUID(str(builder))
+                queryset = queryset.filter(builder_id=val)
+            except (ValueError, TypeError):
+                queryset = queryset.filter(builder__builder_name__icontains=builder)
 
         locality = params.get('locality')
-        if locality:
-            queryset = queryset.filter(locality_id=locality)
+        if locality and locality != 'All':
+            try:
+                import uuid
+                val = uuid.UUID(str(locality))
+                queryset = queryset.filter(locality_id=val)
+            except (ValueError, TypeError):
+                queryset = queryset.filter(locality__name__icontains=locality)
+
+        city = params.get('city')
+        if city and city != 'All':
+            queryset = queryset.filter(
+                Q(locality__city__icontains=city) |
+                Q(address__icontains=city)
+            )
 
         # 2. Property Type & Transaction Type
         property_type = params.get('property_type')
-        if property_type:
+        if property_type and property_type != 'All':
             queryset = queryset.filter(property_type__iexact=property_type)
 
         transaction_type = params.get('transaction_type')
-        if transaction_type:
+        if transaction_type and transaction_type != 'All':
             queryset = queryset.filter(transaction_type__iexact=transaction_type)
 
         # 3. Status & Furnishing & Facing
-        status = params.get('status')
-        if status:
+        status = params.get('status') or params.get('possession_status')
+        if status and status != 'All':
             queryset = queryset.filter(status__iexact=status)
 
         furnishing_status = params.get('furnishing_status')
-        if furnishing_status:
+        if furnishing_status and furnishing_status != 'All':
             queryset = queryset.filter(furnishing_status__iexact=furnishing_status)
 
         facing = params.get('facing')
-        if facing:
+        if facing and facing != 'All':
             queryset = queryset.filter(facing__iexact=facing)
 
-        # 4. Numeric fields: BHK, Price Range, Area Range
-        bhk = params.get('bhk')
-        if bhk is not None:
-            try:
-                queryset = queryset.filter(bhk=int(bhk))
-            except (ValueError, TypeError):
-                pass
+        # 4. BHK Filter (Supports single number or comma-separated values like '1,2,3')
+        bhk_param = params.get('bhk')
+        if bhk_param and bhk_param != 'All':
+            if isinstance(bhk_param, str) and ',' in bhk_param:
+                bhk_values = []
+                has_five_plus = False
+                for val in bhk_param.split(','):
+                    v = val.strip().replace('+ BHK', '').replace(' BHK', '').replace('+', '')
+                    if v == '5' and '+' in val:
+                        has_five_plus = True
+                    try:
+                        bhk_values.append(int(v))
+                    except ValueError:
+                        pass
+                if bhk_values:
+                    if has_five_plus or 5 in bhk_values:
+                        queryset = queryset.filter(Q(bhk__in=bhk_values) | Q(bhk__gte=5))
+                    else:
+                        queryset = queryset.filter(bhk__in=bhk_values)
+            else:
+                v = str(bhk_param).strip().replace('+ BHK', '').replace(' BHK', '').replace('+', '')
+                try:
+                    num = int(v)
+                    if num >= 5 or '+' in str(bhk_param):
+                        queryset = queryset.filter(bhk__gte=5)
+                    else:
+                        queryset = queryset.filter(bhk=num)
+                except ValueError:
+                    pass
 
+        # 5. Price & Area Range
         min_price = params.get('min_price')
-        if min_price is not None:
+        if min_price is not None and str(min_price) != '':
             try:
                 queryset = queryset.filter(price__gte=float(min_price))
             except (ValueError, TypeError):
                 pass
 
         max_price = params.get('max_price')
-        if max_price is not None:
+        if max_price is not None and str(max_price) != '':
             try:
                 queryset = queryset.filter(price__lte=float(max_price))
             except (ValueError, TypeError):
                 pass
 
         min_area = params.get('min_area') or params.get('min_carpet_area')
-        if min_area is not None:
+        if min_area is not None and str(min_area) != '':
             try:
-                queryset = queryset.filter(carpet_area__gte=float(min_area))
+                val = float(min_area)
+                queryset = queryset.filter(Q(carpet_area__gte=val) | Q(builtup_area__gte=val))
             except (ValueError, TypeError):
                 pass
 
         max_area = params.get('max_area') or params.get('max_carpet_area')
-        if max_area is not None:
+        if max_area is not None and str(max_area) != '':
             try:
-                queryset = queryset.filter(carpet_area__lte=float(max_area))
+                val = float(max_area)
+                queryset = queryset.filter(Q(carpet_area__lte=val) | Q(builtup_area__lte=val))
             except (ValueError, TypeError):
                 pass
 
-        # 5. Search Keyword (property_name, rera_number, address, locality name, builder name)
+
+        # 6. Search Keyword (property_name, rera_number, address, locality name, builder name)
         search = params.get('search') or params.get('q')
         if search:
             search_str = str(search).strip()
@@ -88,16 +131,18 @@ class PropertyFilter:
                 Q(rera_number__icontains=search_str) |
                 Q(address__icontains=search_str) |
                 Q(locality__name__icontains=search_str) |
+                Q(locality__city__icontains=search_str) |
                 Q(builder__builder_name__icontains=search_str)
             )
 
-        # 6. Sorting / Ordering
+        # 7. Sorting / Ordering
         ordering = params.get('ordering') or params.get('sort_by')
         if ordering:
             ordering_map = {
                 'price_asc': 'price',
                 'price_desc': '-price',
                 'newest': '-created_at',
+                'popular': '-created_at',
                 'oldest': 'created_at',
                 'bhk_asc': 'bhk',
                 'bhk_desc': '-bhk',
@@ -111,6 +156,7 @@ class PropertyFilter:
                 pass
 
         return queryset.distinct()
+
 
 
 class PropertyListingFilter:

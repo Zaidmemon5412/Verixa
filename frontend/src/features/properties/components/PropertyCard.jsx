@@ -7,14 +7,21 @@ import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 
-export function PropertyCard({ project, onSelect, onToggleWishlist, isWishlisted }) {
+export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlist, isWishlisted }) {
   if (!project) return null;
+
+  const targetId = project.id || project.property_id;
 
   return (
     <Card 
-      onClick={() => onSelect && onSelect(project.id)}
-      className="group overflow-hidden border bg-card hover:shadow-xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
+      onClick={() => onSelect && onSelect(targetId)}
+      className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
     >
+      {/* Diagonal Light Sweep Shine Effect on Hover */}
+      <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden rounded-2xl">
+        <div className="w-1/2 h-[250%] bg-gradient-to-r from-transparent via-white/35 dark:via-white/15 to-transparent -rotate-45 -translate-x-[200%] -translate-y-1/2 group-hover:translate-x-[350%] group-hover:translate-y-1/2 transition-transform duration-1000 ease-in-out" />
+      </div>
+
       <div>
         {/* Card Media Header */}
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
@@ -43,7 +50,7 @@ export function PropertyCard({ project, onSelect, onToggleWishlist, isWishlisted
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleWishlist && onToggleWishlist(project.id);
+              onToggleWishlist && onToggleWishlist(targetId);
             }}
             className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-rose-600 transition-colors z-10"
             title="Add to Wishlist"
@@ -100,20 +107,37 @@ export function PropertyCard({ project, onSelect, onToggleWishlist, isWishlisted
         </CardContent>
       </div>
 
-      {/* Card Footer Button */}
-      <div className="p-4 pt-0">
+      {/* Card Footer Dual Action Buttons */}
+      <div className="p-4 pt-0 grid grid-cols-2 gap-2">
         <Button
           onClick={(e) => {
             e.stopPropagation();
-            onSelect && onSelect(project.id);
+            onSelect && onSelect(targetId);
           }}
-          className="w-full flex items-center justify-center gap-2 rounded-xl"
+          className="w-full flex items-center justify-center gap-1.5 rounded-xl text-xs font-semibold"
           variant="outline"
         >
-          <span>View Property & Legal Specs</span>
-          <ArrowRight className="w-4 h-4" />
+          <span>View Details</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Button>
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onSelectLegal) {
+              onSelectLegal(targetId);
+            } else if (onSelect) {
+              onSelect(targetId, 'legal');
+            }
+          }}
+          className="w-full flex items-center justify-center gap-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+          variant="outline"
+        >
+          <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <span>Legal Specs</span>
         </Button>
       </div>
     </Card>
   );
 }
+
+
