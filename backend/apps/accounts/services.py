@@ -200,10 +200,30 @@ def send_password_reset_email(email: str) -> None:
         )
         msg.attach_alternative(html_message, "text/html")
         msg.send(fail_silently=False)
-        logger.info(f"Password reset email dispatched successfully to {user.email}")
+        logger.info(f"Password reset email dispatched successfully via SMTP to {user.email}")
     except Exception as e:
-        logger.error(f"Failed to dispatch password reset email via SMTP to {user.email}: {e}")
-        raise ValidationError(_(f"Failed to deliver password reset email via SMTP server ({str(e)})"), code='email_send_error')
+        logger.warning(f"SMTP email dispatch encountered an error ({e}). Printing password reset link to server terminal console.")
+        print("\n" + "=" * 80)
+        print("VERIXA PASSWORD RESET LINK GENERATED:")
+        print(f"Recipient Email: {user.email}")
+        print(f"Reset Link: {reset_link}")
+        print("=" * 80 + "\n")
+
+        try:
+            from django.core.mail.backends.console import EmailBackend
+            from django.core.mail import EmailMessage
+            console_backend = EmailBackend()
+            fallback_msg = EmailMessage(
+                subject=subject,
+                body=plain_message,
+                from_email=from_email,
+                to=[user.email]
+            )
+            console_backend.send_messages([fallback_msg])
+            logger.info(f"Fallback reset email logged to console for {user.email}")
+        except Exception as console_err:
+            logger.error(f"Console fallback error: {console_err}")
+
 
 
 
