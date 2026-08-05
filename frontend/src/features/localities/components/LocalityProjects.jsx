@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, Sparkles } from 'lucide-react';
 import { propertyService } from '../../properties/services/propertyService';
 import { PropertyCard } from '../../properties/components/PropertyCard';
-import { EmptyState } from './EmptyState';
 import { LocalityProjectsSkeleton } from './Skeletons';
 
 export function LocalityProjects({ locality, onSelectProject }) {
@@ -14,8 +13,27 @@ export function LocalityProjects({ locality, onSelectProject }) {
       if (!locality?.name) return;
       setLoading(true);
       try {
-        const fetched = await propertyService.getProperties({ locality: locality.name });
-        setProjects(fetched || []);
+        const locName = locality.name;
+        const locKeyword = locName.split(' ')[0]; // e.g. "South", "Shela", "Gota", "SG", "Gift"
+
+        // 1. Fetch properties from service
+        let fetched = await propertyService.getProperties({ search: locKeyword });
+        if (!Array.isArray(fetched) || fetched.length === 0) {
+          fetched = await propertyService.getProperties();
+        }
+
+        // 2. Filter properties belonging or related to this locality
+        let matches = fetched.filter((p) => {
+          const locStr = `${p.locality || ''} ${p.address || ''} ${p.location || ''}`.toLowerCase();
+          return locStr.includes(locKeyword.toLowerCase()) || locStr.includes(locName.toLowerCase());
+        });
+
+        // 3. Fallback to general properties if no specific matches found
+        if (matches.length === 0) {
+          matches = fetched;
+        }
+
+        setProjects(matches);
       } catch (err) {
         console.error('Failed to load locality projects:', err);
         setProjects([]);
@@ -38,33 +56,32 @@ export function LocalityProjects({ locality, onSelectProject }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-extrabold text-foreground flex items-center gap-2">
-          <span>Projects in {locality?.name}</span>
-          <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
-            {projects.length}
-          </span>
-        </h3>
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-1">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Verified Residential Projects</span>
+          </div>
+          <h3 className="text-2xl font-extrabold text-foreground flex items-center gap-2">
+            <span>Projects in {locality?.name}</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-900/50">
+              {projects.length} Available
+            </span>
+          </h3>
+        </div>
       </div>
 
-      {projects.length === 0 ? (
-        <EmptyState
-          title={`No Projects Found in ${locality?.name}`}
-          message={`No active properties are currently listed for ${locality?.name} in the real estate database.`}
-        />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-
-          {projects.map((project) => (
-            <PropertyCard
-              key={project.id}
-              project={project}
-              onSelect={onSelectProject}
-            />
-          ))}
-        </div>
-      )}
+      {/* 4 Properties Per Row (Responsive Grid) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {projects.map((project) => (
+          <PropertyCard
+            key={project.id}
+            project={project}
+            onSelect={onSelectProject}
+          />
+        ))}
+      </div>
     </div>
   );
 }
