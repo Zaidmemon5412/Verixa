@@ -10,7 +10,7 @@ import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 /**
  * ResetPasswordForm Component.
  * Manages entering new passwords with visibility toggles, strength indicators,
- * error state styling, and countdown redirect to login.
+ * theme contrast, error state styling, and countdown redirect to login.
  */
 export const ResetPasswordForm = ({ uid, token }) => {
   const navigate = useNavigate();
@@ -94,25 +94,25 @@ export const ResetPasswordForm = ({ uid, token }) => {
   if (success) {
     return (
       <div className="text-center py-6 space-y-5 select-none" id="reset-password-success-card">
-        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-xl">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shadow-xl">
           <CheckCircle2 className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-xl font-extrabold text-white tracking-tight">Password Reset Complete</h3>
-          <p className="text-xs text-slate-300 max-w-sm mx-auto leading-relaxed">
+          <h3 className="text-xl font-extrabold text-foreground tracking-tight">Password Reset Complete</h3>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed font-medium">
             Your security password has been updated successfully. You can now sign in with your new password.
           </p>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-medium max-w-xs mx-auto">
+        <div className="p-3 rounded-xl bg-background border border-border text-xs text-muted-foreground font-medium max-w-xs mx-auto">
           Redirecting to Sign In in <span className="font-bold text-primary">{countdown}s</span>...
         </div>
 
         <div className="pt-2">
           <Link
             to="/login"
-            className="inline-flex items-center justify-center w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl transition-all"
+            className="inline-flex items-center justify-center w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span>Sign In Now</span>
           </Link>
@@ -124,19 +124,19 @@ export const ResetPasswordForm = ({ uid, token }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate id="reset-password-form">
       {errors.auth && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-start gap-2 animate-in fade-in">
-          <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold flex items-start gap-2 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
           <span>{errors.auth}</span>
         </div>
       )}
 
       {/* New Password Input */}
       <div>
-        <label htmlFor="new-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+        <label htmlFor="new-password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
           New Password
         </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
             <Lock className="w-4 h-4" />
           </div>
           <input
@@ -149,26 +149,27 @@ export const ResetPasswordForm = ({ uid, token }) => {
             }}
             disabled={loading}
             aria-invalid={Boolean(errors.newPassword)}
-            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
               errors.newPassword
-                ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
             placeholder="Min 8 characters"
             required
           />
           <button
             type="button"
+            tabIndex={0}
             onClick={() => setShowPassword(!showPassword)}
             disabled={loading}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md h-7 my-auto"
             title={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         {errors.newPassword && (
-          <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+          <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
             <AlertCircle className="w-3.5 h-3.5" />
             <span>{errors.newPassword}</span>
           </p>
@@ -182,11 +183,11 @@ export const ResetPasswordForm = ({ uid, token }) => {
 
       {/* Confirm Password Input */}
       <div>
-        <label htmlFor="confirm-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+        <label htmlFor="confirm-password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
           Confirm New Password
         </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
             <Lock className="w-4 h-4" />
           </div>
           <input
@@ -199,26 +200,27 @@ export const ResetPasswordForm = ({ uid, token }) => {
             }}
             disabled={loading}
             aria-invalid={Boolean(errors.confirmPassword)}
-            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+            className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
               errors.confirmPassword
-                ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
             }`}
             placeholder="Repeat new password"
             required
           />
           <button
             type="button"
+            tabIndex={0}
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             disabled={loading}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md h-7 my-auto"
             title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
           >
             {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+          <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
             <AlertCircle className="w-3.5 h-3.5" />
             <span>{errors.confirmPassword}</span>
           </p>
@@ -229,7 +231,7 @@ export const ResetPasswordForm = ({ uid, token }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+        className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       >
         {loading ? (
           <ButtonLoader text="Resetting Password..." />

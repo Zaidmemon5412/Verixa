@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Eye, EyeOff, User, Mail, Phone, Lock, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Phone, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
@@ -107,10 +107,10 @@ export const Register = () => {
   return (
     <div id="register-page" className="space-y-6">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-extrabold text-white select-none tracking-tight">
+        <h2 className="text-2xl font-extrabold text-foreground select-none tracking-tight">
           Create Your Account
         </h2>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-muted-foreground font-medium">
           Join Verixa to unlock RERA legal audits, builder delay indices & ML price tools
         </p>
       </div>
@@ -118,11 +118,11 @@ export const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Full Name Field */}
         <div>
-          <label htmlFor="full_name" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="full_name" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Full Name
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <User className="w-4 h-4" />
             </div>
             <input
@@ -132,17 +132,17 @@ export const Register = () => {
               onChange={handleChange}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.full_name)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.full_name
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="John Doe"
               required
             />
           </div>
           {validationErrors.full_name && (
-            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.full_name}</span>
             </p>
@@ -151,11 +151,11 @@ export const Register = () => {
 
         {/* Username Field */}
         <div>
-          <label htmlFor="username" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="username" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Username
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <User className="w-4 h-4" />
             </div>
             <input
@@ -165,17 +165,17 @@ export const Register = () => {
               onChange={handleChange}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.username)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.username
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="johndoe"
               required
             />
           </div>
           {validationErrors.username && (
-            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.username}</span>
             </p>
@@ -184,11 +184,11 @@ export const Register = () => {
 
         {/* Email Address Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="email" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Email Address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Mail className="w-4 h-4" />
             </div>
             <input
@@ -198,17 +198,17 @@ export const Register = () => {
               onChange={handleChange}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.email)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.email
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="john@domain.com"
               required
             />
           </div>
           {validationErrors.email && (
-            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.email}</span>
             </p>
@@ -217,11 +217,11 @@ export const Register = () => {
 
         {/* Phone Field */}
         <div>
-          <label htmlFor="phone" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="phone" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Phone Number (Optional)
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Phone className="w-4 h-4" />
             </div>
             <input
@@ -230,7 +230,7 @@ export const Register = () => {
               value={formData.phone}
               onChange={handleChange}
               disabled={loading}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-sm"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all text-sm font-medium"
               placeholder="+91 9876543210"
             />
           </div>
@@ -238,11 +238,11 @@ export const Register = () => {
 
         {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Password
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Lock className="w-4 h-4" />
             </div>
             <input
@@ -252,26 +252,27 @@ export const Register = () => {
               onChange={handleChange}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.password)}
-              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.password
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="Min 8 characters"
               required
             />
             <button
               type="button"
+              tabIndex={0}
               onClick={() => setShowPassword(!showPassword)}
               disabled={loading}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md h-7 my-auto"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {validationErrors.password && (
-            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.password}</span>
             </p>
@@ -280,11 +281,11 @@ export const Register = () => {
 
         {/* Confirm Password Field */}
         <div>
-          <label htmlFor="confirm_password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label htmlFor="confirm_password" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
             Confirm Password
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Lock className="w-4 h-4" />
             </div>
             <input
@@ -294,26 +295,27 @@ export const Register = () => {
               onChange={handleChange}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.confirm_password)}
-              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.confirm_password
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="Repeat password"
               required
             />
             <button
               type="button"
+              tabIndex={0}
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={loading}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md h-7 my-auto"
               title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
             >
               {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {validationErrors.confirm_password && (
-            <p className="text-xs text-rose-500 mt-1 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.confirm_password}</span>
             </p>
@@ -324,7 +326,7 @@ export const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-3"
+          className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 mt-3"
         >
           {loading ? (
             <ButtonLoader text="Creating Account..." />
@@ -338,9 +340,9 @@ export const Register = () => {
       </form>
 
       {/* Sign In Link */}
-      <div className="mt-6 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-5">
+      <div className="mt-6 text-center text-xs text-muted-foreground border-t border-border/80 pt-5 font-medium">
         Already have an account?{' '}
-        <Link to="/login" className="text-primary font-bold hover:underline">
+        <Link to="/login" className="text-primary font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
           Sign In
         </Link>
       </div>

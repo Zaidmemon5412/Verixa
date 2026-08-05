@@ -9,7 +9,8 @@ import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
 /**
  * Sign In Screen Component.
  * Implements real-estate portal authentication with field validation,
- * password visibility toggling, error state feedback, and return-path redirection.
+ * password visibility toggling, error state feedback, keyboard focus indicators,
+ * and return-path redirection.
  */
 export const Login = () => {
   const { login, loading } = useAuth();
@@ -73,17 +74,17 @@ export const Login = () => {
   return (
     <div id="login-page" className="space-y-6">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-extrabold text-white select-none tracking-tight">
+        <h2 className="text-2xl font-extrabold text-foreground select-none tracking-tight">
           Sign In to Portal
         </h2>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-muted-foreground font-medium">
           Enter your credentials to access verified properties & AI decision tools
         </p>
       </div>
 
       {validationErrors.auth && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
-          <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
+          <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
           <span>{validationErrors.auth}</span>
         </div>
       )}
@@ -91,11 +92,11 @@ export const Login = () => {
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Email Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+          <label htmlFor="email" className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2">
             Email Address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Mail className="w-4 h-4" />
             </div>
             <input
@@ -110,17 +111,17 @@ export const Login = () => {
               }}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.email)}
-              className={`w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-4 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.email
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="name@domain.com"
               required
             />
           </div>
           {validationErrors.email && validationErrors.email.trim() && (
-            <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.email}</span>
             </p>
@@ -130,19 +131,19 @@ export const Login = () => {
         {/* Password Field */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label htmlFor="password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <label htmlFor="password" className="block text-xs font-bold text-foreground uppercase tracking-wider">
               Password
             </label>
             <Link
               to="/forgot-password"
-              className="text-xs text-primary hover:underline font-semibold transition-colors select-none"
+              className="text-xs text-primary hover:underline font-semibold transition-colors select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
               id="forgot-password-link"
             >
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
               <Lock className="w-4 h-4" />
             </div>
             <input
@@ -157,26 +158,27 @@ export const Login = () => {
               }}
               disabled={loading}
               aria-invalid={Boolean(validationErrors.password)}
-              className={`w-full pl-10 pr-11 py-3 rounded-xl bg-slate-950/80 border text-slate-100 placeholder-slate-600 focus:outline-none transition-all text-sm ${
+              className={`w-full pl-10 pr-11 py-3 rounded-xl bg-background border text-foreground placeholder:text-muted-foreground focus:outline-none transition-all text-sm font-medium ${
                 validationErrors.password
-                  ? 'border-rose-500 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500'
-                  : 'border-slate-800 focus:ring-2 focus:ring-primary/40 focus:border-primary'
+                  ? 'border-destructive focus:ring-2 focus:ring-destructive/30 focus:border-destructive'
+                  : 'border-input focus:ring-2 focus:ring-primary/40 focus:border-primary'
               }`}
               placeholder="••••••••"
               required
             />
             <button
               type="button"
+              tabIndex={0}
               onClick={() => setShowPassword(!showPassword)}
               disabled={loading}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md my-auto h-7 my-auto"
               title={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {validationErrors.password && validationErrors.password.trim() && (
-            <p className="text-xs text-rose-500 mt-1.5 font-semibold flex items-center gap-1">
+            <p className="text-xs text-destructive mt-1.5 font-semibold flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>{validationErrors.password}</span>
             </p>
@@ -187,7 +189,7 @@ export const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           {loading ? (
             <ButtonLoader text="Signing In..." />
@@ -201,9 +203,9 @@ export const Login = () => {
       </form>
 
       {/* Footer Navigation */}
-      <div className="mt-6 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-5">
+      <div className="mt-6 text-center text-xs text-muted-foreground border-t border-border/80 pt-5 font-medium">
         Don't have an account yet?{' '}
-        <Link to="/register" className="text-primary font-bold hover:underline">
+        <Link to="/register" className="text-primary font-bold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
           Create Account
         </Link>
       </div>
