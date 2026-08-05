@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+# pyrefly: ignore [missing-import]
 from apps.locations.serializers import NearbyPlaceSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny

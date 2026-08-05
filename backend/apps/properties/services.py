@@ -2,6 +2,8 @@
 Services layer for the properties app.
 Handles core business logic for Amenity, PropertyAmenity, PropertyImage, and PropertyDocument.
 """
+from django.core.exceptions import ValidationError as DjangoValidationError
+
 import os
 import uuid
 import logging
@@ -442,7 +444,9 @@ def get_filter_options() -> dict:
     Retrieves dynamic filter metadata from the active database records.
     """
     from django.db.models import Min, Max
+    # pyrefly: ignore [missing-import]
     from apps.builders.models import Builder
+    # pyrefly: ignore [missing-import]
     from apps.locations.models import Locality
 
     price_stats = Property.objects.aggregate(min_p=Min('price'), max_p=Max('price'))
