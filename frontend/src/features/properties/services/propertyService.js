@@ -69,9 +69,10 @@ function mapApiPropertyToUi(item) {
     location: localityName,
     locality: localityName.split(',')[0],
     localityDetail: item.locality_detail || null,
-    address: item.address || localityName || 'Ahmedabad, Gujarat',
-    latitude: item.latitude || null,
-    longitude: item.longitude || null,
+    address: item.address || (item.property_name ? `${item.property_name}, ${localityName}` : localityName),
+    latitude: item.latitude != null ? parseFloat(item.latitude) : null,
+    longitude: item.longitude != null ? parseFloat(item.longitude) : null,
+
     image: finalPrimaryImage,
     images: finalGalleryImages,
     badges: [
