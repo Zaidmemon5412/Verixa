@@ -66,8 +66,10 @@ function mapApiPropertyToUi(item) {
   }
 
   const resolvedAddress = item.address || item.location || (item.property_name && localityName ? `${item.property_name}, ${localityName}` : (localityName || 'Location Unavailable'));
+  const rawLocality = localityName || item.city || 'Ahmedabad';
   const propName = item.project_name || item.property_name || 'Unnamed Property';
   const statusStr = item.project_status || item.status || 'Ready to Move';
+
 
   return {
     id: item.project_id || item.property_id || item.id,
