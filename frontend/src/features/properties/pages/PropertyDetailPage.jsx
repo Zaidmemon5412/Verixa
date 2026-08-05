@@ -3,7 +3,7 @@ import {
   Building2, MapPin, Shield, BedDouble, Calendar, 
   Heart, ArrowLeft, Calculator, Phone, CheckCircle, 
   Share2, Award, Zap, Trees, Hospital, Train, ShoppingBag,
-  FileCheck, AlertCircle, Check, Image as ImageIcon
+  FileCheck, AlertCircle, Check, Image as ImageIcon, X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { propertyService } from '../services/propertyService';
 import { builderService } from '../../builders/services/builderService';
@@ -13,12 +13,16 @@ import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { EMICalculatorModal } from '../components/EMICalculatorModal';
 
+const DEFAULT_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=500&fit=crop&auto=format";
+
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const [project, setProject] = useState(null);
   const [builder, setBuilder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showEMIModal, setShowEMIModal] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
 
   useEffect(() => {
     async function loadDetails() {
@@ -54,6 +58,22 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
       }, 150);
     }
   }, [loading, project, isLegalView]);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (lightboxIndex === null) return;
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+      }
+      if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex, galleryImages?.length]);
+
 
   if (loading) {
     return (
@@ -153,18 +173,28 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         </div>
 
         {/* Hero Gallery Main Image Banner */}
-        <div className="relative aspect-[21/9] rounded-3xl overflow-hidden border shadow-lg bg-muted">
+        <div 
+          onClick={() => {
+            const idx = galleryImages.indexOf(currentImage);
+            setLightboxIndex(idx !== -1 ? idx : 0);
+          }}
+          className="relative aspect-[21/9] rounded-3xl overflow-hidden border shadow-lg bg-muted cursor-pointer group"
+        >
           <img
-            src={currentImage}
+            src={currentImage || DEFAULT_IMAGE_FALLBACK}
             alt={project.name}
-            className="w-full h-full object-cover transition-all duration-300"
+            onError={(e) => { e.target.src = DEFAULT_IMAGE_FALLBACK; }}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute bottom-6 left-6 text-white space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-400">
-              Cloudinary Verified Property Image
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute bottom-6 left-6 text-white space-y-1 z-10">
+            <span className="text-xs font-semibold uppercase tracking-widest text-amber-400 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/10">
+              Verified Property Gallery
             </span>
-            <h2 className="text-2xl font-bold">{project.name} by {project.builder}</h2>
+            <h2 className="text-2xl font-bold pt-1">{project.name} by {project.builder}</h2>
+          </div>
+          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+            Click for Fullscreen Gallery
           </div>
         </div>
 
@@ -182,18 +212,25 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               <button
                 key={idx}
                 onClick={() => setSelectedImage(imgUrl)}
+                onDoubleClick={() => setLightboxIndex(idx)}
                 className={`relative w-28 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 group ${
                   currentImage === imgUrl ? 'border-primary ring-2 ring-primary/40 scale-105 shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
                 }`}
               >
-                <img src={imgUrl} alt={`Photo ${idx}`} className="w-full h-full object-cover" />
+                <img 
+                  src={imgUrl || DEFAULT_IMAGE_FALLBACK} 
+                  alt={`Photo ${idx + 1}`} 
+                  onError={(e) => { e.target.src = DEFAULT_IMAGE_FALLBACK; }}
+                  className="w-full h-full object-cover" 
+                />
                 <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                  Photo {idx}
+                  Photo {idx + 1}
                 </span>
               </button>
             ))}
           </div>
         </div>
+
       </div>
 
       {/* Grid Specs & Details */}
@@ -394,9 +431,79 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         onClose={() => setShowEMIModal(false)}
         defaultPrice={project.priceNum}
       />
+
+      {/* Fullscreen Gallery Lightbox Modal */}
+      {lightboxIndex !== null && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col justify-between p-4 md:p-8 animate-in fade-in duration-200">
+          {/* Top Bar Controls */}
+          <div className="flex items-center justify-between text-white z-10">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-bold text-amber-400">
+                Photo {lightboxIndex + 1} of {galleryImages.length}
+              </span>
+              <span className="text-xs text-white/70 hidden sm:inline">
+                • {project.name}
+              </span>
+            </div>
+            <button
+              onClick={() => setLightboxIndex(null)}
+              className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+              title="Close Fullscreen Viewer (Esc)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Main Image Container */}
+          <div className="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
+            <img
+              src={galleryImages[lightboxIndex] || DEFAULT_IMAGE_FALLBACK}
+              alt={`Photo ${lightboxIndex + 1}`}
+              onError={(e) => { e.target.src = DEFAULT_IMAGE_FALLBACK; }}
+              className="max-h-full max-w-full object-contain rounded-2xl shadow-2xl"
+            />
+
+            {/* Prev / Next Buttons */}
+            {galleryImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => setLightboxIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))}
+                  className="absolute left-4 p-3 rounded-full bg-black/60 hover:bg-black/80 text-white border border-white/20 transition-all backdrop-blur-md"
+                  title="Previous Photo (Left Arrow)"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setLightboxIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1))}
+                  className="absolute right-4 p-3 rounded-full bg-black/60 hover:bg-black/80 text-white border border-white/20 transition-all backdrop-blur-md"
+                  title="Next Photo (Right Arrow)"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Strip */}
+          <div className="flex items-center justify-center gap-2 overflow-x-auto py-2 z-10">
+            {galleryImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setLightboxIndex(idx)}
+                className={`w-16 h-12 rounded-lg overflow-hidden border-2 transition-all shrink-0 ${
+                  lightboxIndex === idx ? 'border-amber-400 scale-105 ring-2 ring-amber-400/50' : 'border-transparent opacity-50 hover:opacity-100'
+                }`}
+              >
+                <img src={img || DEFAULT_IMAGE_FALLBACK} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 export default PropertyDetailPage;
 

@@ -392,11 +392,12 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
 
 class PropertyListSerializer(serializers.ModelSerializer):
     """
-    Lightweight list serializer for Property list endpoints.
+    Lightweight list serializer for Property list endpoints including all gallery images.
     """
     locality_name = serializers.CharField(source='locality.name', read_only=True)
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
     primary_image = serializers.SerializerMethodField()
+    images = PropertyImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Property
@@ -404,12 +405,13 @@ class PropertyListSerializer(serializers.ModelSerializer):
             'property_id', 'property_name', 'locality_name', 'builder_name',
             'property_type', 'transaction_type', 'price', 'price_per_sqft',
             'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
-            'primary_image', 'created_at'
+            'primary_image', 'images', 'created_at'
         ]
 
     def get_primary_image(self, obj):
         primary_img = obj.images.filter(is_primary=True).first() or obj.images.first()
         return primary_img.image_url if primary_img else None
+
 
 
 from apps.locations.serializers import NearbyPlaceSerializer

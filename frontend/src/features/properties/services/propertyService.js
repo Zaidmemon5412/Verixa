@@ -31,16 +31,22 @@ function mapApiPropertyToUi(item) {
   if (!item) return null;
   const legalInfo = item.legal_info || null;
   const legalStatus = legalInfo?.verification_status || 'VERIFIED';
-  const priceFormatted = formatPrice(item.price);
-  
-  // Safely extract Cloudinary image URLs
   const rawImages = Array.isArray(item.images) ? item.images : [];
   const imagesList = rawImages.map(extractImageUrl).filter(Boolean);
   
   const primaryImg = item.primary_image || (imagesList.length > 0 ? imagesList[0] : null);
+
   const defaultFallbackImage = "https://images.unsplash.com/photo-1714983007778-b370188238b8?w=800&h=500&fit=crop&auto=format";
   const finalPrimaryImage = primaryImg || defaultFallbackImage;
-  const finalGalleryImages = imagesList.length > 0 ? imagesList : [finalPrimaryImage];
+  const defaultFallbackImages = [
+    finalPrimaryImage,
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=500&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=500&fit=crop&auto=format",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop&auto=format"
+  ];
+  const finalGalleryImages = imagesList.length > 0 ? imagesList : defaultFallbackImages;
+
+
 
   // Extract amenities list
   let amenitiesList = ['24x7 Security', 'Car Parking', 'Power Backup', 'Gymnasium', 'Elevator', 'Clubhouse'];
