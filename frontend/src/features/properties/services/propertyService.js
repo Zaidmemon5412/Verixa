@@ -38,65 +38,77 @@ function mapApiPropertyToUi(item) {
   const imagesList = rawImages.map(extractImageUrl).filter(Boolean);
   
   const primaryImg = item.primary_image || (imagesList.length > 0 ? imagesList[0] : null);
-  const defaultFallbackImage = "https://images.unsplash.com/photo-1714983007778-b370188238b8?w=800&h=500&fit=crop&auto=format";
+  const defaultFallbackImage = "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop&auto=format";
   const finalPrimaryImage = primaryImg || defaultFallbackImage;
   const finalGalleryImages = imagesList.length > 0 ? imagesList : [finalPrimaryImage];
 
-  // Extract amenities list
+  // Parse amenities (handles array of strings or JSON string representation)
   let amenitiesList = ['24x7 Security', 'Car Parking', 'Power Backup', 'Gymnasium', 'Elevator', 'Clubhouse'];
   if (Array.isArray(item.amenities) && item.amenities.length > 0) {
-    amenitiesList = item.amenities.map(a => typeof a === 'string' ? a : (a.amenity_name || a.name)).filter(Boolean);
+    const rawA = item.amenities;
+    if (rawA.length === 1 && typeof rawA[0] === 'string' && rawA[0].startsWith('[')) {
+      try {
+        amenitiesList = JSON.parse(rawA[0]);
+      } catch (e) {
+        amenitiesList = rawA;
+      }
+    } else {
+      amenitiesList = rawA.map(a => typeof a === 'string' ? a : (a.amenity_name || a.name)).filter(Boolean);
+    }
   }
 
-  const builderName = item.builder_name || item.builder_detail?.builder_name || 'Verified Developer';
-  const localityName = item.locality_name || item.locality_detail?.name || item.address || 'Ahmedabad';
+  const builderName = item.builder_name || item.company_name || item.builder_detail?.builder_name || 'Verified Developer';
+  const rawLocality = item.locality || item.locality_name || item.locality_detail?.name || item.address || item.city || 'Ahmedabad';
+
+  const propName = item.project_name || item.property_name || 'Unnamed Property';
+  const statusStr = item.project_status || item.status || 'Under Construction';
 
   return {
-    id: item.property_id || item.id,
-    name: item.property_name || 'Unnamed Property',
+    id: item.project_id || item.property_id || item.id,
+    name: propName,
     builder: builderName,
     builderId: item.builder || item.builder_detail?.builder_id || '1',
     builderDetail: item.builder_detail || null,
     price: priceFormatted,
     priceNum: parseFloat(item.price || 0),
-    pricePerSqft: item.price_per_sqft ? `₹${parseFloat(item.price_per_sqft).toLocaleString('en-IN')}/sqft` : '₹5,200/sqft',
-    config: item.bhk ? `${item.bhk} BHK` : '2, 3 BHK',
-    bhkNum: item.bhk || 2,
+    pricePerSqft: item.price_per_sqft ? `₹${parseFloat(item.price_per_sqft).toLocaleString('en-IN')}/sqft` : '₹5,500/sqft',
+    config: item.bhk_variants || (item.bhk ? `${item.bhk} BHK` : item.primary_bhk || '2, 3 BHK'),
+    bhkNum: item.bhk || (item.primary_bhk ? parseInt(item.primary_bhk) : 2) || 2,
     propertyType: item.property_type || 'Apartment',
     transactionType: item.transaction_type || 'Sale',
-    possession: item.status || 'Ready to Move',
-    location: localityName,
-    locality: localityName.split(',')[0],
+    possession: statusStr,
+    location: item.location || `${rawLocality}, ${item.city || 'Gujarat'}`,
+    locality: rawLocality.split(',')[0],
     localityDetail: item.locality_detail || null,
-    address: item.address || localityName || 'Ahmedabad, Gujarat',
+    address: item.address || item.location || rawLocality || 'Ahmedabad, Gujarat',
     latitude: item.latitude || null,
     longitude: item.longitude || null,
     image: finalPrimaryImage,
     images: finalGalleryImages,
     badges: [
-      item.status || 'Ready to Move',
+      statusStr,
       cleanFurnishing(item.furnishing_status),
       `Legal ${legalStatus}`
     ],
-    rera: item.rera_number && item.rera_number !== 'Not Registered' ? item.rera_number : 'PR/GJ/AHM/VERIXA/2026',
+    rera: item.rera_number || item.rera || 'PR/GJ/AHM/VERIXA/2026',
     investScore: legalStatus === 'VERIFIED' ? 88 : legalStatus === 'PENDING' ? 76 : 54,
     growthScore: 82,
     rentalYield: '3.8%',
-    area: item.carpet_area ? `${item.carpet_area} sq ft` : (item.builtup_area ? `${item.builtup_area} sq ft` : '1,200 sq ft'),
+    area: item.carpet_area ? String(item.carpet_area) : (item.builtup_area ? String(item.builtup_area) : '1,200 sq ft'),
     areaNum: parseFloat(item.carpet_area || item.builtup_area || 1200),
-    carpetArea: item.carpet_area ? `${item.carpet_area} sq ft` : 'N/A',
-    builtupArea: item.builtup_area ? `${item.builtup_area} sq ft` : 'N/A',
-    superBuiltupArea: item.super_builtup_area ? `${item.super_builtup_area} sq ft` : 'N/A',
+    carpetArea: item.carpet_area ? String(item.carpet_area) : 'N/A',
+    builtupArea: item.builtup_area ? String(item.builtup_area) : 'N/A',
+    superBuiltupArea: item.super_builtup_area ? String(item.super_builtup_area) : 'N/A',
     bathrooms: item.bathrooms || 2,
     balconies: item.balconies || 1,
     floorNumber: item.floor_number || 1,
     totalFloors: item.total_floors || 5,
     facing: item.facing || 'East',
     furnishingStatus: cleanFurnishing(item.furnishing_status),
-    status: item.status || 'Ready to Move',
+    status: statusStr,
     trustScore: legalStatus === 'VERIFIED' ? 95 : legalStatus === 'PENDING' ? 75 : 45,
     amenities: amenitiesList,
-    overview: item.description || `Spacious ${item.bhk || 3} BHK ${item.property_type || 'apartment'} property located in ${localityName}. Featuring excellent road connectivity, modern structural layout, and RERA compliance.`,
+    overview: item.project_description || item.description || `Spacious ${item.primary_bhk || '2, 3 BHK'} development located in ${rawLocality}. Featuring modern architectural layout, low-density structural design, and RERA compliance.`,
     legalInfo: legalInfo,
     documents: item.documents || [],
     listings: item.listings || []
@@ -157,10 +169,22 @@ export const propertyService = {
         return mapApiPropertyToUi(rawData);
       }
     } catch (error) {
-      console.warn(`Backend detail API lookup for "${id}" failed, trying active list & static fallback:`, error?.message || error);
+      // Ignore 404 and proceed to Attempt 2
     }
 
-    // Attempt 2: Search active database properties list by ID or slugified name
+    // Attempt 2: Direct BuilderProject table endpoint GET /api/builders/projects/:id/
+    try {
+      const response = await apiClient.get(`/builders/projects/${id}/`);
+      const rawData = response?.data?.data || response?.data || response;
+
+      if (rawData && (rawData.project_id || rawData.id)) {
+        return mapApiPropertyToUi(rawData);
+      }
+    } catch (error) {
+      // Ignore 404 and proceed to Attempt 3
+    }
+
+    // Attempt 3: Search active database properties list by ID or slugified name
     try {
       const allDbProperties = await this.getProperties();
       if (Array.isArray(allDbProperties) && allDbProperties.length > 0) {
@@ -174,7 +198,7 @@ export const propertyService = {
       console.warn('Database properties list fallback search failed:', e);
     }
 
-    // Attempt 3: Search static fallback PROJECTS by ID or slugified name
+    // Attempt 4: Search static fallback PROJECTS by ID or slugified name
     const foundStatic = PROJECTS.find(
       (p) => String(p.id).toLowerCase() === String(id).toLowerCase() ||
              String(p.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()

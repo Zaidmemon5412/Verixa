@@ -162,9 +162,6 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-6 left-6 text-white space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-widest text-amber-400">
-              Cloudinary Verified Property Image
-            </span>
             <h2 className="text-2xl font-bold">{project.name} by {project.builder}</h2>
           </div>
         </div>

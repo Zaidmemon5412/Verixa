@@ -23,6 +23,7 @@ const LandingPage = lazy(() => import('../../features/landing/pages/LandingPage'
 const PropertiesPage = lazy(() => import('../../features/properties/pages/PropertiesPage'));
 const PropertyDetailPage = lazy(() => import('../../features/properties/pages/PropertyDetailPage'));
 const BuildersPage = lazy(() => import('../../features/builders/pages/BuildersPage'));
+const BuilderDetailsPage = lazy(() => import('../../features/builders/pages/BuilderDetailsPage'));
 const LocalitiesPage = lazy(() => import('../../features/localities/pages/LocalitiesPage'));
 const ComparisonPage = lazy(() => import('../../features/comparison/pages/ComparisonPage'));
 const MarketTrendsPage = lazy(() => import('../../features/market/pages/MarketTrendsPage'));
@@ -70,7 +71,19 @@ function BuildersPageWrapper() {
   const navigate = useNavigate();
   return (
     <BuildersPage
-      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
+      onSelectBuilder={(bId) => navigate(`/builder/${bId}`)}
+    />
+  );
+}
+
+function BuilderDetailsPageWrapper() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  return (
+    <BuilderDetailsPage
+      builderId={id}
+      onSelectProject={(pId) => navigate(`/properties/${pId}`)}
+      onBack={() => navigate('/builders')}
     />
   );
 }
@@ -159,16 +172,16 @@ export const AppRoutes = () => {
         <Route
           path="/builders/:id"
           element={
-            <AppSuspense fallback={<CardSkeleton count={4} />}>
-              <BuildersPageWrapper />
+            <AppSuspense fallback={<PageSkeleton />}>
+              <BuilderDetailsPageWrapper />
             </AppSuspense>
           }
         />
         <Route
           path="/builder/:id"
           element={
-            <AppSuspense fallback={<CardSkeleton count={4} />}>
-              <BuildersPageWrapper />
+            <AppSuspense fallback={<PageSkeleton />}>
+              <BuilderDetailsPageWrapper />
             </AppSuspense>
           }
         />
