@@ -74,8 +74,8 @@ export function LocalityChartSkeleton() {
 
 export function LocalityProjectsSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-      {[1, 2, 3, 4].map((i) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3].map((i) => (
         <div key={i} className="border rounded-2xl p-4 space-y-3 bg-card shadow-sm">
           <Skeleton className="h-48 w-full rounded-xl" />
           <Skeleton className="h-6 w-3/4" />
@@ -85,4 +85,5 @@ export function LocalityProjectsSkeleton() {
     </div>
   );
 }
+
 

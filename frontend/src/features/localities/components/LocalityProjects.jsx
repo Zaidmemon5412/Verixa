@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { propertyService } from '../../properties/services/propertyService';
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { LocalityProjectsSkeleton } from './Skeletons';
@@ -14,7 +14,7 @@ export function LocalityProjects({ locality, onSelectProject }) {
       setLoading(true);
       try {
         const locName = locality.name;
-        const locKeyword = locName.split(' ')[0]; // e.g. "South", "Shela", "Gota", "SG", "Gift"
+        const locKeyword = locName.split(' ')[0]; // e.g. "Satellite", "Thaltej", "Gota", "Chandkheda", "Sola"
 
         // 1. Fetch properties from service
         let fetched = await propertyService.getProperties({ search: locKeyword });
@@ -72,8 +72,8 @@ export function LocalityProjects({ locality, onSelectProject }) {
         </div>
       </div>
 
-      {/* 4 Properties Per Row (Responsive Grid) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {/* Exactly 3 Properties Per Row (Responsive 3-Column Grid) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
           <PropertyCard
             key={project.id}
