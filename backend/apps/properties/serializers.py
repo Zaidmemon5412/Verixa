@@ -11,6 +11,7 @@ from apps.builders.models import Builder
 class PropertyImageSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='image_id', read_only=True)
     image = serializers.URLField(source='image_url', read_only=True)
+    image_url = serializers.URLField(source='image_url', read_only=True)
     descriptions = serializers.CharField(
         source='image_type',
         required=False,
@@ -20,8 +21,8 @@ class PropertyImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PropertyImage
-        fields = ['id', 'property', 'image', 'is_primary', 'display_order', 'descriptions']
-        read_only_fields = ['id', 'property', 'image']
+        fields = ['id', 'property', 'image', 'image_url', 'is_primary', 'display_order', 'descriptions']
+        read_only_fields = ['id', 'property', 'image', 'image_url']
 
     def to_internal_value(self, data):
         # Allow singular 'description' or plural 'descriptions'

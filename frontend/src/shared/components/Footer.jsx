@@ -1,98 +1,101 @@
-import { Link } from 'react-router-dom';
-import { Building2, Shield, Globe, Mail } from 'lucide-react';
+import React from 'react';
+import { Building2, Shield, Heart, Globe, Mail, Phone } from 'lucide-react';
 
-/**
- * Footer Component for MainLayout.
- * Features platform navigation, category links, legal info, and copyright.
- */
-export const Footer = () => {
+export function Footer({ onNavigate }) {
   return (
-    <footer className="w-full border-t border-white/5 bg-slate-950 text-slate-400 text-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="border-t bg-muted/40 text-muted-foreground mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand Summary */}
-          <div className="space-y-3">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-7 h-7 rounded-lg bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400">
+          {/* Brand Col */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
                 <Building2 className="w-4 h-4" />
               </div>
-              <span className="text-base font-extrabold text-white tracking-tight">
-                VERIXA<span className="text-brand-400">.</span>
-              </span>
-            </Link>
-            <p className="text-slate-500 leading-relaxed">
-              Advanced Real Estate Intelligence & Risk Mitigation Platform. Transforming property verification, valuation, and geospatial legal insights.
+              <span className="text-lg font-bold text-foreground tracking-tight">VERIXA</span>
+            </div>
+            <p className="text-xs leading-relaxed">
+              India's premier AI-powered Real Estate Decision Engine. Verifying legal titles, builder delivery records, and investment yields.
             </p>
+            <div className="flex items-center gap-2 text-xs text-emerald-600 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-md w-fit border border-emerald-200 dark:border-emerald-800">
+              <Shield className="w-3.5 h-3.5" />
+              100% RERA & Legal Audit Guaranteed
+            </div>
           </div>
 
-          {/* Quick Platform Links */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">Platform</h4>
-            <ul className="space-y-1.5">
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Quick Navigation</h4>
+            <ul className="space-y-2 text-xs">
               <li>
-                <Link to="/properties" className="hover:text-slate-200 transition-colors">Properties Search</Link>
+                <button onClick={() => onNavigate && onNavigate('projects')} className="hover:text-foreground transition-colors">
+                  Properties Registry
+                </button>
               </li>
               <li>
-                <Link to="/builders" className="hover:text-slate-200 transition-colors">Verified Builders</Link>
+                <button onClick={() => onNavigate && onNavigate('builders')} className="hover:text-foreground transition-colors">
+                  Builder Trust Directory
+                </button>
               </li>
               <li>
-                <Link to="/comparison" className="hover:text-slate-200 transition-colors">Decision Matrix</Link>
+                <button onClick={() => onNavigate && onNavigate('localities')} className="hover:text-foreground transition-colors">
+                  Locality Growth Index
+                </button>
               </li>
               <li>
-                <Link to="/dashboard" className="hover:text-slate-200 transition-colors">Analytics Dashboard</Link>
+                <button onClick={() => onNavigate && onNavigate('compare')} className="hover:text-foreground transition-colors">
+                  Side-by-Side Comparison Tool
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate && onNavigate('market')} className="hover:text-foreground transition-colors">
+                  Market Trend Analytics
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Resources */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">Resources</h4>
-            <ul className="space-y-1.5">
-              <li>
-                <span className="text-slate-600 cursor-not-allowed">Geospatial Registry API</span>
-              </li>
-              <li>
-                <span className="text-slate-600 cursor-not-allowed">Zoning & Flood Risk Guide</span>
-              </li>
-              <li>
-                <span className="text-slate-600 cursor-not-allowed">Legal OCR Documentation</span>
-              </li>
-              <li>
-                <span className="text-slate-600 cursor-not-allowed">Developer Portal</span>
-              </li>
+          {/* Top Localities */}
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Popular Hubs</h4>
+            <ul className="space-y-2 text-xs">
+              <li className="hover:text-foreground cursor-pointer">SG Highway, Ahmedabad</li>
+              <li className="hover:text-foreground cursor-pointer">GIFT City, Gandhinagar</li>
+              <li className="hover:text-foreground cursor-pointer">Shela & South Bopal</li>
+              <li className="hover:text-foreground cursor-pointer">Gota & Jagatpur</li>
+              <li className="hover:text-foreground cursor-pointer">Sindhu Bhavan Road</li>
             </ul>
           </div>
 
-          {/* Legal & Security */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">Security & Legal</h4>
-            <ul className="space-y-1.5">
-              <li className="flex items-center space-x-1.5 text-slate-400">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>JWT End-to-End Encrypted</span>
+          {/* Contact & Support */}
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Contact & Legal</h4>
+            <ul className="space-y-2 text-xs">
+              <li className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-primary" />
+                support@verixa.in
               </li>
-              <li className="flex items-center space-x-1.5 text-slate-400">
-                <Globe className="w-3.5 h-3.5 text-brand-400" />
-                <span>Geospatial Compliance</span>
+              <li className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-primary" />
+                +91 79 4000 8800
               </li>
-              <li className="pt-1">
-                <span className="text-slate-500">Privacy Policy • Terms of Service</span>
+              <li className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5 text-primary" />
+                Ahmedabad, Gujarat, India
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500">
-          <p>© {new Date().getFullYear()} Verixa Technologies. All rights reserved.</p>
-          <div className="flex items-center space-x-4">
-            <span className="hover:text-slate-400 cursor-pointer">Security</span>
-            <span className="hover:text-slate-400 cursor-pointer">Status</span>
-            <span className="hover:text-slate-400 cursor-pointer">Contact Support</span>
+        <div className="border-t border-border/60 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs gap-4">
+          <p>© {new Date().getFullYear()} Verixa Real Estate Decision Platform. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <span className="hover:underline cursor-pointer">Privacy Policy</span>
+            <span className="hover:underline cursor-pointer">Terms of Service</span>
+            <span className="hover:underline cursor-pointer">RERA Disclaimer</span>
           </div>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

@@ -1,6 +1,7 @@
 import os
 import csv
 import logging
+import uuid
 from decimal import Decimal, InvalidOperation
 
 from django.core.management.base import BaseCommand
@@ -98,11 +99,13 @@ class Command(BaseCommand):
         with open(property_csv_path, mode="r", encoding="utf-8-sig") as p_file:
             reader = csv.DictReader(p_file)
             for row_idx, row in enumerate(reader, start=2):
-                prop_id = self._clean_str(row.get("property_id"))
-                if not prop_id:
+                prop_id_str = self._clean_str(row.get("property_id"))
+                if not prop_id_str:
                     self.stderr.write(f"Row {row_idx}: Missing property_id. Skipping.")
                     stats["failed_properties"] += 1
                     continue
+                
+                prop_id = self._parse_uuid(prop_id_str)
 
                 # Idempotency check: Skip if Property already exists
                 if Property.objects.filter(property_id=prop_id).exists():
@@ -111,8 +114,8 @@ class Command(BaseCommand):
                     continue
 
                 # FK Resolution & Validation
-                locality_id = self._clean_str(row.get("locality_id"))
-                if not locality_id:
+                locality_id_raw = self._clean_str(row.get("locality_id"))
+                if not locality_id_raw:
                     self.stdout.write(
                         self.style.WARNING(
                             f"Skipped Property {prop_id}: Missing Locality ID field."
@@ -121,8 +124,10 @@ class Command(BaseCommand):
                     stats["missing_localities"] += 1
                     stats["skipped_properties"] += 1
                     continue
+                
+                locality_id = self._parse_uuid(locality_id_raw)
 
-                if locality_id not in existing_locality_ids:
+                if str(locality_id) not in existing_locality_ids and str(locality_id_raw) not in existing_locality_ids:
                     # Create placeholder locality for missing FK to ensure properties import
                     loc_obj, _ = Locality.objects.get_or_create(
                         locality_id=locality_id,
@@ -135,13 +140,14 @@ class Command(BaseCommand):
                             "longitude": self._parse_decimal(row.get("longitude")),
                         }
                     )
-                    existing_locality_ids.add(locality_id)
+                    existing_locality_ids.add(str(locality_id))
                     stats["missing_localities"] += 1
 
-                builder_id = self._clean_str(row.get("builder_id"))
-                if builder_id and builder_id not in existing_builder_ids:
+                builder_id_raw = self._clean_str(row.get("builder_id"))
+                builder_id = self._parse_uuid(builder_id_raw) if builder_id_raw and builder_id_raw != "0" else None
+                if builder_id and str(builder_id) not in existing_builder_ids and builder_id_raw not in existing_builder_ids:
                     logger.warning(
-                        f"Property {prop_id} has invalid Builder ID '{builder_id}'. "
+                        f"Property {prop_id} has invalid Builder ID '{builder_id_raw}'. "
                         f"Setting builder to None."
                     )
                     stats["missing_builders"] += 1
@@ -169,13 +175,13 @@ class Command(BaseCommand):
                             parking_spaces=self._parse_int(row.get("parking_spaces")),
                             floor_number=self._parse_int(row.get("floor_number")),
                             total_floors=self._parse_int(row.get("total_floors")),
-                            furnishing_status=self._clean_str(row.get("furnishing_status")),
-                            facing=self._clean_str(row.get("facing")),
+                            furnishing_status=self._clean_str(row.get("furnishing_status"))[:20] if self._clean_str(row.get("furnishing_status")) else None,
+                            facing=self._clean_str(row.get("facing"))[:20] if self._clean_str(row.get("facing")) else None,
                             construction_age=self._parse_int(row.get("construction_age")),
                             address=self._clean_str(row.get("address")) or "",
                             latitude=self._parse_decimal(row.get("latitude")),
                             longitude=self._parse_decimal(row.get("longitude")),
-                            status=self._clean_str(row.get("status")) or "ready",
+                            status=self._clean_str(row.get("status"))[:30] if self._clean_str(row.get("status")) else "ready",
                             launch_date=self._parse_date_val(row.get("launch_date")),
                             completion_date=self._parse_date_val(row.get("completion_date")),
                             description=self._clean_str(row.get("description")),
@@ -205,7 +211,8 @@ class Command(BaseCommand):
             property_image_groups = {}
             for row_idx, row in enumerate(reader, start=2):
                 img_id = self._clean_str(row.get("image_id"))
-                p_id = self._clean_str(row.get("property_id"))
+                p_id_raw = self._clean_str(row.get("property_id"))
+                p_id = str(self._parse_uuid(p_id_raw)) if p_id_raw else None
                 img_url = self._clean_str(row.get("image_url"))
                 img_type = self._clean_str(row.get("image_type")) or "elevation"
 
@@ -315,3 +322,12 @@ class Command(BaseCommand):
             return None
         dt = parse_datetime(cleaned)
         return dt
+
+    def _parse_uuid(self, val):
+        cleaned = self._clean_str(val)
+        if not cleaned:
+            return uuid.uuid4()
+        try:
+            return uuid.UUID(cleaned)
+        except ValueError:
+            return uuid.uuid5(uuid.NAMESPACE_DNS, cleaned)
