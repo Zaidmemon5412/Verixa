@@ -140,10 +140,12 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               )}
             </div>
             <h1 className="text-3xl font-extrabold text-foreground">{project.name}</h1>
-            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
-              <MapPin className="w-4 h-4 text-primary" />
-              {project.location}
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1 font-medium">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span>{project.address || project.location}</span>
             </p>
+
+
           </div>
 
           <div className="text-left md:text-right bg-card p-4 rounded-2xl border shadow-sm">

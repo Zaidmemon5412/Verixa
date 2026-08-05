@@ -393,10 +393,12 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
 
 class PropertyListSerializer(serializers.ModelSerializer):
     """
-    Lightweight list serializer for Property list endpoints including all gallery images, address & coordinates.
+    Lightweight list serializer for Property list endpoints including gallery images, address & coordinates.
     """
     locality_name = serializers.CharField(source='locality.name', read_only=True)
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    locality_detail = serializers.SerializerMethodField()
+    builder_detail = serializers.SerializerMethodField()
     primary_image = serializers.SerializerMethodField()
     images = PropertyImageSerializer(many=True, read_only=True)
     latitude = serializers.SerializerMethodField()
@@ -405,7 +407,7 @@ class PropertyListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
-            'property_id', 'property_name', 'locality_name', 'builder_name',
+            'property_id', 'property_name', 'locality_name', 'locality_detail', 'builder_name', 'builder_detail',
             'property_type', 'transaction_type', 'price', 'price_per_sqft',
             'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
             'address', 'latitude', 'longitude',
@@ -429,6 +431,32 @@ class PropertyListSerializer(serializers.ModelSerializer):
         if obj.locality and obj.locality.longitude is not None:
             return float(obj.locality.longitude)
         return 72.5714
+
+    def get_builder_detail(self, obj):
+        if not obj.builder:
+            return None
+        return {
+            "builder_id": str(obj.builder.builder_id),
+            "builder_name": obj.builder.builder_name,
+            "logo": obj.builder.logo.url if getattr(obj.builder, 'logo', None) else None,
+            "description": getattr(obj.builder, 'description', ''),
+            "experience_years": getattr(obj.builder, 'experience_years', 10),
+            "completed_projects": getattr(obj.builder, 'completed_projects', 15)
+        }
+
+    def get_locality_detail(self, obj):
+        if not obj.locality:
+            return None
+        return {
+            "locality_id": str(obj.locality.locality_id),
+            "name": obj.locality.name,
+            "city": getattr(obj.locality, 'city', 'Ahmedabad'),
+            "state": getattr(obj.locality, 'state', 'Gujarat'),
+            "pincode": getattr(obj.locality, 'pincode', ''),
+            "latitude": float(obj.locality.latitude) if getattr(obj.locality, 'latitude', None) is not None else 23.0225,
+            "longitude": float(obj.locality.longitude) if getattr(obj.locality, 'longitude', None) is not None else 72.5714
+        }
+
 
 
 

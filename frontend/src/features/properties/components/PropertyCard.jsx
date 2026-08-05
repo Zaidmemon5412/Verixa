@@ -61,10 +61,11 @@ export function PropertyCard({ project, onSelect, onSelectLegal, onToggleWishlis
           {/* Price & Location Overlay */}
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white z-10">
             <div>
-              <p className="text-xs text-white/80 font-medium flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-primary" />
-                {project.location}
+              <p className="text-xs text-white/90 font-semibold flex items-center gap-1 truncate max-w-[220px]" title={project.address || project.location}>
+                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span className="truncate">{project.address || project.location}</span>
               </p>
+
               <h3 className="text-lg font-bold tracking-tight drop-shadow-sm">
                 {project.name}
               </h3>

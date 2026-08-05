@@ -50,28 +50,38 @@ function mapApiPropertyToUi(item) {
 
   const builderName = item.builder_name || item.builder_detail?.builder_name || '';
 
-  const localityName = item.locality_name || item.locality_detail?.name || item.address || 'Ahmedabad';
+  const localityName = item.locality_name || item.locality_detail?.name || (item.address ? item.address.split(',')[1]?.trim() : null);
+
+  if (!item.address && !localityName) {
+    console.warn(`[PropertyDataAudit] Property ID ${item.property_id || item.id} missing DB address and locality records.`);
+  }
+
+  const resolvedAddress = item.address || (item.property_name && localityName ? `${item.property_name}, ${localityName}` : (localityName || 'Location Unavailable'));
 
   return {
     id: item.property_id || item.id,
     name: item.property_name || 'Unnamed Property',
     builder: builderName,
-    builderId: item.builder || item.builder_detail?.builder_id || '1',
+    builderId: item.builder || item.builder_detail?.builder_id || null,
     builderDetail: item.builder_detail || null,
     price: priceFormatted,
     priceNum: parseFloat(item.price || 0),
-    pricePerSqft: item.price_per_sqft ? `₹${parseFloat(item.price_per_sqft).toLocaleString('en-IN')}/sqft` : '₹5,200/sqft',
-    config: item.bhk ? `${item.bhk} BHK` : '2, 3 BHK',
-    bhkNum: item.bhk || 2,
+    pricePerSqft: item.price_per_sqft ? `₹${parseFloat(item.price_per_sqft).toLocaleString('en-IN')}/sqft` : 'N/A',
+    config: item.bhk ? `${item.bhk} BHK` : 'N/A',
+    bhkNum: item.bhk || 0,
     propertyType: item.property_type || 'Apartment',
     transactionType: item.transaction_type || 'Sale',
     possession: item.status || 'Ready to Move',
-    location: localityName,
-    locality: localityName.split(',')[0],
+    location: localityName || 'Location Unavailable',
+    locality: item.locality_name || item.locality_detail?.name || (localityName || 'Location Unavailable'),
+    city: item.locality_detail?.city || 'Ahmedabad',
+    state: item.locality_detail?.state || 'Gujarat',
     localityDetail: item.locality_detail || null,
-    address: item.address || (item.property_name ? `${item.property_name}, ${localityName}` : localityName),
-    latitude: item.latitude != null ? parseFloat(item.latitude) : null,
-    longitude: item.longitude != null ? parseFloat(item.longitude) : null,
+    address: resolvedAddress,
+    latitude: item.latitude != null ? parseFloat(item.latitude) : (item.locality_detail?.latitude != null ? parseFloat(item.locality_detail.latitude) : null),
+    longitude: item.longitude != null ? parseFloat(item.longitude) : (item.locality_detail?.longitude != null ? parseFloat(item.locality_detail.longitude) : null),
+
+
 
     image: finalPrimaryImage,
     images: finalGalleryImages,

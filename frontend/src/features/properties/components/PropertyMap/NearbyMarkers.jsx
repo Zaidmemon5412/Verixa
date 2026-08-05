@@ -109,14 +109,21 @@ export function NearbyMarkers({ property, nearbyPlaces = [], activeCategory = 'a
                 {property?.locality || 'Ahmedabad'}
               </span>
             </div>
+            {property?.address && (
+              <p className="text-[11px] text-slate-600 flex items-start gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200/60 mt-1">
+                <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0 mt-0.5" />
+                <span className="leading-tight">{property.address}</span>
+              </p>
+            )}
             {property?.builder && (
-              <div className="text-[11px] text-slate-600 flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200/60">
+              <div className="text-[11px] text-slate-600 flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200/60 mt-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span>Developer: <strong className="text-slate-900">{property.builder}</strong></span>
               </div>
             )}
           </div>
         </Popup>
+
       </Marker>
 
       {/* Nearby Places Markers */}

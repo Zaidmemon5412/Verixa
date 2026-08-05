@@ -29,10 +29,26 @@ function MapViewController({ center, zoom }) {
 }
 
 export function PropertyMap({ property, nearbyPlaces = [], radiusKm = 2, mapType = 'streets', activeCategory = 'all' }) {
+  const hasValidCoords = property?.latitude != null && property?.longitude != null && !isNaN(parseFloat(property.latitude)) && !isNaN(parseFloat(property.longitude));
+
   const center = useMemo(() => [
-    parseFloat(property?.latitude) || 23.0225,
-    parseFloat(property?.longitude) || 72.5714
-  ], [property?.latitude, property?.longitude]);
+    hasValidCoords ? parseFloat(property.latitude) : 23.0225,
+    hasValidCoords ? parseFloat(property.longitude) : 72.5714
+  ], [property?.latitude, property?.longitude, hasValidCoords]);
+
+  if (!hasValidCoords) {
+    return (
+      <div className="w-full h-full min-h-[300px] rounded-2xl bg-muted/40 border border-dashed border-border flex flex-col items-center justify-center p-6 text-center space-y-2">
+        <div className="p-3 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+          <span className="font-extrabold text-sm">Location Unavailable</span>
+        </div>
+        <p className="text-xs text-muted-foreground max-w-xs">
+          GPS latitude/longitude coordinates are not specified in database for property "{property?.name || 'Selected Property'}".
+        </p>
+      </div>
+    );
+  }
+
 
   const radiusInMeters = radiusKm * 1000;
   const currentTile = TILE_SERVERS[mapType] || TILE_SERVERS.streets;
