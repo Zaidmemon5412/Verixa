@@ -1,177 +1,146 @@
-import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Building2, Search, User, Menu, X, ShieldCheck, LayoutDashboard, LogOut } from 'lucide-react';
-import useAuth from '../../features/auth/hooks/useAuth';
+import React, { useState } from 'react';
+import { 
+  Building2, Search, ArrowLeftRight, TrendingUp, Heart, 
+  User, Menu, X, Sun, Moon, MapPin
+} from 'lucide-react';
+import { Button } from './ui/button';
 
-/**
- * Navbar Component for MainLayout.
- * Provides primary platform navigation, search placeholder, and session actions.
- */
-export const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
-  const navigate = useNavigate();
+export function Navbar({ activeTab = 'home', onNavigate, wishlistCount = 0, isDark, toggleDarkMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Properties', path: '/properties' },
-    { label: 'Builders', path: '/builders' },
+    { id: 'home', label: 'Home' },
+    { id: 'projects', label: 'Properties' },
+    { id: 'builders', label: 'Builders' },
+    { id: 'localities', label: 'Localities' },
+    { id: 'compare', label: 'Compare', icon: ArrowLeftRight },
+    { id: 'market', label: 'Market Trends', icon: TrendingUp },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center space-x-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 group-hover:bg-brand-500/30 transition-all shadow-md shadow-brand-500/10">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <span className="text-lg font-extrabold text-white tracking-tight">
-              VERIXA<span className="text-brand-400">.</span>
-            </span>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/'}
-                className={({ isActive }) =>
-                  `px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-colors ${
-                    isActive
-                      ? 'bg-white/5 text-white font-bold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          {/* Right Action Bar */}
-          <div className="hidden md:flex items-center space-x-3">
-            {/* Quick Search Input Trigger Placeholder */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search properties, builders..."
-                className="w-48 lg:w-60 pl-8 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
-                readOnly
-                onClick={() => navigate('/properties')}
-              />
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-            </div>
-
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/dashboard"
-                  className="px-3.5 py-1.5 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 hover:bg-brand-500/20 text-xs font-semibold flex items-center space-x-1.5 transition-all"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span>Dashboard</span>
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                  title="Sign Out"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/login"
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-3.5 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all shadow-sm shadow-brand-500/20"
-                >
-                  Get Started
-                </Link>
-              </div>
-            )}
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+        {/* Brand Logo */}
+        <div 
+          onClick={() => onNavigate && onNavigate('home')} 
+          className="flex items-center gap-2 cursor-pointer group"
+        >
+          <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-md transition-transform group-hover:scale-105">
+            <Building2 className="w-5 h-5" />
           </div>
+          <div>
+            <span className="text-xl font-bold tracking-tight text-foreground">
+              VERIXA
+            </span>
+            <span className="hidden sm:inline-block text-[10px] uppercase font-semibold text-primary tracking-wider ml-1.5 px-1.5 py-0.5 bg-primary/10 rounded">
+              Decision Engine
+            </span>
+          </div>
+        </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onNavigate && onNavigate(item.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-primary/10 text-primary font-semibold'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                }`}
+              >
+                {Icon && <Icon className="w-4 h-4" />}
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-2">
+          {/* Wishlist Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onNavigate && onNavigate('wishlist')}
+            className="relative"
+            title="Wishlist"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            <Heart className="w-5 h-5 text-muted-foreground hover:text-destructive transition-colors" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
+                {wishlistCount}
+              </span>
+            )}
+          </Button>
+
+          {/* Dark Mode Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDarkMode}
+            title={isDark ? 'Light Mode' : 'Dark Mode'}
+          >
+            {isDark ? (
+              <Sun className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Moon className="w-5 h-5 text-slate-700" />
+            )}
+          </Button>
+
+          {/* Profile / Account */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onNavigate && onNavigate('profile')}
+            className="hidden sm:flex items-center gap-2"
+          >
+            <User className="w-4 h-4" />
+            <span>Profile</span>
+          </Button>
+
+          {/* Mobile Menu Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-white/5 bg-slate-950 px-4 pt-2 pb-4 space-y-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-900"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <div className="pt-2 border-t border-slate-900 flex flex-col space-y-2">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2 text-center rounded-lg bg-brand-500/20 border border-brand-500/30 text-brand-300 text-sm font-semibold"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full py-2 text-center rounded-lg bg-red-500/10 text-red-400 text-sm font-semibold"
-                >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2 text-center rounded-lg bg-slate-900 text-slate-300 text-sm font-semibold"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2 text-center rounded-lg bg-brand-500 text-white text-sm font-bold"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
-          </div>
+        <div className="md:hidden border-b bg-background px-4 pt-2 pb-4 space-y-1 animate-in slide-in-from-top">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (onNavigate) onNavigate(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium text-left ${
+                  isActive
+                    ? 'bg-primary/10 text-primary font-semibold'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                }`}
+              >
+                {Icon && <Icon className="w-4 h-4" />}
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </header>
   );
-};
-
-export default Navbar;
+}
