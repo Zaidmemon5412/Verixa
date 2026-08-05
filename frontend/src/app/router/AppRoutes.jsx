@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
-import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
+
 
 // Layout wrappers
 import MainLayout from '../layouts/MainLayout';
@@ -35,10 +36,14 @@ const NotFound = lazy(() => import('../../shared/components/NotFound'));
 // Route Wrapper Components for URL Parameter Passing
 function PropertyDetailPageWrapper() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const isLegalView = location.pathname.includes('/legal');
+
   return (
     <PropertyDetailPage
       projectId={id}
+      isLegalView={isLegalView}
       onBack={() => navigate('/properties')}
       onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
     />
@@ -49,10 +54,17 @@ function PropertiesPageWrapper() {
   const navigate = useNavigate();
   return (
     <PropertiesPage
-      onSelectProject={(id) => navigate(`/properties/${id}`)}
+      onSelectProject={(id, view) => {
+        if (view === 'legal') {
+          navigate(`/properties/${id}/legal`);
+        } else {
+          navigate(`/properties/${id}`);
+        }
+      }}
     />
   );
 }
+
 
 function BuildersPageWrapper() {
   const navigate = useNavigate();
@@ -112,6 +124,14 @@ export const AppRoutes = () => {
           }
         />
         <Route
+          path="/properties/:id/legal"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <PropertyDetailPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
           path="/property/:id"
           element={
             <AppSuspense fallback={<PageSkeleton />}>
@@ -119,6 +139,15 @@ export const AppRoutes = () => {
             </AppSuspense>
           }
         />
+        <Route
+          path="/property/:id/legal"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <PropertyDetailPageWrapper />
+            </AppSuspense>
+          }
+        />
+
         <Route
           path="/builders"
           element={

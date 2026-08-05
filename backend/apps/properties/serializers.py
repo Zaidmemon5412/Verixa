@@ -11,7 +11,8 @@ from apps.builders.models import Builder
 class PropertyImageSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='image_id', read_only=True)
     image = serializers.URLField(source='image_url', read_only=True)
-    image_url = serializers.URLField(source='image_url', read_only=True)
+    image_url = serializers.URLField(read_only=True)
+
     descriptions = serializers.CharField(
         source='image_type',
         required=False,
@@ -392,11 +393,12 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
 
 class PropertyListSerializer(serializers.ModelSerializer):
     """
-    Lightweight list serializer for Property list endpoints.
+    Lightweight list serializer for Property list endpoints including all gallery images.
     """
     locality_name = serializers.CharField(source='locality.name', read_only=True)
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
     primary_image = serializers.SerializerMethodField()
+    images = PropertyImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Property
@@ -404,12 +406,13 @@ class PropertyListSerializer(serializers.ModelSerializer):
             'property_id', 'property_name', 'locality_name', 'builder_name',
             'property_type', 'transaction_type', 'price', 'price_per_sqft',
             'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
-            'primary_image', 'created_at'
+            'primary_image', 'images', 'created_at'
         ]
 
     def get_primary_image(self, obj):
         primary_img = obj.images.filter(is_primary=True).first() or obj.images.first()
         return primary_img.image_url if primary_img else None
+
 
 
 from apps.locations.serializers import NearbyPlaceSerializer
@@ -421,6 +424,9 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
     """
     locality_name = serializers.CharField(source='locality.name', read_only=True)
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    builder_detail = serializers.SerializerMethodField()
+    locality_detail = serializers.SerializerMethodField()
+    amenities = serializers.SerializerMethodField()
     images = PropertyImageSerializer(many=True, read_only=True)
     documents = PropertyDocumentSerializer(many=True, read_only=True)
     listings = PropertyListingSerializer(many=True, read_only=True)
@@ -430,15 +436,49 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
-            'property_id', 'builder', 'builder_name', 'locality', 'locality_name',
-            'rera_number', 'property_name', 'property_type', 'transaction_type',
-            'price', 'price_per_sqft', 'bhk', 'carpet_area', 'builtup_area',
-            'super_builtup_area', 'bathrooms', 'balconies', 'parking_spaces',
-            'floor_number', 'total_floors', 'furnishing_status', 'facing',
-            'construction_age', 'land_area', 'address', 'latitude', 'longitude',
-            'status', 'launch_date', 'completion_date', 'description',
-            'images', 'documents', 'listings', 'legal_info', 'nearby_places_grouped',
-            'created_at', 'updated_at'
+            'property_id', 'builder', 'builder_name', 'builder_detail', 'locality',
+            'locality_name', 'locality_detail', 'rera_number', 'property_name',
+            'property_type', 'transaction_type', 'price', 'price_per_sqft', 'bhk',
+            'carpet_area', 'builtup_area', 'super_builtup_area', 'bathrooms',
+            'balconies', 'parking_spaces', 'floor_number', 'total_floors',
+            'furnishing_status', 'facing', 'construction_age', 'land_area',
+            'address', 'latitude', 'longitude', 'status', 'launch_date',
+            'completion_date', 'description', 'amenities', 'images', 'documents',
+            'listings', 'legal_info', 'nearby_places_grouped', 'created_at', 'updated_at'
+        ]
+
+    def get_builder_detail(self, obj):
+        if not obj.builder:
+            return None
+        return {
+            "builder_id": str(obj.builder.builder_id),
+            "builder_name": obj.builder.builder_name,
+            "logo": obj.builder.logo.url if obj.builder.logo else None,
+            "description": getattr(obj.builder, 'description', ''),
+            "experience_years": getattr(obj.builder, 'experience_years', 10),
+            "completed_projects": getattr(obj.builder, 'completed_projects', 15)
+        }
+
+    def get_locality_detail(self, obj):
+        if not obj.locality:
+            return None
+        return {
+            "locality_id": str(obj.locality.locality_id),
+            "name": obj.locality.name,
+            "city": getattr(obj.locality, 'city', 'Ahmedabad'),
+            "state": getattr(obj.locality, 'state', 'Gujarat'),
+            "pincode": getattr(obj.locality, 'pincode', '')
+        }
+
+    def get_amenities(self, obj):
+        pa_list = obj.property_amenities.select_related('amenity').all()
+        return [
+            {
+                "amenity_id": str(pa.amenity.amenity_id),
+                "amenity_name": pa.amenity.amenity_name,
+                "category": getattr(pa.amenity, 'category', 'General')
+            }
+            for pa in pa_list
         ]
 
     def get_nearby_places_grouped(self, obj):
@@ -447,5 +487,6 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
         for place_type, places in grouped.items():
             result[place_type] = NearbyPlaceSerializer(places, many=True).data
         return result
+
 
 
