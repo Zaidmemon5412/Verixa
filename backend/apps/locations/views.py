@@ -9,6 +9,8 @@ from django.db import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action
+from rest_framework.views import APIView
 
 from .models import Locality, NearbyPlace
 from .serializers import (
@@ -18,6 +20,7 @@ from .serializers import (
     NearbyPlaceSerializer,
     NearbyPlaceCreateSerializer,
     NearbyPlaceUpdateSerializer,
+    NearbyPlaceDistanceSerializer,
 )
 from .services import (
     create_locality,
@@ -30,6 +33,8 @@ from .services import (
     get_all_nearby_places,
     update_nearby_place,
     delete_nearby_place,
+    get_locality_nearby_places_with_distances,
+    get_global_nearby_places_with_distances,
 )
 
 logger = logging.getLogger(__name__)
@@ -89,6 +94,43 @@ class LocalityViewSet(viewsets.ViewSet):
                 "message": "An internal server error occurred.",
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['get'], url_path='nearby')
+    def nearby(self, request, pk=None, *args, **kwargs):
+        """
+        GET /localities/<locality_id>/nearby/
+        Retrieves nearby places for a locality with calculated distances.
+        Supports query parameters: category, radius, limit.
+        """
+        try:
+            locality = get_locality(pk)
+        except (Locality.DoesNotExist, DjangoValidationError, ValueError):
+            return Response({
+                "success": False,
+                "message": "Locality not found.",
+                "data": {}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        category = request.query_params.get('category')
+        radius = request.query_params.get('radius')
+        limit = request.query_params.get('limit')
+
+        nearby_places_list = get_locality_nearby_places_with_distances(
+            locality_obj=locality,
+            category=category,
+            radius=radius,
+            limit=limit
+        )
+
+        return Response({
+            "success": True,
+            "message": "Locality nearby places retrieved successfully.",
+            "locality_id": str(locality.locality_id),
+            "locality": locality.name,
+            "city": locality.city,
+            "total_count": len(nearby_places_list),
+            "nearby_places": nearby_places_list
+        }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         """
@@ -394,3 +436,45 @@ class NearbyPlaceViewSet(viewsets.ViewSet):
                 "message": "An internal server error occurred.",
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GlobalNearbyPlacesAPIView(APIView):
+    """
+    GET /api/nearby/
+    Global nearby place search endpoint querying stored PostgreSQL database records.
+    Supports query parameters: locality, category, radius, limit, lat, lon.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        locality_param = request.query_params.get('locality')
+        category = request.query_params.get('category')
+        radius = request.query_params.get('radius')
+        limit = request.query_params.get('limit')
+        lat = request.query_params.get('lat')
+        lon = request.query_params.get('lon')
+
+        try:
+            nearby_places_list = get_global_nearby_places_with_distances(
+                locality_filter=locality_param,
+                origin_lat=lat,
+                origin_lon=lon,
+                category=category,
+                radius=radius,
+                limit=limit
+            )
+
+            return Response({
+                "success": True,
+                "message": "Nearby places retrieved successfully.",
+                "total_count": len(nearby_places_list),
+                "nearby_places": nearby_places_list
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error querying global nearby places")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
