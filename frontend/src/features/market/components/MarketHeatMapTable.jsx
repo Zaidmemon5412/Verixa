@@ -19,10 +19,11 @@ export function MarketHeatMapTable({ localityData, isLoading }) {
     return <Skeleton className="h-80 rounded-2xl" />;
   }
 
-  const items = localityData || [];
+  const items = Array.isArray(localityData) ? localityData : [];
   const filteredItems = items.filter(loc => 
-    loc.name.toLowerCase().includes(searchTerm.toLowerCase())
+    loc && loc.name && String(loc.name).toLowerCase().includes(String(searchTerm || '').toLowerCase())
   );
+
 
   const getRatingBadge = (rating) => {
     switch (rating) {

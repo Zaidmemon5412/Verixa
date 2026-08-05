@@ -73,7 +73,8 @@ export function BuilderIntelligenceSection({ buildersData, isLoading }) {
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-foreground">{b.marketShare}</span>
                     <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
-                      <div className="h-full bg-primary rounded-full" style={{ width: b.marketShare }} />
+                      <div className="h-full bg-primary rounded-full" style={{ width: typeof b.marketShare === 'number' ? `${b.marketShare}%` : (b.marketShare || '15%') }} />
+
                     </div>
                   </div>
                 </td>
