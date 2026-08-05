@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_SEARCH_RADIUS_KM = 5.0
 
-# Overpass API endpoints (Primary and fallback mirrors)
+# Overpass API endpoints (Primary official server and fallback mirrors)
 OVERPASS_ENDPOINTS = [
-    "https://overpass.private.coffee/api/interpreter",
-    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
     "https://overpass-api.de/api/interpreter",
+    "https://z.overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ]
 
 # Standardized Categories mapped to OpenStreetMap tags
@@ -205,7 +205,7 @@ class OSMNearbySearchService:
     Service to perform nearby amenity searches using OpenStreetMap Overpass API.
     """
 
-    def __init__(self, timeout_seconds: int = 8):
+    def __init__(self, timeout_seconds: int = 15):
         self.timeout = timeout_seconds
 
     def build_overpass_query(self, lat: float, lon: float, radius_meters: int) -> str:

@@ -1,7 +1,9 @@
 import time
 import logging
 from django.core.management.base import BaseCommand
+# pyrefly: ignore [missing-import]
 from apps.locations.models import Locality
+# pyrefly: ignore [missing-import]
 from apps.locations.services import sync_locality_nearby_places
 
 logger = logging.getLogger(__name__)

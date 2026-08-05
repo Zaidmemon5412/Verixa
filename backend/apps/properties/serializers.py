@@ -393,25 +393,71 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
 
 class PropertyListSerializer(serializers.ModelSerializer):
     """
-    Lightweight list serializer for Property list endpoints including all gallery images.
+    Lightweight list serializer for Property list endpoints including gallery images, address & coordinates.
     """
     locality_name = serializers.CharField(source='locality.name', read_only=True)
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    locality_detail = serializers.SerializerMethodField()
+    builder_detail = serializers.SerializerMethodField()
     primary_image = serializers.SerializerMethodField()
     images = PropertyImageSerializer(many=True, read_only=True)
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
         fields = [
-            'property_id', 'property_name', 'locality_name', 'builder_name',
+            'property_id', 'property_name', 'locality_name', 'locality_detail', 'builder_name', 'builder_detail',
             'property_type', 'transaction_type', 'price', 'price_per_sqft',
             'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
+            'address', 'latitude', 'longitude',
             'primary_image', 'images', 'created_at'
         ]
 
     def get_primary_image(self, obj):
         primary_img = obj.images.filter(is_primary=True).first() or obj.images.first()
         return primary_img.image_url if primary_img else None
+
+    def get_latitude(self, obj):
+        if obj.latitude is not None:
+            return float(obj.latitude)
+        if obj.locality and obj.locality.latitude is not None:
+            return float(obj.locality.latitude)
+        return 23.0225
+
+    def get_longitude(self, obj):
+        if obj.longitude is not None:
+            return float(obj.longitude)
+        if obj.locality and obj.locality.longitude is not None:
+            return float(obj.locality.longitude)
+        return 72.5714
+
+    def get_builder_detail(self, obj):
+        if not obj.builder:
+            return None
+        return {
+            "builder_id": str(obj.builder.builder_id),
+            "builder_name": obj.builder.builder_name,
+            "logo": obj.builder.logo.url if getattr(obj.builder, 'logo', None) else None,
+            "description": getattr(obj.builder, 'description', ''),
+            "experience_years": getattr(obj.builder, 'experience_years', 10),
+            "completed_projects": getattr(obj.builder, 'completed_projects', 15)
+        }
+
+    def get_locality_detail(self, obj):
+        if not obj.locality:
+            return None
+        return {
+            "locality_id": str(obj.locality.locality_id),
+            "name": obj.locality.name,
+            "city": getattr(obj.locality, 'city', 'Ahmedabad'),
+            "state": getattr(obj.locality, 'state', 'Gujarat'),
+            "pincode": getattr(obj.locality, 'pincode', ''),
+            "latitude": float(obj.locality.latitude) if getattr(obj.locality, 'latitude', None) is not None else 23.0225,
+            "longitude": float(obj.locality.longitude) if getattr(obj.locality, 'longitude', None) is not None else 72.5714
+        }
+
+
 
 
 
@@ -432,6 +478,9 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
     listings = PropertyListingSerializer(many=True, read_only=True)
     legal_info = PropertyLegalSerializer(read_only=True)
     nearby_places_grouped = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Property
@@ -447,7 +496,22 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
             'listings', 'legal_info', 'nearby_places_grouped', 'created_at', 'updated_at'
         ]
 
+    def get_latitude(self, obj):
+        if obj.latitude is not None:
+            return float(obj.latitude)
+        if obj.locality and obj.locality.latitude is not None:
+            return float(obj.locality.latitude)
+        return 23.0225
+
+    def get_longitude(self, obj):
+        if obj.longitude is not None:
+            return float(obj.longitude)
+        if obj.locality and obj.locality.longitude is not None:
+            return float(obj.locality.longitude)
+        return 72.5714
+
     def get_builder_detail(self, obj):
+
         if not obj.builder:
             return None
         return {
