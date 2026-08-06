@@ -29,7 +29,12 @@ class PropertyFilter:
                 val = uuid.UUID(str(locality))
                 queryset = queryset.filter(locality_id=val)
             except (ValueError, TypeError):
-                queryset = queryset.filter(locality__name__icontains=locality)
+                loc_str = str(locality).strip()
+                queryset = queryset.filter(
+                    Q(locality__name__icontains=loc_str) |
+                    Q(address__icontains=loc_str) |
+                    Q(property_name__icontains=loc_str)
+                )
 
         city = params.get('city')
         if city and city != 'All':
