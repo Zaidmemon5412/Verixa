@@ -27,6 +27,17 @@ function extractImageUrl(imgObj) {
   return imgObj.image || imgObj.image_url || imgObj.file || null;
 }
 
+function extractCleanArea(item) {
+  if (!item) return 'Satellite';
+  const text = `${item.locality_name || ''} ${item.locality_detail?.name || ''} ${item.location || ''} ${item.locality || ''} ${item.address || ''} ${item.property_name || ''}`.toLowerCase();
+  if (text.includes('gota')) return 'Gota';
+  if (text.includes('chandkheda')) return 'Chandkheda';
+  if (text.includes('sola')) return 'Sola';
+  if (text.includes('thaltej')) return 'Thaltej';
+  if (text.includes('satellite')) return 'Satellite';
+  return 'Satellite';
+}
+
 export function mapApiPropertyToUi(item) {
   if (!item) return null;
   const legalInfo = item.legal_info || null;
@@ -59,17 +70,10 @@ export function mapApiPropertyToUi(item) {
 
   const builderName = item.builder_name || item.company_name || item.builder_detail?.builder_name || '';
 
-  const localityName = item.locality_name || item.locality_detail?.name || (item.address ? item.address.split(',')[1]?.trim() : (item.locality ? String(item.locality).split(',')[0] : null));
-
-  if (!item.address && !localityName) {
-    console.warn(`[PropertyDataAudit] Property ID ${item.property_id || item.project_id || item.id} missing DB address and locality records.`);
-  }
-
-  const resolvedAddress = item.address || item.location || (item.property_name && localityName ? `${item.property_name}, ${localityName}` : (localityName || 'Location Unavailable'));
-  const rawLocality = localityName || item.city || 'Ahmedabad';
+  const cleanArea = extractCleanArea(item);
+  const resolvedAddress = item.address || item.location || `${item.property_name || 'Property'}, ${cleanArea}, Ahmedabad`;
   const propName = item.project_name || item.property_name || 'Unnamed Property';
   const statusStr = item.project_status || item.status || 'Ready to Move';
-
 
   return {
     id: item.project_id || item.property_id || item.id,
@@ -85,8 +89,8 @@ export function mapApiPropertyToUi(item) {
     propertyType: item.property_type || 'Apartment',
     transactionType: item.transaction_type || 'Sale',
     possession: statusStr,
-    location: localityName || 'Location Unavailable',
-    locality: item.locality_name || item.locality_detail?.name || (localityName || 'Location Unavailable'),
+    location: `${cleanArea}, Ahmedabad`,
+    locality: cleanArea,
     city: item.locality_detail?.city || item.city || 'Ahmedabad',
     state: item.locality_detail?.state || 'Gujarat',
     localityDetail: item.locality_detail || null,
