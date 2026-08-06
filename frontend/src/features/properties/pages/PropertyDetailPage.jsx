@@ -17,6 +17,7 @@ import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { EMICalculatorModal } from '../components/EMICalculatorModal';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import PropertyMapSection from '../components/PropertyMap';
+import { AIFairPriceCard } from '../components/AIFairPriceCard';
 
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const { user } = useAuth();
@@ -220,8 +221,11 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
       {/* Grid Specs & Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2-Cols: Overview, Legal & Amenities */}
+        {/* Left 2-Cols: Overview, AI Fair Price, Legal & Amenities */}
         <div className="lg:col-span-2 space-y-8">
+          {/* AI Fair Price Prediction Card */}
+          <AIFairPriceCard propertyId={project.id} property={project} />
+
           {/* PostgreSQL Legal Audit Card */}
           {legalInfo && (
             <Card id="legal-audit-section" className="rounded-2xl border bg-card shadow-sm scroll-mt-24">

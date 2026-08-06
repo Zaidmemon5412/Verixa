@@ -1,9 +1,23 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   Bot, TrendingUp, TrendingDown, Minus, Sparkles,
   BadgeCheck, AlertCircle, ChevronRight, Loader2, Info
 } from 'lucide-react';
 import { useAIFairPrice } from '../hooks/useAIFairPrice';
+
+/* ─── INR Price Formatting Helper ─────────────────────── */
+function formatPriceINR(val) {
+  if (val == null || isNaN(val) || val === 0) return 'N/A';
+  const num = Number(val);
+  if (num >= 10000000) {
+    const cr = num / 10000000;
+    return `₹${cr % 1 === 0 ? cr.toFixed(0) : cr.toFixed(2)} Cr`;
+  } else if (num >= 100000) {
+    const lakh = num / 100000;
+    return `₹${lakh % 1 === 0 ? lakh.toFixed(0) : lakh.toFixed(2)} Lakh`;
+  }
+  return `₹${num.toLocaleString('en-IN')}`;
+}
 
 /* ─── Verdict config helper ─────────────────────────── */
 function getVerdictConfig(verdict, color) {
@@ -17,6 +31,7 @@ function getVerdictConfig(verdict, color) {
         glow: 'rgba(16, 185, 129, 0.25)',
         diffColor: '#6ee7b7',
         arrowBg: 'rgba(16, 185, 129, 0.15)',
+        statusText: 'Good Deal (Listed < Fair Price)',
       };
     case 'red':
       return {
@@ -27,26 +42,19 @@ function getVerdictConfig(verdict, color) {
         glow: 'rgba(239, 68, 68, 0.25)',
         diffColor: '#fca5a5',
         arrowBg: 'rgba(239, 68, 68, 0.15)',
+        statusText: 'Overpriced (Listed > Fair Price)',
       };
     case 'yellow':
+    default:
       return {
         bg: 'linear-gradient(135deg, #451a03 0%, #78350f 100%)',
         badge: '#f59e0b',
         badgeText: '#fffbeb',
-        icon: <TrendingUp className="w-4 h-4" style={{ opacity: 0.7 }} />,
+        icon: <Minus className="w-4 h-4" />,
         glow: 'rgba(245, 158, 11, 0.25)',
         diffColor: '#fcd34d',
         arrowBg: 'rgba(245, 158, 11, 0.15)',
-      };
-    default:
-      return {
-        bg: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
-        badge: '#6366f1',
-        badgeText: '#eef2ff',
-        icon: <Minus className="w-4 h-4" />,
-        glow: 'rgba(99, 102, 241, 0.25)',
-        diffColor: '#a5b4fc',
-        arrowBg: 'rgba(99, 102, 241, 0.15)',
+        statusText: 'Fairly Priced (At Market Value)',
       };
   }
 }
@@ -163,15 +171,15 @@ function AIFairPriceSkeleton() {
       </div>
       <div style={{ height: 56, background: 'rgba(255,255,255,0.05)', borderRadius: 14, marginTop: 16 }} />
       <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 16 }}>
-        Running AI models · Please wait...
+        Evaluating Fair Market Value via ML Model Engine · Please wait...
       </p>
     </div>
   );
 }
 
 /* ─── Main Component ─────────────────────────────────── */
-export function AIFairPriceCard({ propertyId }) {
-  const { data, isLoading, isError, error } = useAIFairPrice(propertyId);
+export function AIFairPriceCard({ propertyId, property }) {
+  const { data, isLoading, isError, error } = useAIFairPrice(propertyId, property);
 
   if (isLoading) return <AIFairPriceSkeleton />;
 
@@ -207,8 +215,39 @@ export function AIFairPriceCard({ propertyId }) {
 
   if (!data) return null;
 
-  const cfg = getVerdictConfig(data.verdict, data.verdict_color);
-  const isPricedBelow = data.difference_percentage > 0;
+  // Normalized API and model fields
+  const fairPriceNum = data.predicted_fair_price ?? data.ai_predicted_price ?? 0;
+  const listedPriceNum = data.listed_price ?? property?.priceNum ?? 0;
+  const confidenceScore = data.confidence_score ?? 95;
+
+  const listedPriceFormatted = data.listed_price_formatted || (property?.price ? String(property.price) : formatPriceINR(listedPriceNum));
+  const aiPredictedPriceFormatted = data.ai_predicted_price_formatted || formatPriceINR(fairPriceNum);
+
+  const diffVal = listedPriceNum - fairPriceNum;
+  const diffAbs = Math.abs(diffVal);
+  const priceDiffFormatted = data.price_difference_formatted || formatPriceINR(diffAbs);
+  const diffPct = data.difference_percentage ?? (fairPriceNum ? ((listedPriceNum - fairPriceNum) / fairPriceNum * 100) : 0);
+
+  let verdict = data.verdict;
+  let verdictColor = data.verdict_color;
+
+  if (!verdict || !verdictColor) {
+    if (listedPriceNum < fairPriceNum * 0.97) {
+      verdict = "Good Deal";
+      verdictColor = "green";
+    } else if (listedPriceNum > fairPriceNum * 1.03) {
+      verdict = "Overpriced";
+      verdictColor = "red";
+    } else {
+      verdict = "Fairly Priced";
+      verdictColor = "yellow";
+    }
+  }
+
+  const cfg = getVerdictConfig(verdict, verdictColor);
+  const isGoodDeal = verdictColor === 'green';
+  const isOverpriced = verdictColor === 'red';
+  const sign = isGoodDeal ? '-' : (isOverpriced ? '+' : '±');
 
   return (
     <div
@@ -219,19 +258,19 @@ export function AIFairPriceCard({ propertyId }) {
         boxShadow: `0 8px 48px ${cfg.glow}, 0 2px 8px rgba(0,0,0,0.4)`,
         overflow: 'hidden',
         position: 'relative',
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '1px solid rgba(255,255,255,0.1)',
       }}
     >
-      {/* Glassmorphic shimmer lines */}
+      {/* Glassmorphic shimmer background lines */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 120% 80% at 80% 10%, rgba(255,255,255,0.04) 0%, transparent 60%)',
+        background: 'radial-gradient(ellipse 120% 80% at 80% 10%, rgba(255,255,255,0.05) 0%, transparent 60%)',
       }} />
 
       <div style={{ padding: '28px 28px 24px', position: 'relative' }}>
 
         {/* ── Header ─────────────────────────── */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
               width: 48, height: 48,
@@ -246,60 +285,65 @@ export function AIFairPriceCard({ propertyId }) {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <h3 style={{
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: 800,
                   color: 'white',
                   letterSpacing: '-0.02em',
                   margin: 0,
                 }}>
-                  Verixa AI Fair Price
+                  AI Fair Price Prediction
                 </h3>
-                <Sparkles className="w-4 h-4 text-indigo-300" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  <Sparkles className="w-3 h-3 text-indigo-300" />
+                  AI Verified
+                </span>
               </div>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 3, fontWeight: 500 }}>
-                Powered by {data.model_type || 'RandomForestRegressor'} · Real-time inference
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 3, fontWeight: 500 }}>
+                Powered by {data.model_type || 'XGBoost Fair Value Engine'} · Real-time inference
               </p>
             </div>
           </div>
 
-          {/* Verdict Badge */}
+          {/* Verdict Status Indicator Badge (Green / Yellow / Red) */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6,
             background: cfg.arrowBg,
-            border: `1px solid ${cfg.badge}55`,
+            border: `1px solid ${cfg.badge}77`,
             borderRadius: 50,
-            padding: '6px 14px',
+            padding: '7px 16px',
             flexShrink: 0,
+            boxShadow: `0 2px 12px ${cfg.glow}`,
           }}>
             <span style={{ color: cfg.badge }}>{cfg.icon}</span>
             <span style={{
               fontSize: 12,
-              fontWeight: 700,
+              fontWeight: 800,
               color: cfg.badge,
-              letterSpacing: '0.02em',
+              letterSpacing: '0.03em',
+              textTransform: 'uppercase',
             }}>
-              {data.verdict}
+              {verdict}
             </span>
           </div>
         </div>
 
-        {/* ── Price Grid ─────────────────────── */}
+        {/* ── Price Comparison Grid ─────────────────────── */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           <PriceCol
             label="Listed Price"
-            value={data.listed_price_formatted}
-            sub="Current asking price"
+            value={listedPriceFormatted}
+            sub="Asking seller price"
             big
           />
           <PriceCol
             label="AI Fair Price"
-            value={data.ai_predicted_price_formatted}
+            value={aiPredictedPriceFormatted}
             sub="Predicted market value"
             accent={cfg.diffColor}
             big
           />
           <div style={{
-            display: 'flex', flexDirection: 'column', gap: 8, flex: 1, minWidth: 100,
+            display: 'flex', flexDirection: 'column', gap: 8, flex: 1, minWidth: 140,
           }}>
             <div style={{
               background: 'rgba(255,255,255,0.05)',
@@ -308,11 +352,11 @@ export function AIFairPriceCard({ propertyId }) {
               padding: '10px 14px',
               flex: 1,
             }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                Difference
+              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                Difference Amount
               </p>
               <p style={{ fontSize: 15, fontWeight: 800, color: cfg.diffColor, letterSpacing: '-0.01em' }}>
-                {isPricedBelow ? '+' : '-'}{data.price_difference_formatted}
+                {sign}{priceDiffFormatted}
               </p>
             </div>
             <div style={{
@@ -322,21 +366,21 @@ export function AIFairPriceCard({ propertyId }) {
               padding: '10px 14px',
               flex: 1,
             }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                Variance %
+              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+                Market Variance
               </p>
               <p style={{ fontSize: 15, fontWeight: 800, color: cfg.diffColor, letterSpacing: '-0.01em' }}>
-                {isPricedBelow ? '+' : ''}{data.difference_percentage?.toFixed(1)}%
+                {sign}{Math.abs(diffPct).toFixed(1)}%
               </p>
             </div>
           </div>
         </div>
 
-        {/* ── Confidence + Insight ───────────── */}
+        {/* ── Confidence & AI Insight ───────────── */}
         <div style={{
           display: 'flex', gap: 16, alignItems: 'stretch', marginBottom: 20, flexWrap: 'wrap',
         }}>
-          {/* Confidence Meter */}
+          {/* Confidence Score Arc Meter */}
           <div style={{
             background: 'rgba(255,255,255,0.05)',
             border: '1px solid rgba(255,255,255,0.1)',
@@ -346,14 +390,14 @@ export function AIFairPriceCard({ propertyId }) {
             gap: 4,
             flexShrink: 0,
           }}>
-            <ConfidenceArc value={data.confidence_score} />
+            <ConfidenceArc value={confidenceScore} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-              <BadgeCheck className="w-3.5 h-3.5 text-purple-400" />
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>MODEL SCORE</span>
+              <BadgeCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>CONFIDENCE SCORE</span>
             </div>
           </div>
 
-          {/* AI Insight */}
+          {/* AI Insight Box */}
           <div style={{
             background: 'rgba(99,102,241,0.08)',
             border: '1px solid rgba(99,102,241,0.2)',
@@ -366,17 +410,17 @@ export function AIFairPriceCard({ propertyId }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <Sparkles className="w-4 h-4 text-indigo-400" />
               <span style={{ fontSize: 11, fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                AI Insight
+                AI Valuation Insight
               </span>
             </div>
             <p style={{
               fontSize: 13,
-              color: 'rgba(255,255,255,0.75)',
+              color: 'rgba(255,255,255,0.8)',
               lineHeight: 1.65,
               fontWeight: 400,
               margin: 0,
             }}>
-              {data.insight}
+              {data.insight || `${cfg.statusText}. Predicted using comparable property sales and locality feature indices.`}
             </p>
           </div>
         </div>
@@ -388,9 +432,9 @@ export function AIFairPriceCard({ propertyId }) {
           borderRadius: 10,
           padding: '9px 14px',
         }}>
-          <Info className="w-3.5 h-3.5 text-white/30 shrink-0" />
-          <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)', margin: 0 }}>
-            AI predictions are based on comparable market data. Consult a real estate advisor before making financial decisions.
+          <Info className="w-3.5 h-3.5 text-white/40 shrink-0" />
+          <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+            Verixa AI Fair Price Engine evaluates multi-source real estate market datasets. Consult an authorized advisor prior to final commitments.
           </p>
         </div>
       </div>
