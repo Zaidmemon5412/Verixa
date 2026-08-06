@@ -301,12 +301,9 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               ))}
             </CardContent>
           </Card>
-
-          {/* 7. Location Map */}
-          <PropertyMapSection property={project} />
         </div>
 
-        {/* RIGHT PERMANENT STICKY SIDEBAR COLUMN (lg:col-span-4 / 30%) */}
+        {/* RIGHT PERMANENT STICKY SIDEBAR COLUMN (lg:col-span-4 / 30% - Sticky down to Project Amenities) */}
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 self-start">
           {/* Action CTAs Box */}
           <Card className="rounded-2xl border-2 border-primary/30 bg-card shadow-md">
@@ -387,6 +384,11 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </Card>
           )}
         </div>
+      </div>
+
+      {/* FULL WIDTH LOCATION & SURROUNDING ECOSYSTEM SECTION (Below 2-Column Grid with No Side Gaps) */}
+      <div className="w-full pt-4">
+        <PropertyMapSection property={project} />
       </div>
 
       {/* Request Site Visit / Callback Modal */}
