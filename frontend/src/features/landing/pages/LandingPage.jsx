@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Building2, Search, ArrowRight, Shield, Play, Star, 
+  Building2, Search, ArrowRight, Shield, Star, 
   CheckCircle, XCircle, Sparkles, TrendingUp, Award, 
   Check, AlertTriangle, FileText, Lock, Users, HelpCircle, 
   ChevronRight, ArrowUpRight
@@ -8,12 +8,11 @@ import {
 import { Button } from '../../../shared/components/ui/button';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
-import { VideoDemoModal } from '../components/VideoDemoModal';
+import { PropertyHeroSlider } from '../components/PropertyHeroSlider';
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { PROJECTS } from '../../properties/constants/propertyData';
 
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
-  const [showDemoModal, setShowDemoModal] = useState(false);
   const featuredProjects = PROJECTS.slice(0, 3);
 
   return (
@@ -69,13 +68,13 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
                   <ArrowRight className="w-5 h-5" />
                 </Button>
                 <Button
-                  onClick={() => setShowDemoModal(true)}
+                  onClick={() => onNavigate && onNavigate('projects')}
                   variant="outline"
                   size="lg"
                   className="h-13 px-6 text-base font-semibold rounded-2xl gap-2"
                 >
-                  <Play className="w-4 h-4 fill-foreground" />
-                  <span>Watch 2-Min Demo</span>
+                  <Building2 className="w-4 h-4 text-primary" />
+                  <span>Browse Featured Homes</span>
                 </Button>
               </div>
 
@@ -96,46 +95,12 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
             </div>
           </div>
 
-          {/* Right Column: Hero Video / Media Preview Card */}
+          {/* Right Column: Hero Auto Property Photo Slider */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-3xl overflow-hidden border bg-card shadow-2xl group">
-              <div className="relative aspect-[4/3] bg-slate-900 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1714983007778-b370188238b8?w=800&h=600&fit=crop&auto=format"
-                  alt="Verixa Decision Engine Demo Preview"
-                  className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
-
-                {/* Play Button Overlay */}
-                <button
-                  onClick={() => setShowDemoModal(true)}
-                  className="absolute inset-0 flex items-center justify-center group/btn"
-                  title="Play Platform Demo"
-                >
-                  <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-2xl group-hover/btn:scale-110 transition-transform duration-300">
-                    <Play className="w-9 h-9 fill-primary-foreground ml-1" />
-                  </div>
-                </button>
-
-                {/* Live Floating Badge Overlay */}
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-lg">
-                    <Shield className="w-3.5 h-3.5" />
-                    100% RERA & Legal Audited
-                  </span>
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 z-10 text-white space-y-1">
-                  <span className="text-[11px] uppercase tracking-wider text-amber-400 font-bold block">
-                    Interactive Walkthrough
-                  </span>
-                  <h3 className="text-lg font-bold">
-                    See How AI Decision Scores Work
-                  </h3>
-                </div>
-              </div>
-            </div>
+            <PropertyHeroSlider 
+              onSelectProject={onSelectProject} 
+              onNavigate={onNavigate} 
+            />
           </div>
         </div>
       </section>
@@ -521,12 +486,6 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           </div>
         </div>
       </section>
-
-      {/* Demo Video Modal */}
-      <VideoDemoModal
-        isOpen={showDemoModal}
-        onClose={() => setShowDemoModal(false)}
-      />
     </div>
   );
 }
