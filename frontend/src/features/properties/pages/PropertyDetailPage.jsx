@@ -117,6 +117,15 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
     setShowInquiryModal(true);
   };
 
+  const handleOpenEMIModal = () => {
+    if (!user) {
+      toast.info('Please sign in to access financial calculators & tools.');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setShowEMIModal(true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Top Back Navigation */}
@@ -221,11 +230,8 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
       {/* Grid Specs & Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2-Cols: Overview, AI Fair Price, Legal & Amenities */}
+        {/* Left 2-Cols: Overview, Specs, Legal, Amenities & AI Fair Price */}
         <div className="lg:col-span-2 space-y-8">
-          {/* AI Fair Price Prediction Card */}
-          <AIFairPriceCard propertyId={project.id} property={project} />
-
           {/* PostgreSQL Legal Audit Card */}
           {legalInfo && (
             <Card id="legal-audit-section" className="rounded-2xl border bg-card shadow-sm scroll-mt-24">
@@ -342,9 +348,12 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               ))}
             </CardContent>
           </Card>
+
+          {/* AI Fair Price Prediction Card */}
+          <AIFairPriceCard propertyId={project.id} property={project} />
         </div>
 
-        {/* Right 1-Col: Builder & Inquiry Actions */}
+        {/* Right 1-Col: Builder, Locality Scorecard & Inquiry Actions */}
         <div className="space-y-6">
           {/* Builder Card */}
           {builder && (
@@ -395,7 +404,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             <CardContent className="p-6 space-y-4 text-center">
               <h4 className="font-bold text-foreground">Financial & Site Visit Tools</h4>
               <Button
-                onClick={() => setShowEMIModal(true)}
+                onClick={handleOpenEMIModal}
                 className="w-full rounded-xl gap-2"
                 variant="default"
               >
