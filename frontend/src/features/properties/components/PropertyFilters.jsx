@@ -36,8 +36,8 @@ export function PropertyFilters({
   // 1. BHK Options (1, 2, 3, 4 BHK - 5+ BHK removed per request)
   const bhkOptions = ['1 BHK', '2 BHK', '3 BHK', '4 BHK'];
 
-  // 2. Target 5 Primary Clean Area Options (Gota, Chandkheda, Sola, Thaltej, Satellite)
-  const areaOptions = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite'];
+  // Primary Clean Area Options (Gota, Chandkheda, Sola, Thaltej, Satellite, Maninagar)
+  const areaOptions = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite', 'Maninagar'];
 
   const propertyTypes = ['All', 'Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
   const statusOptions = ['All', 'Ready to Move', 'Under Construction', 'New Launch'];

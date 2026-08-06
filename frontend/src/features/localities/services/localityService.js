@@ -1,7 +1,7 @@
 import apiClient from '../../../shared/services/apiClient';
 import { LOCALITIES } from '../constants/localityData';
 
-const TARGET_5_NAMES = ['gota', 'chandkheda', 'sola', 'thaltej', 'satellite'];
+const TARGET_5_NAMES = ['gota', 'chandkheda', 'sola', 'thaltej', 'satellite', 'maninagar'];
 
 export const localityService = {
   async getLocalities() {

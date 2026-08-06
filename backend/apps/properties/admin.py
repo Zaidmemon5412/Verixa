@@ -16,6 +16,7 @@ from .models import (
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
     extra = 1
+    fields = ('image_url', 'image_type', 'display_order', 'is_primary')
 
 
 class PropertyDocumentInline(admin.TabularInline):
@@ -51,11 +52,11 @@ class PropertyLegalInline(admin.StackedInline):
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
     list_display = (
-        'property_name', 'locality', 'builder', 'property_type',
+        'property_name', 'property_id', 'locality', 'builder', 'property_type',
         'price', 'bhk', 'furnishing_status', 'facing', 'status', 'rera_number'
     )
-    list_filter = ('property_type', 'transaction_type', 'furnishing_status', 'facing', 'status', 'locality__city')
-    search_fields = ('property_name', 'rera_number', 'locality__name', 'builder__builder_name')
+    list_filter = ('locality', 'property_type', 'transaction_type', 'bhk', 'furnishing_status', 'facing', 'status', 'locality__city')
+    search_fields = ('property_name', 'property_id', 'rera_number', 'locality__name', 'builder__builder_name', 'address')
     inlines = [
         PropertyAmenityInline,
         PropertyImageInline,

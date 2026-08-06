@@ -34,7 +34,8 @@ function extractCleanArea(item) {
   if (text.includes('sola')) return 'Sola';
   if (text.includes('thaltej')) return 'Thaltej';
   if (text.includes('satellite')) return 'Satellite';
-  return 'Satellite';
+  if (text.includes('maninagar')) return 'Maninagar';
+  return 'Maninagar';
 }
 
 function extractArray(val) {
