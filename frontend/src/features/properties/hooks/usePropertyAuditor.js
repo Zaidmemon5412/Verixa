@@ -1,19 +1,32 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../../shared/services/apiClient';
 
+const auditCache = new Map();
+
 /**
  * Custom hook to manage Verixa AI Property Auditor report generation & state.
+ * Uses in-memory caching to eliminate redundant backend queries and speed up page load.
  */
 export function usePropertyAuditor(property, builder) {
-  const [auditData, setAuditData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [auditData, setAuditData] = useState(() => property?.id ? auditCache.get(property.id) || null : null);
+  const [isLoading, setIsLoading] = useState(() => property?.id ? !auditCache.has(property.id) : true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchAuditReport() {
-      if (!property) return;
+      if (!property?.id) return;
+
+      // 1. Check in-memory cache first for instant render
+      if (auditCache.has(property.id)) {
+        if (isMounted) {
+          setAuditData(auditCache.get(property.id));
+          setIsLoading(false);
+        }
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
 
@@ -22,6 +35,7 @@ export function usePropertyAuditor(property, builder) {
         const data = response?.data || response;
 
         if (isMounted && data && data.price_analysis) {
+          auditCache.set(property.id, data);
           setAuditData(data);
           setIsLoading(false);
           return;
@@ -30,9 +44,12 @@ export function usePropertyAuditor(property, builder) {
         console.warn('[PropertyAuditor] API audit query notice, generating contextual synthesis:', err);
       }
 
-      // Contextual Deterministic Synthesis Fallback using verified property data
+      // 2. Fallback contextual synthesis
       if (isMounted) {
         const fallbackAudit = synthesizePropertyAudit(property, builder);
+        if (fallbackAudit) {
+          auditCache.set(property.id, fallbackAudit);
+        }
         setAuditData(fallbackAudit);
         setIsLoading(false);
       }
@@ -43,7 +60,7 @@ export function usePropertyAuditor(property, builder) {
     return () => {
       isMounted = false;
     };
-  }, [property?.id, property, builder]);
+  }, [property?.id]);
 
   return { auditData, isLoading, error };
 }

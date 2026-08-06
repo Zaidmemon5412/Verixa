@@ -34,7 +34,8 @@ function extractCleanArea(item) {
   if (text.includes('sola')) return 'Sola';
   if (text.includes('thaltej')) return 'Thaltej';
   if (text.includes('satellite')) return 'Satellite';
-  return 'Satellite';
+  if (text.includes('maninagar')) return 'Maninagar';
+  return 'Maninagar';
 }
 
 function extractArray(val) {
@@ -197,7 +198,18 @@ export const propertyService = {
         return mapApiPropertyToUi(rawData);
       }
     } catch (error) {
-      // Proceed to database list search
+      // Proceed to builder project fallback
+    }
+
+    try {
+      const bpResponse = await apiClient.get(`/builders/projects/${id}/`);
+      const rawBpData = bpResponse?.data?.data || bpResponse?.data || bpResponse;
+
+      if (rawBpData && (rawBpData.project_id || rawBpData.id)) {
+        return mapApiPropertyToUi(rawBpData);
+      }
+    } catch (err) {
+      // Proceed to list search
     }
 
     try {

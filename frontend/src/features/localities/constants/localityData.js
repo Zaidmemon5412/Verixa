@@ -223,5 +223,50 @@ export const LOCALITIES = [
       { month: "Jan 25", price: 6750, yield: 3.5, demand: 83 },
       { month: "Mar 25", price: 6800, yield: 3.5, demand: 84 }
     ]
+  },
+  {
+    id: "6",
+    slug: "maninagar",
+    name: "Maninagar",
+    city: "Ahmedabad",
+    state: "Gujarat",
+    avgPrice: "₹45L",
+    avgPriceNum: 4500000,
+    psf: "₹4,100",
+    psfNum: 4100,
+    rentalYield: "3.6%",
+    growthScore: 79,
+    traffic: "Medium",
+    trafficDesc: "Active arterial connectivity near Kankaria & BRTS hub",
+    safety: "Safe Area",
+    safetyDesc: "Established high-safety residential township",
+    scorecard: {
+      overallGrowth: 79,
+      connectivity: 86,
+      socialInfra: 85,
+      priceAppreciation: 76,
+      rentalDemand: 82,
+      safetyScore: 92,
+    },
+    verdict: "Good Investment",
+    verdictConfidence: 89,
+    verdictSummary: "Historic commercial & residential hub with metro, rail, and lakefront connectivity.",
+    infra: {
+      schools: 18,
+      hospitals: 10,
+      metro: "0.8 km",
+      shopping: 14,
+    },
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop&auto=format",
+    priceTrends: [
+      { month: "Jan 24", price: 3600, yield: 3.2, demand: 70 },
+      { month: "Mar 24", price: 3700, yield: 3.3, demand: 72 },
+      { month: "May 24", price: 3800, yield: 3.4, demand: 74 },
+      { month: "Jul 24", price: 3900, yield: 3.4, demand: 76 },
+      { month: "Sep 24", price: 3980, yield: 3.5, demand: 78 },
+      { month: "Nov 24", price: 4030, yield: 3.5, demand: 79 },
+      { month: "Jan 25", price: 4070, yield: 3.6, demand: 80 },
+      { month: "Mar 25", price: 4100, yield: 3.6, demand: 82 }
+    ]
   }
 ];

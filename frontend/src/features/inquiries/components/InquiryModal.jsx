@@ -9,11 +9,11 @@ import useEnquiryMutation from '../hooks/useEnquiryMutation';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { Button } from '../../../shared/components/ui/button';
 
-export function InquiryModal({ isOpen, onClose, property }) {
+export function InquiryModal({ isOpen, onClose, property, initialType = 'site_visit' }) {
   const { user } = useAuth();
   const { mutateAsync, loading, error } = useEnquiryMutation();
 
-  const [type, setType] = useState('site_visit'); // 'site_visit' or 'callback'
+  const [type, setType] = useState(initialType); // 'site_visit' or 'callback'
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -21,6 +21,13 @@ export function InquiryModal({ isOpen, onClose, property }) {
   const [preferredTime, setPreferredTime] = useState('10:00 AM');
   const [message, setMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
+
+  // Reset type when modal opens with initialType
+  useEffect(() => {
+    if (isOpen) {
+      setType(initialType);
+    }
+  }, [isOpen, initialType]);
 
   // Pre-fill user data if logged in
   useEffect(() => {

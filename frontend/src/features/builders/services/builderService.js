@@ -61,8 +61,8 @@ export function mapApiBuilderProjectToUi(item) {
   const aiScore = isCompleted ? 94 : 88;
 
   return {
-    id: item.project_id || item.id,
-    name: item.project_name || 'Unnamed Project',
+    id: item.property_id || item.project_id || item.id,
+    name: item.project_name || item.property_name || 'Unnamed Project',
     builderId: item.builder || item.builder_detail?.builder_id,
     builderName: item.builder_name || item.company_name || 'Verified Developer',
     companyName: item.company_name || item.builder_name || 'Verixa Developer',
