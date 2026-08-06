@@ -18,6 +18,7 @@ import { EMICalculatorModal } from '../components/EMICalculatorModal';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import PropertyMapSection from '../components/PropertyMap';
 import { AIFairPriceCard } from '../components/AIFairPriceCard';
+import { VerixaPropertyAuditor } from '../components/VerixaPropertyAuditor';
 
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const { user } = useAuth();
@@ -348,6 +349,9 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               ))}
             </CardContent>
           </Card>
+
+          {/* Verixa AI Executive Property Auditor Decision Report */}
+          <VerixaPropertyAuditor property={project} builder={builder} />
 
           {/* AI Fair Price Prediction Card */}
           <AIFairPriceCard propertyId={project.id} property={project} />
