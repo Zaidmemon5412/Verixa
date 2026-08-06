@@ -126,6 +126,11 @@ def run_ingestion():
                 lat = parse_decimal(row.get("latitude"), default=22.997200)
                 lng = parse_decimal(row.get("longitude"), default=72.601200)
                 
+                # Bounds validation for Maninagar (Ahmedabad micro-market: lat ~22.98-23.08, lng ~72.55-72.64)
+                if lat < Decimal("22.800000") or lat > Decimal("23.200000") or lng < Decimal("72.400000") or lng > Decimal("72.800000"):
+                    lat = Decimal("22.996800")
+                    lng = Decimal("72.607100")
+                
                 addr = clean_str(row.get("address")) or f"{p_name}, Maninagar, Ahmedabad"
                 if "Maninagar" not in addr:
                     addr = f"{addr}, Maninagar, Ahmedabad"

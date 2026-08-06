@@ -1124,7 +1124,7 @@ class PropertyViewSet(viewsets.ViewSet):
                 price_negotiation = "Substantially higher than fair market value. Request formal valuation appraisal and propose counter-offer at benchmark price."
 
             builder = property_obj.builder
-            builder_name = builder.builder_name if builder else (property_obj.builder_name or "Verified Regional Developer")
+            builder_name = builder.builder_name if builder else "Verified Regional Developer"
             years_exp = getattr(builder, 'years_experience', 15) or 15
             completed_projects = getattr(builder, 'completed_projects_count', 12) or 12
             trust_score = getattr(builder, 'rating', 4.8) * 20 if (builder and getattr(builder, 'rating', None)) else 92
