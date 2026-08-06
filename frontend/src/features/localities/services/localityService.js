@@ -1,6 +1,7 @@
 import apiClient from '../../../shared/services/apiClient';
 import { LOCALITIES } from '../constants/localityData';
 
+const TARGET_5_NAMES = ['gota', 'chandkheda', 'sola', 'thaltej', 'satellite'];
 
 export const localityService = {
   async getLocalities() {
@@ -15,25 +16,41 @@ export const localityService = {
         : [];
 
       if (rawData.length > 0) {
-        return rawData.map((item, idx) => {
-          const matchMeta = LOCALITIES.find(
-            (l) => l.name.toLowerCase() === (item.name || '').toLowerCase() || l.slug === (item.name || '').toLowerCase().replace(/\s+/g, '-')
-          ) || LOCALITIES[idx % LOCALITIES.length];
+        // Filter raw database records strictly to the 5 target micro-markets
+        const filtered = rawData.filter(item => 
+          item && item.name && TARGET_5_NAMES.some(t => String(item.name).toLowerCase().includes(t))
+        );
 
-          return {
-            ...matchMeta,
-            id: item.locality_id || item.id || matchMeta.id,
-            slug: item.slug || matchMeta.slug || String(item.name || '').toLowerCase().replace(/\s+/g, '-'),
-            name: item.name || matchMeta.name,
-            city: item.city || matchMeta.city || 'Ahmedabad',
-            state: item.state || matchMeta.state || 'Gujarat',
-            latitude: item.latitude != null ? parseFloat(item.latitude) : matchMeta.latitude,
-            longitude: item.longitude != null ? parseFloat(item.longitude) : matchMeta.longitude,
-          };
-        });
+        if (filtered.length > 0) {
+          const mapped = filtered.map((item, idx) => {
+            const matchMeta = LOCALITIES.find(
+              (l) => l.name.toLowerCase() === (item.name || '').toLowerCase() || l.slug === (item.name || '').toLowerCase().replace(/\s+/g, '-')
+            ) || LOCALITIES[idx % LOCALITIES.length];
+
+            return {
+              ...matchMeta,
+              id: item.locality_id || item.id || matchMeta.id,
+              slug: matchMeta.slug || String(item.name || '').toLowerCase().replace(/\s+/g, '-'),
+              name: matchMeta.name,
+              city: item.city || matchMeta.city || 'Ahmedabad',
+              state: item.state || matchMeta.state || 'Gujarat',
+            };
+          });
+
+          // Ensure unique output for each of the 5 localities
+          const seen = new Set();
+          const uniqueRes = [];
+          mapped.forEach(l => {
+            if (!seen.has(l.name)) {
+              seen.add(l.name);
+              uniqueRes.push(l);
+            }
+          });
+          if (uniqueRes.length > 0) return uniqueRes;
+        }
       }
     } catch (err) {
-      console.warn('Backend locality list fetch warning, falling back to rich metadata:', err);
+      console.warn('Backend locality list fetch notice, returning 5 target micro-markets:', err);
     }
     return LOCALITIES;
   },
@@ -43,7 +60,6 @@ export const localityService = {
 
     const cleanQuery = String(idOrSlug).toLowerCase().trim();
 
-    // 1. Check local static metadata first for exact ID/slug/name match
     const staticMatch = LOCALITIES.find(
       (l) => l.id === cleanQuery ||
              l.slug === cleanQuery ||
@@ -51,7 +67,6 @@ export const localityService = {
              l.name.toLowerCase().replace(/\s+/g, '-') === cleanQuery
     );
 
-    // 2. Fetch API live analytics endpoint GET /api/locations/localities/:id/analytics/
     try {
       const response = await apiClient.get(`/locations/localities/${idOrSlug}/analytics/`);
       const apiItem = (response?.locality_id || response?.name) ? response : (response?.data || response);
@@ -65,25 +80,20 @@ export const localityService = {
           ...meta,
           id: apiItem.locality_id || meta.id,
           slug: meta.slug || String(apiItem.name || '').toLowerCase().replace(/\s+/g, '-'),
-          name: apiItem.name || meta.name,
+          name: meta.name || apiItem.name,
           city: apiItem.city || meta.city,
           state: apiItem.state || meta.state,
           avgPrice: apiItem.avgPrice || meta.avgPrice,
           psf: apiItem.psf || meta.psf,
           growthScore: apiItem.growthScore || meta.growthScore,
-          traffic: apiItem.traffic || meta.traffic,
-          trafficDesc: apiItem.trafficDesc || meta.trafficDesc,
-          scorecard: apiItem.scorecard || meta.scorecard,
-          verdict: apiItem.verdict || meta.verdict,
-          verdictSummary: apiItem.verdictSummary || meta.verdictSummary,
-          infra: apiItem.infra || meta.infra,
         };
       }
     } catch (err) {
-      // Endpoint error or missing, proceed with static match fallback
+      // Return static match on API error
     }
-
 
     return staticMatch || LOCALITIES[0];
   }
 };
+
+export default localityService;

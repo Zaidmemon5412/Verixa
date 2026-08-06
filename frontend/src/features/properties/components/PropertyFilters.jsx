@@ -36,14 +36,8 @@ export function PropertyFilters({
   // 1. BHK Options (1, 2, 3, 4 BHK - 5+ BHK removed per request)
   const bhkOptions = ['1 BHK', '2 BHK', '3 BHK', '4 BHK'];
 
-  // 2. Area/Locality Options (Gota, Chandkheda, Shela, Bopal, Satellite, Thaltej, SG Highway)
-  const defaultPopularAreas = ['Gota', 'Chandkheda', 'Shela', 'Bopal', 'Satellite', 'Thaltej', 'SG Highway'];
-  const dbAreaNames = Array.isArray(localities) && localities.length > 0
-    ? localities.map(l => typeof l === 'string' ? l : l.name).filter(Boolean)
-    : defaultPopularAreas;
-
-  // Unique area names list starting with popular ones
-  const areaOptions = Array.from(new Set([...defaultPopularAreas, ...dbAreaNames])).slice(0, 10);
+  // 2. Target 5 Primary Clean Area Options (Gota, Chandkheda, Sola, Thaltej, Satellite)
+  const areaOptions = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite'];
 
   const propertyTypes = ['All', 'Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
   const statusOptions = ['All', 'Ready to Move', 'Under Construction', 'New Launch'];
@@ -214,12 +208,12 @@ export function PropertyFilters({
         </div>
       </div>
 
-      {/* 3. Prominent Area-Wise / Locality Filter Bar (Gota, Chandkheda, Shela, Bopal, etc.) */}
+      {/* 3. Prominent Area-Wise / Locality Filter Bar (Gota, Chandkheda, Sola, Thaltej, Satellite) */}
       <div className="pt-2 border-t space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary" />
-            Area Wise Filter (Gota, Chandkheda, Shela...)
+            Area Wise Filter (Gota, Chandkheda, Sola, Thaltej, Satellite)
           </span>
           {selectedLocality !== 'All' && (
             <button
@@ -299,9 +293,9 @@ export function PropertyFilters({
                 className="w-full h-10 rounded-xl border border-input bg-background px-3 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="All">All Localities</option>
-                {localities.map((loc) => (
-                  <option key={loc.id || loc.locality_id || loc.name} value={loc.name}>
-                    {loc.name}
+                {areaOptions.map((area) => (
+                  <option key={area} value={area}>
+                    {area}
                   </option>
                 ))}
               </select>

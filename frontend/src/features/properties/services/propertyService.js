@@ -1,5 +1,4 @@
 import apiClient from '../../../shared/services/apiClient';
-import { PROJECTS } from '../constants/propertyData';
 
 function formatPrice(priceVal) {
   const num = parseFloat(priceVal);
@@ -27,6 +26,29 @@ function extractImageUrl(imgObj) {
   return imgObj.image || imgObj.image_url || imgObj.file || null;
 }
 
+function extractCleanArea(item) {
+  if (!item) return 'Satellite';
+  const text = `${item.locality_name || ''} ${item.locality_detail?.name || ''} ${item.location || ''} ${item.locality || ''} ${item.address || ''} ${item.property_name || ''}`.toLowerCase();
+  if (text.includes('gota')) return 'Gota';
+  if (text.includes('chandkheda')) return 'Chandkheda';
+  if (text.includes('sola')) return 'Sola';
+  if (text.includes('thaltej')) return 'Thaltej';
+  if (text.includes('satellite')) return 'Satellite';
+  return 'Satellite';
+}
+
+function extractArray(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (val.data) {
+    if (Array.isArray(val.data)) return val.data;
+    if (val.data.results && Array.isArray(val.data.results)) return val.data.results;
+    if (val.data.data && Array.isArray(val.data.data)) return val.data.data;
+  }
+  if (val.results && Array.isArray(val.results)) return val.results;
+  return [];
+}
+
 export function mapApiPropertyToUi(item) {
   if (!item) return null;
   const legalInfo = item.legal_info || null;
@@ -42,7 +64,7 @@ export function mapApiPropertyToUi(item) {
   const finalPrimaryImage = primaryImg || defaultFallbackImage;
   const finalGalleryImages = imagesList.length > 0 ? imagesList : [finalPrimaryImage];
 
-  // Parse amenities (handles array of strings or JSON string representation)
+  // Parse amenities
   let amenitiesList = ['24x7 Security', 'Car Parking', 'Power Backup', 'Gymnasium', 'Elevator', 'Clubhouse'];
   if (Array.isArray(item.amenities) && item.amenities.length > 0) {
     const rawA = item.amenities;
@@ -58,18 +80,10 @@ export function mapApiPropertyToUi(item) {
   }
 
   const builderName = item.builder_name || item.company_name || item.builder_detail?.builder_name || '';
-
-  const localityName = item.locality_name || item.locality_detail?.name || (item.address ? item.address.split(',')[1]?.trim() : (item.locality ? String(item.locality).split(',')[0] : null));
-
-  if (!item.address && !localityName) {
-    console.warn(`[PropertyDataAudit] Property ID ${item.property_id || item.project_id || item.id} missing DB address and locality records.`);
-  }
-
-  const resolvedAddress = item.address || item.location || (item.property_name && localityName ? `${item.property_name}, ${localityName}` : (localityName || 'Location Unavailable'));
-  const rawLocality = localityName || item.city || 'Ahmedabad';
+  const cleanArea = extractCleanArea(item);
+  const resolvedAddress = item.address || item.location || `${item.property_name || 'Property'}, ${cleanArea}, Ahmedabad`;
   const propName = item.project_name || item.property_name || 'Unnamed Property';
   const statusStr = item.project_status || item.status || 'Ready to Move';
-
 
   return {
     id: item.project_id || item.property_id || item.id,
@@ -85,8 +99,8 @@ export function mapApiPropertyToUi(item) {
     propertyType: item.property_type || 'Apartment',
     transactionType: item.transaction_type || 'Sale',
     possession: statusStr,
-    location: localityName || 'Location Unavailable',
-    locality: item.locality_name || item.locality_detail?.name || (localityName || 'Location Unavailable'),
+    location: `${cleanArea}, Ahmedabad`,
+    locality: cleanArea,
     city: item.locality_detail?.city || item.city || 'Ahmedabad',
     state: item.locality_detail?.state || 'Gujarat',
     localityDetail: item.locality_detail || null,
@@ -105,7 +119,7 @@ export function mapApiPropertyToUi(item) {
     investScore: legalStatus === 'VERIFIED' ? 88 : legalStatus === 'PENDING' ? 76 : 54,
     growthScore: 82,
     rentalYield: '3.8%',
-    area: item.carpet_area ? String(item.carpet_area) : (item.builtup_area ? String(item.builtup_area) : '1,200 sq ft'),
+    area: item.carpet_area ? `${item.carpet_area} sq ft` : (item.builtup_area ? `${item.builtup_area} sq ft` : '1,200 sq ft'),
     areaNum: parseFloat(item.carpet_area || item.builtup_area || 1200),
     carpetArea: item.carpet_area ? String(item.carpet_area) : 'N/A',
     builtupArea: item.builtup_area ? String(item.builtup_area) : 'N/A',
@@ -119,7 +133,7 @@ export function mapApiPropertyToUi(item) {
     status: statusStr,
     trustScore: legalStatus === 'VERIFIED' ? 95 : legalStatus === 'PENDING' ? 75 : 45,
     amenities: amenitiesList,
-    overview: item.project_description || item.description || `Spacious ${item.primary_bhk || '2, 3 BHK'} development located in ${rawLocality}. Featuring modern architectural layout, low-density structural design, and RERA compliance.`,
+    overview: item.project_description || item.description || `Spacious ${item.primary_bhk || '2, 3 BHK'} development located in ${cleanArea}, Ahmedabad. Featuring modern architectural layout, low-density structural design, and RERA compliance.`,
     legalInfo: legalInfo,
     documents: item.documents || [],
     listings: item.listings || []
@@ -127,22 +141,10 @@ export function mapApiPropertyToUi(item) {
 }
 
 export const propertyService = {
+  /**
+   * Primary service method to fetch property listings directly from the backend PostgreSQL database.
+   */
   async getProperties(filters = {}) {
-    const hasActiveFilter = Boolean(
-      (filters.search && String(filters.search).trim() !== '') ||
-      (filters.locality && filters.locality !== 'All') ||
-      (filters.city && filters.city !== 'All') ||
-      (filters.builder && filters.builder !== 'All') ||
-      (filters.status && filters.status !== 'All') ||
-      (filters.property_type && filters.property_type !== 'All') ||
-      (filters.transaction_type && filters.transaction_type !== 'All') ||
-      (filters.bhk && Array.isArray(filters.bhk) ? filters.bhk.length > 0 : filters.bhk !== 'All') ||
-      filters.min_price ||
-      filters.max_price ||
-      filters.min_area ||
-      filters.max_area
-    );
-
     try {
       const params = new URLSearchParams({ page_size: '600' });
       if (filters.search) params.append('search', String(filters.search).trim());
@@ -169,43 +171,16 @@ export const propertyService = {
       if (filters.ordering) params.append('ordering', filters.ordering);
 
       const response = await apiClient.get(`/properties/?${params.toString()}`);
-      let rawResults = response?.data?.results || response?.results || response?.data || response;
-      if (!Array.isArray(rawResults)) rawResults = [];
+      const rawResults = extractArray(response);
 
       if (rawResults.length > 0) {
         return rawResults.map(mapApiPropertyToUi).filter(Boolean);
       }
 
-      // If backend API responded successfully with 0 results, return empty array when filters are active
-      if (hasActiveFilter) {
-        return [];
-      }
-      return PROJECTS;
+      return [];
     } catch (error) {
-      console.warn('Property service fallback to static data due to API error:', error);
-      // Perform client-side filter on static fallback PROJECTS
-      let fallbackList = [...PROJECTS];
-      if (filters.search) {
-        const q = String(filters.search).toLowerCase().trim();
-        fallbackList = fallbackList.filter(p =>
-          (p.name && p.name.toLowerCase().includes(q)) ||
-          (p.location && p.location.toLowerCase().includes(q)) ||
-          (p.builder && p.builder.toLowerCase().includes(q)) ||
-          (p.address && p.address.toLowerCase().includes(q))
-        );
-      }
-      if (filters.locality && filters.locality !== 'All') {
-        fallbackList = fallbackList.filter(p =>
-          p.location && p.location.toLowerCase().includes(filters.locality.toLowerCase())
-        );
-      }
-      if (filters.bhk && filters.bhk !== 'All' && Array.isArray(filters.bhk) && filters.bhk.length > 0) {
-        const nums = filters.bhk.map(b => parseInt(String(b).replace(/[^0-9]/g, ''))).filter(Boolean);
-        if (nums.length > 0) {
-          fallbackList = fallbackList.filter(p => nums.includes(p.bhkNum));
-        }
-      }
-      return fallbackList;
+      console.error('Failed to load property list from backend database:', error);
+      return [];
     }
   },
 
@@ -214,7 +189,6 @@ export const propertyService = {
       return null;
     }
 
-    // Attempt 1: Direct backend detail endpoint GET /api/properties/:id/
     try {
       const response = await apiClient.get(`/properties/${id}/`);
       const rawData = response?.data?.data || response?.data || response;
@@ -223,43 +197,23 @@ export const propertyService = {
         return mapApiPropertyToUi(rawData);
       }
     } catch (error) {
-      // Ignore 404 and proceed to Attempt 2
+      // Proceed to database list search
     }
 
-    // Attempt 2: Direct BuilderProject table endpoint GET /api/builders/projects/:id/
-    try {
-      const response = await apiClient.get(`/builders/projects/${id}/`);
-      const rawData = response?.data?.data || response?.data || response;
-
-      if (rawData && (rawData.project_id || rawData.id)) {
-        return mapApiPropertyToUi(rawData);
-      }
-    } catch (error) {
-      // Ignore 404 and proceed to Attempt 3
-    }
-
-    // Attempt 3: Search active database properties list by ID or slugified name
     try {
       const allDbProperties = await this.getProperties();
       if (Array.isArray(allDbProperties) && allDbProperties.length > 0) {
         const match = allDbProperties.find(
-          (p) => String(p.id).toLowerCase() === String(id).toLowerCase() ||
-                 String(p.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
+          (p) => String(p.id).toLowerCase() === String(id).toLowerCase()
         );
         if (match) return match;
       }
     } catch (e) {
-      console.warn('Database properties list fallback search failed:', e);
+      console.warn('Database properties list search notice:', e);
     }
 
-    // Attempt 4: Search static fallback PROJECTS by ID or slugified name
-    const foundStatic = PROJECTS.find(
-      (p) => String(p.id).toLowerCase() === String(id).toLowerCase() ||
-             String(p.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
-    );
-    return foundStatic || null;
+    return null;
   },
-
 
   async getFilterOptions() {
     try {
@@ -272,3 +226,4 @@ export const propertyService = {
   }
 };
 
+export default propertyService;
