@@ -274,7 +274,10 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           {/* 3. AI Verdict Card & Compact Tabbed Property Auditor */}
           <VerixaPropertyAuditor property={project} builder={builder} />
 
-          {/* 4. Property Description / Project Overview */}
+          {/* 4. AI Fair Price Prediction Card (Just Below VERIXA AI VERDICT) */}
+          <AIFairPriceCard propertyId={project.id} property={project} />
+
+          {/* 5. Property Description / Project Overview */}
           <Card className="rounded-2xl border bg-card">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold">Project Overview & Description</CardTitle>
@@ -284,7 +287,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </CardContent>
           </Card>
 
-          {/* 5. Amenities */}
+          {/* 6. Amenities */}
           <Card className="rounded-2xl border bg-card">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold">Project Amenities</CardTitle>
@@ -299,11 +302,8 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </CardContent>
           </Card>
 
-          {/* 6. Location Map */}
+          {/* 7. Location Map */}
           <PropertyMapSection property={project} />
-
-          {/* 7. AI Fair Price Prediction Card */}
-          <AIFairPriceCard propertyId={project.id} property={project} />
         </div>
 
         {/* RIGHT PERMANENT STICKY SIDEBAR COLUMN (lg:col-span-4 / 30%) */}
