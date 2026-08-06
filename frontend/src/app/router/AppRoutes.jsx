@@ -242,14 +242,6 @@ export const AppRoutes = () => {
             </AppSuspense>
           }
         />
-        <Route
-          path="/comparison"
-          element={
-            <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
-              <ComparisonPageWrapper />
-            </AppSuspense>
-          }
-        />
       </Route>
 
       {/* 2. Public Authentication Routes (Isolated AuthLayout Shell) */}
@@ -324,6 +316,16 @@ export const AppRoutes = () => {
             <ProtectedRoute>
               <AppSuspense fallback={<ListSkeleton rows={4} />}>
                 <ReportsPage />
+              </AppSuspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/comparison"
+          element={
+            <ProtectedRoute>
+              <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
+                <ComparisonPageWrapper />
               </AppSuspense>
             </ProtectedRoute>
           }

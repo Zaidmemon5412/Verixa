@@ -128,18 +128,39 @@ export function mapApiPropertyToUi(item) {
 
 export const propertyService = {
   async getProperties(filters = {}) {
+    const hasActiveFilter = Boolean(
+      (filters.search && String(filters.search).trim() !== '') ||
+      (filters.locality && filters.locality !== 'All') ||
+      (filters.city && filters.city !== 'All') ||
+      (filters.builder && filters.builder !== 'All') ||
+      (filters.status && filters.status !== 'All') ||
+      (filters.property_type && filters.property_type !== 'All') ||
+      (filters.transaction_type && filters.transaction_type !== 'All') ||
+      (filters.bhk && Array.isArray(filters.bhk) ? filters.bhk.length > 0 : filters.bhk !== 'All') ||
+      filters.min_price ||
+      filters.max_price ||
+      filters.min_area ||
+      filters.max_area
+    );
+
     try {
       const params = new URLSearchParams({ page_size: '600' });
-      if (filters.search) params.append('search', filters.search);
+      if (filters.search) params.append('search', String(filters.search).trim());
       if (filters.locality && filters.locality !== 'All') params.append('locality', filters.locality);
       if (filters.city && filters.city !== 'All') params.append('city', filters.city);
       if (filters.builder && filters.builder !== 'All') params.append('builder', filters.builder);
       if (filters.status && filters.status !== 'All') params.append('status', filters.status);
       if (filters.property_type && filters.property_type !== 'All') params.append('property_type', filters.property_type);
       if (filters.transaction_type && filters.transaction_type !== 'All') params.append('transaction_type', filters.transaction_type);
+      
       if (filters.bhk && filters.bhk !== 'All') {
-        const bhkVal = Array.isArray(filters.bhk) ? filters.bhk.join(',') : filters.bhk;
-        params.append('bhk', bhkVal);
+        const rawBhkList = Array.isArray(filters.bhk) ? filters.bhk : [filters.bhk];
+        const cleanedBhkList = rawBhkList
+          .map(b => String(b).replace(/[^0-9]/g, ''))
+          .filter(Boolean);
+        if (cleanedBhkList.length > 0) {
+          params.append('bhk', cleanedBhkList.join(','));
+        }
       }
       if (filters.min_price) params.append('min_price', filters.min_price);
       if (filters.max_price) params.append('max_price', filters.max_price);
@@ -155,14 +176,36 @@ export const propertyService = {
         return rawResults.map(mapApiPropertyToUi).filter(Boolean);
       }
 
-      // If backend returns 0 results for active filters, return empty array
-      if (Object.keys(filters).length > 0 && (filters.search || filters.locality !== 'All' || filters.status !== 'All' || filters.bhk)) {
+      // If backend API responded successfully with 0 results, return empty array when filters are active
+      if (hasActiveFilter) {
         return [];
       }
       return PROJECTS;
     } catch (error) {
       console.warn('Property service fallback to static data due to API error:', error);
-      return PROJECTS;
+      // Perform client-side filter on static fallback PROJECTS
+      let fallbackList = [...PROJECTS];
+      if (filters.search) {
+        const q = String(filters.search).toLowerCase().trim();
+        fallbackList = fallbackList.filter(p =>
+          (p.name && p.name.toLowerCase().includes(q)) ||
+          (p.location && p.location.toLowerCase().includes(q)) ||
+          (p.builder && p.builder.toLowerCase().includes(q)) ||
+          (p.address && p.address.toLowerCase().includes(q))
+        );
+      }
+      if (filters.locality && filters.locality !== 'All') {
+        fallbackList = fallbackList.filter(p =>
+          p.location && p.location.toLowerCase().includes(filters.locality.toLowerCase())
+        );
+      }
+      if (filters.bhk && filters.bhk !== 'All' && Array.isArray(filters.bhk) && filters.bhk.length > 0) {
+        const nums = filters.bhk.map(b => parseInt(String(b).replace(/[^0-9]/g, ''))).filter(Boolean);
+        if (nums.length > 0) {
+          fallbackList = fallbackList.filter(p => nums.includes(p.bhkNum));
+        }
+      }
+      return fallbackList;
     }
   },
 

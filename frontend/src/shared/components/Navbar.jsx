@@ -6,8 +6,10 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import useAuth from '../../features/auth/hooks/useAuth';
+import { useTheme } from '../context/ThemeContext';
 
-export function Navbar({ wishlistCount = 0, isDark, toggleDarkMode }) {
+export function Navbar({ wishlistCount = 0 }) {
+  const { isDark, toggleDarkMode } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();

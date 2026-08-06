@@ -1,9 +1,16 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useAuth from '../../auth/hooks/useAuth';
 import comparisonService from '../services/comparisonService';
 
 const STORAGE_KEY = 'verixa_comparison_ids';
 
 export function usePropertyComparison(initialIds = []) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // Initialize state from LocalStorage or initialIds (NO random default forced)
   const [selectedIds, setSelectedIds] = useState(() => {
     try {
@@ -70,14 +77,19 @@ export function usePropertyComparison(initialIds = []) {
     fetchCompared();
   }, [selectedIds]);
 
-  // Add property to comparison (Max 4)
+  // Add property to comparison (Max 4) - Requires Authentication
   const addProperty = useCallback((id) => {
+    if (!user) {
+      toast.info('Please sign in to compare properties.');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
     const targetId = String(id);
     setSelectedIds((prev) => {
       if (prev.includes(targetId) || prev.length >= 4) return prev;
       return [...prev, targetId];
     });
-  }, []);
+  }, [user, navigate, location.pathname]);
 
   // Remove property from comparison
   const removeProperty = useCallback((id) => {
@@ -85,8 +97,13 @@ export function usePropertyComparison(initialIds = []) {
     setSelectedIds((prev) => prev.filter((item) => String(item) !== targetId));
   }, []);
 
-  // Replace property at specific slot index
+  // Replace property at specific slot index - Requires Authentication
   const replaceProperty = useCallback((slotIndex, newId) => {
+    if (!user) {
+      toast.info('Please sign in to compare properties.');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
     const targetId = String(newId);
     setSelectedIds((prev) => {
       if (prev.includes(targetId)) return prev;
@@ -98,7 +115,7 @@ export function usePropertyComparison(initialIds = []) {
       }
       return next;
     });
-  }, []);
+  }, [user, navigate, location.pathname]);
 
   // Clear all selections
   const clearAll = useCallback(() => {

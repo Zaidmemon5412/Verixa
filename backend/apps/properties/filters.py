@@ -122,7 +122,7 @@ class PropertyFilter:
                 pass
 
 
-        # 6. Search Keyword (property_name, rera_number, address, locality name, builder name)
+        # 6. Search Keyword (property_name, rera_number, address, locality name, builder name, property_type, status)
         search = params.get('search') or params.get('q')
         if search:
             search_str = str(search).strip()
@@ -132,7 +132,11 @@ class PropertyFilter:
                 Q(address__icontains=search_str) |
                 Q(locality__name__icontains=search_str) |
                 Q(locality__city__icontains=search_str) |
-                Q(builder__builder_name__icontains=search_str)
+                Q(builder__builder_name__icontains=search_str) |
+                Q(property_type__icontains=search_str) |
+                Q(status__icontains=search_str) |
+                Q(transaction_type__icontains=search_str) |
+                Q(furnishing_status__icontains=search_str)
             )
 
         # 7. Sorting / Ordering

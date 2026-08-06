@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
-import { Search, Bell, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Search, Bell, ShieldCheck, HelpCircle, Sun, Moon } from 'lucide-react';
 import useAuth from '../../features/auth/hooks/useAuth';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * DashboardHeader Component for DashboardLayout.
@@ -9,6 +10,7 @@ import useAuth from '../../features/auth/hooks/useAuth';
 export const DashboardHeader = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const { isDark, toggleDarkMode } = useTheme();
 
   const getBreadcrumbTitle = () => {
     switch (location.pathname) {
@@ -48,6 +50,19 @@ export const DashboardHeader = () => {
           />
           <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
         </div>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDark ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-slate-300" />
+          )}
+        </button>
 
         {/* Notifications Button Placeholder */}
         <button className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 relative transition-colors">

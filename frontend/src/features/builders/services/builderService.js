@@ -101,10 +101,30 @@ export function mapApiBuilderToUi(item) {
 
   const currentYear = new Date().getFullYear();
   const estYear = item.established_year || 2005;
-  const yearsExp = Math.max(1, currentYear - estYear);
+  const yearsExp = item.years_of_experience ?? Math.max(1, currentYear - estYear);
 
   const builderName = item.builder_name || 'Verified Developer';
   const brandInfo = getBuilderBrandInfo(builderName, item.logo_url);
+
+  // Dynamic Algorithmic Trust Score Fallback if backend API omits score
+  let computedTrustScore = item.trust_score;
+  if (computedTrustScore == null) {
+    let score = 0;
+    const rera = item.rera_registration_no || '';
+    if (rera && rera !== 'Not Registered') score += 30; else score += 10;
+    if (yearsExp >= 15) score += 25;
+    else if (yearsExp >= 10) score += 20;
+    else if (yearsExp >= 5) score += 15;
+    else score += 10;
+    const completed = item.completed_projects ?? 15;
+    const total = item.total_projects ?? 20;
+    score += Math.min(25, Math.round((completed / Math.max(1, total)) * 25));
+    if (item.email) score += 5;
+    if (item.phone) score += 5;
+    if (item.website) score += 5;
+    if (item.office_address) score += 5;
+    computedTrustScore = Math.min(99, Math.max(55, score));
+  }
 
   return {
     id: item.builder_id || item.id,
@@ -123,11 +143,11 @@ export function mapApiBuilderToUi(item) {
     brandColor: brandInfo.color,
     abbr: brandInfo.abbr,
     // Trust and Delivery statistics
-    trustScore: item.trust_score || 94,
-    deliveryRate: item.delivery_on_time_rate || 96,
-    completedProjectsCount: item.completed_projects || 28,
-    ongoingProjectsCount: item.ongoing_projects || 8,
-    totalProjectsCount: item.total_projects || 36,
+    trustScore: computedTrustScore,
+    deliveryRate: item.delivery_on_time_rate || 94,
+    completedProjectsCount: item.completed_projects ?? 28,
+    ongoingProjectsCount: item.ongoing_projects ?? 8,
+    totalProjectsCount: item.total_projects ?? 36,
   };
 }
 

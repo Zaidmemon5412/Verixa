@@ -33,6 +33,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [selectedLocality, setSelectedLocality] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedType, setSelectedType] = useState('All');
@@ -45,6 +46,14 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const [selectedOrdering, setSelectedOrdering] = useState('newest');
 
   const bottomSentinelRef = useRef(null);
+
+  // Debounce search query input (300ms delay)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   // Initial Filter Options Data Fetching (Builders & Localities)
   useEffect(() => {
@@ -67,12 +76,14 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 
   // Main Property List Data Fetching on Filter Changes
   useEffect(() => {
+    let isCancelled = false;
+
     async function loadData() {
       setLoading(true);
       setDisplayLimit(BATCH_SIZE);
       try {
         const propsData = await propertyService.getProperties({
-          search: searchQuery,
+          search: debouncedSearchQuery,
           locality: selectedLocality,
           status: selectedStatus,
           property_type: selectedType,
@@ -84,16 +95,26 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
           builder: selectedBuilder,
           ordering: selectedOrdering
         });
-        setProjects(propsData || []);
+        if (!isCancelled) {
+          setProjects(propsData || []);
+        }
       } catch (err) {
-        console.error('Failed to load property list:', err);
+        if (!isCancelled) {
+          console.error('Failed to load property list:', err);
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
     loadData();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [
-    searchQuery,
+    debouncedSearchQuery,
     selectedLocality,
     selectedStatus,
     selectedType,

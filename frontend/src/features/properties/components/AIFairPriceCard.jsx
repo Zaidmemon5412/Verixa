@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Bot, TrendingUp, TrendingDown, Minus, Sparkles,
-  BadgeCheck, AlertCircle, ChevronRight, Loader2, Info
+  BadgeCheck, AlertCircle, Loader2, Info, ArrowUpRight, ArrowDownRight, Equal,
+  HelpCircle, BrainCircuit, Scale, Target, ShieldCheck, ChevronDown, ChevronUp, X
 } from 'lucide-react';
 import { useAIFairPrice } from '../hooks/useAIFairPrice';
 
@@ -19,160 +20,60 @@ function formatPriceINR(val) {
   return `₹${num.toLocaleString('en-IN')}`;
 }
 
-/* ─── Verdict config helper ─────────────────────────── */
+/* ─── Verdict Styling Helper ─────────────────────────── */
 function getVerdictConfig(verdict, color) {
   switch (color) {
     case 'green':
       return {
-        bg: 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-        badge: '#10b981',
-        badgeText: '#ecfdf5',
-        icon: <TrendingDown className="w-4 h-4" />,
-        glow: 'rgba(16, 185, 129, 0.25)',
-        diffColor: '#6ee7b7',
-        arrowBg: 'rgba(16, 185, 129, 0.15)',
-        statusText: 'Good Deal (Listed < Fair Price)',
+        badgeBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+        badgeBorder: 'border-emerald-200 dark:border-emerald-800',
+        badgeText: 'text-emerald-700 dark:text-emerald-300',
+        icon: <ArrowDownRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+        statusText: 'Good Deal (Below Fair Market Price)',
+        pillColor: 'bg-emerald-500',
       };
     case 'red':
       return {
-        bg: 'linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%)',
-        badge: '#ef4444',
-        badgeText: '#fef2f2',
-        icon: <TrendingUp className="w-4 h-4" />,
-        glow: 'rgba(239, 68, 68, 0.25)',
-        diffColor: '#fca5a5',
-        arrowBg: 'rgba(239, 68, 68, 0.15)',
-        statusText: 'Overpriced (Listed > Fair Price)',
+        badgeBg: 'bg-rose-50 dark:bg-rose-950/50',
+        badgeBorder: 'border-rose-200 dark:border-rose-800',
+        badgeText: 'text-rose-700 dark:text-rose-300',
+        icon: <ArrowUpRight className="w-4 h-4 text-rose-600 dark:text-rose-400" />,
+        statusText: 'Overpriced (Above Fair Market Price)',
+        pillColor: 'bg-rose-500',
       };
     case 'yellow':
     default:
       return {
-        bg: 'linear-gradient(135deg, #451a03 0%, #78350f 100%)',
-        badge: '#f59e0b',
-        badgeText: '#fffbeb',
-        icon: <Minus className="w-4 h-4" />,
-        glow: 'rgba(245, 158, 11, 0.25)',
-        diffColor: '#fcd34d',
-        arrowBg: 'rgba(245, 158, 11, 0.15)',
+        badgeBg: 'bg-amber-50 dark:bg-amber-950/50',
+        badgeBorder: 'border-amber-200 dark:border-amber-800',
+        badgeText: 'text-amber-700 dark:text-amber-300',
+        icon: <Equal className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
         statusText: 'Fairly Priced (At Market Value)',
+        pillColor: 'bg-amber-500',
       };
   }
 }
 
-/* ─── Animated ring confidence arc ──────────────────── */
-function ConfidenceArc({ value }) {
-  const r = 38;
-  const cx = 48;
-  const cy = 48;
-  const circ = 2 * Math.PI * r;
-  const pct = Math.min(Math.max(value, 0), 100) / 100;
-  const strokeDash = pct * circ;
-
-  return (
-    <svg width="96" height="96" viewBox="0 0 96 96">
-      <circle
-        cx={cx} cy={cy} r={r}
-        fill="none"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="8"
-      />
-      <circle
-        cx={cx} cy={cy} r={r}
-        fill="none"
-        stroke="url(#arcGrad)"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeDasharray={`${strokeDash} ${circ}`}
-        strokeDashoffset={circ * 0.25}
-        style={{ transition: 'stroke-dasharray 1.2s ease-in-out' }}
-      />
-      <defs>
-        <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#a78bfa" />
-          <stop offset="100%" stopColor="#38bdf8" />
-        </linearGradient>
-      </defs>
-      <text
-        x={cx} y={cy + 1}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="white"
-        fontSize="15"
-        fontWeight="700"
-        fontFamily="Inter, sans-serif"
-      >
-        {value}%
-      </text>
-      <text
-        x={cx} y={cy + 17}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="rgba(255,255,255,0.55)"
-        fontSize="7.5"
-        fontFamily="Inter, sans-serif"
-      >
-        CONFIDENCE
-      </text>
-    </svg>
-  );
-}
-
-/* ─── Price column ───────────────────────────────────── */
-function PriceCol({ label, value, sub, accent, big = false }) {
-  return (
-    <div style={{
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: 16,
-      padding: '16px 20px',
-      flex: 1,
-      minWidth: 0,
-    }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
-        {label}
-      </p>
-      <p style={{
-        fontSize: big ? 22 : 18,
-        fontWeight: 800,
-        color: accent || 'white',
-        lineHeight: 1.1,
-        letterSpacing: '-0.02em',
-      }}>
-        {value}
-      </p>
-      {sub && (
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{sub}</p>
-      )}
-    </div>
-  );
-}
-
-/* ─── Skeleton loader ────────────────────────────────── */
+/* ─── Skeleton Loader ────────────────────────────────── */
 function AIFairPriceSkeleton() {
   return (
-    <div style={{
-      borderRadius: 24,
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-      padding: 28,
-      animation: 'pulse 1.5s ease-in-out infinite',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,255,255,0.1)' }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ height: 14, width: '60%', background: 'rgba(255,255,255,0.1)', borderRadius: 6, marginBottom: 6 }} />
-          <div style={{ height: 10, width: '40%', background: 'rgba(255,255,255,0.07)', borderRadius: 4 }} />
+    <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm animate-pulse space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
+          <div className="space-y-2">
+            <div className="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded" />
+            <div className="h-3 w-24 bg-slate-100 dark:bg-slate-800/60 rounded" />
+          </div>
         </div>
-        <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+        <div className="h-8 w-28 bg-slate-200 dark:bg-slate-800 rounded-full" />
       </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        {[1, 2, 3].map(i => (
-          <div key={i} style={{ flex: 1, height: 80, background: 'rgba(255,255,255,0.06)', borderRadius: 16 }} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="h-24 bg-slate-100 dark:bg-slate-800/50 rounded-xl" />
         ))}
       </div>
-      <div style={{ height: 56, background: 'rgba(255,255,255,0.05)', borderRadius: 14, marginTop: 16 }} />
-      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.35)', fontSize: 12, marginTop: 16 }}>
-        Evaluating Fair Market Value via ML Model Engine · Please wait...
-      </p>
+      <div className="h-20 bg-blue-50/50 dark:bg-slate-800/30 rounded-xl" />
     </div>
   );
 }
@@ -185,28 +86,14 @@ export function AIFairPriceCard({ propertyId, property }) {
 
   if (isError) {
     return (
-      <div style={{
-        borderRadius: 24,
-        background: 'linear-gradient(135deg, #1c0a0a 0%, #450a0a 100%)',
-        border: '1px solid rgba(239,68,68,0.25)',
-        padding: 24,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-      }}>
-        <div style={{
-          width: 44, height: 44,
-          borderRadius: 12,
-          background: 'rgba(239,68,68,0.15)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <AlertCircle className="w-5 h-5 text-red-400" />
+      <div className="rounded-2xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20 p-5 flex items-center gap-4">
+        <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center shrink-0">
+          <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
         </div>
         <div>
-          <p style={{ fontWeight: 700, color: '#fca5a5', fontSize: 14 }}>AI Prediction Unavailable</p>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 3 }}>
-            {error?.message || 'Could not load prediction data. Please try again later.'}
+          <p className="text-sm font-semibold text-rose-900 dark:text-rose-200">AI Valuation Unavailable</p>
+          <p className="text-xs text-rose-600/80 dark:text-rose-300/70 mt-0.5">
+            {error?.message || 'Could not load valuation inference data.'}
           </p>
         </div>
       </div>
@@ -215,7 +102,7 @@ export function AIFairPriceCard({ propertyId, property }) {
 
   if (!data) return null;
 
-  // Normalized API and model fields
+  // Normalized values
   const fairPriceNum = data.predicted_fair_price ?? data.ai_predicted_price ?? 0;
   const listedPriceNum = data.listed_price ?? property?.priceNum ?? 0;
   const confidenceScore = data.confidence_score ?? 95;
@@ -252,194 +139,185 @@ export function AIFairPriceCard({ propertyId, property }) {
   return (
     <div
       id="ai-fair-price-section"
-      style={{
-        borderRadius: 24,
-        background: cfg.bg,
-        boxShadow: `0 8px 48px ${cfg.glow}, 0 2px 8px rgba(0,0,0,0.4)`,
-        overflow: 'hidden',
-        position: 'relative',
-        border: '1px solid rgba(255,255,255,0.1)',
-      }}
+      className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative"
     >
-      {/* Glassmorphic shimmer background lines */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 120% 80% at 80% 10%, rgba(255,255,255,0.05) 0%, transparent 60%)',
-      }} />
-
-      <div style={{ padding: '28px 28px 24px', position: 'relative' }}>
-
-        {/* ── Header ─────────────────────────── */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{
-              width: 48, height: 48,
-              borderRadius: 14,
-              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(124, 58, 237, 0.45)',
-              flexShrink: 0,
-            }}>
+      {/* ── Card Header ────────────────────────────────────── */}
+      <div className="bg-gradient-to-r from-slate-50 via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/40 border-b border-slate-100 dark:border-slate-800 p-5 md:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center shadow-sm shadow-indigo-500/25 shrink-0">
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h3 style={{
-                  fontSize: 18,
-                  fontWeight: 800,
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                  margin: 0,
-                }}>
-                  AI Fair Price Prediction
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                  Verixa AI Fair Price
                 </h3>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  <Sparkles className="w-3 h-3 text-indigo-300" />
-                  AI Verified
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
+                  <Sparkles className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+                  AI Model Verified
                 </span>
               </div>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 3, fontWeight: 500 }}>
-                Powered by {data.model_type || 'XGBoost Fair Value Engine'} · Real-time inference
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                {data.model_type || 'XGBoost & Random Forest Engine'} · Automated Market Valuation
               </p>
             </div>
           </div>
 
-          {/* Verdict Status Indicator Badge (Green / Yellow / Red) */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: cfg.arrowBg,
-            border: `1px solid ${cfg.badge}77`,
-            borderRadius: 50,
-            padding: '7px 16px',
-            flexShrink: 0,
-            boxShadow: `0 2px 12px ${cfg.glow}`,
-          }}>
-            <span style={{ color: cfg.badge }}>{cfg.icon}</span>
-            <span style={{
-              fontSize: 12,
-              fontWeight: 800,
-              color: cfg.badge,
-              letterSpacing: '0.03em',
-              textTransform: 'uppercase',
-            }}>
-              {verdict}
-            </span>
+          {/* Verdict Status Badge & Compact Hover Tooltip */}
+          <div className={`group relative cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-bold tracking-wide shadow-xs shrink-0 transition-all hover:scale-105 active:scale-95 ${cfg.badgeBg} ${cfg.badgeBorder} ${cfg.badgeText}`}>
+            {cfg.icon}
+            <span className="uppercase">{verdict}</span>
+            <HelpCircle className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity ml-0.5" />
+
+            {/* Sleek Compact Hover Tooltip */}
+            <div className="pointer-events-none absolute right-0 top-full mt-2 w-72 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3.5 shadow-xl opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-30 border border-slate-700/80">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 mb-1">
+                <Info className="w-3.5 h-3.5 text-indigo-400" />
+                <span>How Verdict & Prediction Work</span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-snug">
+                Predicted via ML model evaluating carpet area, BHK, floor & locality transaction trends.
+              </p>
+              <div className="mt-2 pt-2 border-t border-slate-700/80 text-[10.5px] space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-emerald-400 font-bold">Good Deal:</span>
+                  <span className="text-slate-300">Listed &lt; 97% Fair Price</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-amber-400 font-bold">Fairly Priced:</span>
+                  <span className="text-slate-300">Within ±3% Equilibrium</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-rose-400 font-bold">Overpriced:</span>
+                  <span className="text-slate-300">Listed &gt; 103% Fair Price</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* ── Price Comparison Grid ─────────────────────── */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-          <PriceCol
-            label="Listed Price"
-            value={listedPriceFormatted}
-            sub="Asking seller price"
-            big
-          />
-          <PriceCol
-            label="AI Fair Price"
-            value={aiPredictedPriceFormatted}
-            sub="Predicted market value"
-            accent={cfg.diffColor}
-            big
-          />
-          <div style={{
-            display: 'flex', flexDirection: 'column', gap: 8, flex: 1, minWidth: 140,
-          }}>
-            <div style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 12,
-              padding: '10px 14px',
-              flex: 1,
-            }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                Difference Amount
+      {/* ── Main Content Area ──────────────────────────────── */}
+      <div className="p-5 md:p-6 space-y-6">
+
+        {/* ── Primary Price Metrics Grid ──────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* 1. Listed Price */}
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 transition-colors hover:border-slate-300 dark:hover:border-slate-700">
+            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
+              Listed Price
+            </p>
+            <p className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {listedPriceFormatted}
+            </p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
+              Seller asking price
+            </p>
+          </div>
+
+          {/* 2. AI Fair Price (Primary Focus) */}
+          <div className="rounded-xl border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/40 dark:bg-indigo-950/20 p-4 transition-colors hover:border-indigo-300 dark:hover:border-indigo-800">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+                AI Fair Price
               </p>
-              <p style={{ fontSize: 15, fontWeight: 800, color: cfg.diffColor, letterSpacing: '-0.01em' }}>
+              <BadgeCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <p className="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 tracking-tight">
+              {aiPredictedPriceFormatted}
+            </p>
+            <p className="text-[11px] text-indigo-700/70 dark:text-indigo-300/70 mt-1 font-medium">
+              Estimated market valuation
+            </p>
+          </div>
+
+          {/* 3. Compact Stat: Difference Amount */}
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 flex flex-col justify-between">
+            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Price Difference
+            </p>
+            <div className="my-1">
+              <p className="text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">
                 {sign}{priceDiffFormatted}
               </p>
             </div>
-            <div style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 12,
-              padding: '10px 14px',
-              flex: 1,
-            }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                Market Variance
-              </p>
-              <p style={{ fontSize: 15, fontWeight: 800, color: cfg.diffColor, letterSpacing: '-0.01em' }}>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Abs variance vs. fair price
+            </p>
+          </div>
+
+          {/* 4. Compact Stat: Market Variance % */}
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 flex flex-col justify-between">
+            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Market Variance
+            </p>
+            <div className="my-1">
+              <p className="text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">
                 {sign}{Math.abs(diffPct).toFixed(1)}%
               </p>
             </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              {cfg.statusText}
+            </p>
           </div>
         </div>
 
-        {/* ── Confidence & AI Insight ───────────── */}
-        <div style={{
-          display: 'flex', gap: 16, alignItems: 'stretch', marginBottom: 20, flexWrap: 'wrap',
-        }}>
-          {/* Confidence Score Arc Meter */}
-          <div style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 16,
-            padding: '16px 20px',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            gap: 4,
-            flexShrink: 0,
-          }}>
-            <ConfidenceArc value={confidenceScore} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-              <BadgeCheck className="w-3.5 h-3.5 text-indigo-400" />
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>CONFIDENCE SCORE</span>
-            </div>
-          </div>
-
-          {/* AI Insight Box */}
-          <div style={{
-            background: 'rgba(99,102,241,0.08)',
-            border: '1px solid rgba(99,102,241,0.2)',
-            borderRadius: 16,
-            padding: '18px 20px',
-            flex: 1,
-            minWidth: 200,
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                AI Valuation Insight
+        {/* ── Model Confidence Score Progress Bar ──────────── */}
+        <div className="rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/20 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <BadgeCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                Model Confidence Score
               </span>
             </div>
-            <p style={{
-              fontSize: 13,
-              color: 'rgba(255,255,255,0.8)',
-              lineHeight: 1.65,
-              fontWeight: 400,
-              margin: 0,
-            }}>
+            <span className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-0.5 rounded-md border border-indigo-100 dark:border-indigo-900">
+              {confidenceScore}%
+            </span>
+          </div>
+
+          {/* Sleek Progress Bar */}
+          <div className="w-full h-2 bg-slate-200/70 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-600 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${Math.min(Math.max(confidenceScore, 0), 100)}%` }}
+            />
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            Based on carpet area, BHK, locality price trends, and decision tree ensemble variance.
+          </p>
+        </div>
+
+        {/* ── AI Insight Card (Light Blue Highlight) ──────── */}
+        <div className="rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/70 dark:bg-blue-950/30 p-4 md:p-5 flex items-start gap-3.5">
+          <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">
+              AI Valuation Insight
+            </h4>
+            <p className="text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
               {data.insight || `${cfg.statusText}. Predicted using comparable property sales and locality feature indices.`}
             </p>
           </div>
         </div>
 
-        {/* ── Footer disclaimer ──────────────── */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'rgba(255,255,255,0.04)',
-          borderRadius: 10,
-          padding: '9px 14px',
-        }}>
-          <Info className="w-3.5 h-3.5 text-white/40 shrink-0" />
-          <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>
-            Verixa AI Fair Price Engine evaluates multi-source real estate market datasets. Consult an authorized advisor prior to final commitments.
-          </p>
-        </div>
+      </div>
+
+      {/* ── Card Footer Disclaimer ─────────────────────────── */}
+      <div className="bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 px-5 py-3 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
+        <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <span>
+          Verixa AI Fair Price Engine evaluates multi-source real estate market datasets. Consult an authorized financial or property advisor prior to final commitments.
+        </span>
       </div>
     </div>
   );
 }
 
 export default AIFairPriceCard;
+
+
