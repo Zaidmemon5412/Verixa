@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { 
@@ -15,10 +15,23 @@ import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
-import PropertyMapSection from '../components/PropertyMap';
-import { AIFairPriceCard } from '../components/AIFairPriceCard';
-import { VerixaPropertyAuditor } from '../components/VerixaPropertyAuditor';
 import { EMICalculatorCard } from '../components/EMICalculatorCard';
+
+// Route-level Code-Splitting & Lazy Loading for Heavy Below-the-Fold Components
+const PropertyMapSection = lazy(() => import('../components/PropertyMap'));
+const AIFairPriceCard = lazy(() => import('../components/AIFairPriceCard').then(m => ({ default: m.AIFairPriceCard })));
+const VerixaPropertyAuditor = lazy(() => import('../components/VerixaPropertyAuditor').then(m => ({ default: m.VerixaPropertyAuditor })));
+
+// Sleek Skeleton Placeholders for Progressive Component Hydration
+const ComponentSkeleton = ({ height = "h-32", title = "Loading AI & Spatial Data..." }) => (
+  <Card className="rounded-2xl border bg-card p-6 shadow-sm space-y-4 animate-pulse">
+    <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
+      <Building2 className="w-3.5 h-3.5 animate-spin text-primary" />
+      <span>{title}</span>
+    </div>
+    <Skeleton className={`${height} w-full rounded-xl`} />
+  </Card>
+);
 
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const { user } = useAuth();
@@ -30,30 +43,47 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
-  const [inquiryType, setInquiryType] = useState('site_visit'); // 'site_visit' or 'callback'
+  const [inquiryType, setInquiryType] = useState('site_visit');
 
+  // Fast Core Data Fetching (<1s initial load)
   useEffect(() => {
+    let isCancelled = false;
+
     async function loadDetails() {
       setLoading(true);
       try {
+        // Fetch primary property data immediately
         const pData = await propertyService.getPropertyById(projectId);
+        if (isCancelled) return;
+        
         setProject(pData);
         if (pData?.image) {
           setSelectedImage(pData.image);
         }
+        // Render core above-the-fold page immediately
+        setLoading(false);
+
+        // Fetch builder metadata in parallel without blocking core property rendering
         if (pData?.builderId) {
-          const bData = await builderService.getBuilderById(pData.builderId);
-          setBuilder(bData);
+          builderService.getBuilderById(pData.builderId)
+            .then((bData) => {
+              if (!isCancelled && bData) setBuilder(bData);
+            })
+            .catch((e) => console.warn('Non-blocking builder fetch notice:', e));
         }
       } catch (err) {
         console.error('Failed to load property details:', err);
-      } finally {
-        setLoading(false);
+        if (!isCancelled) setLoading(false);
       }
     }
+
     if (projectId) {
       loadDetails();
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [projectId]);
 
   useEffect(() => {
@@ -72,7 +102,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-6 animate-pulse">
         <div className="flex items-center gap-2 text-sm text-primary font-bold">
           <Building2 className="w-4 h-4 animate-bounce" />
-          <span>Loading Property Details & Legal Specifications...</span>
+          <span>Fetching Core Property Specifications...</span>
         </div>
         <Skeleton className="h-8 w-1/4" />
         <Skeleton className="h-96 w-full rounded-2xl" />
@@ -144,7 +174,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         </div>
       </div>
 
-      {/* Header Info & Price Banner */}
+      {/* Above-The-Fold Header Info & Price Banner */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -181,16 +211,18 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         </div>
       </div>
 
-      {/* HIGH CONVERSION TWO-COLUMN RESPONSIVE LAYOUT (70% Left / 30% Sticky Right) */}
+      {/* HIGH-PERFORMANCE TWO-COLUMN LAYOUT (70% Left / 30% Sticky Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT MAIN CONTENT COLUMN (lg:col-span-8 / 70%) */}
+        {/* LEFT MAIN CONTENT COLUMN (70%) */}
         <div className="lg:col-span-8 space-y-8">
-          {/* 1. Property Gallery */}
+          {/* 1. Above-The-Fold: Optimized Hero Property Gallery */}
           <div className="space-y-3">
             <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border shadow-lg bg-muted">
               <img
                 src={currentImage}
                 alt={project.name}
+                loading="eager"
+                decoding="async"
                 className="w-full h-full object-cover transition-all duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -202,7 +234,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               </div>
             </div>
 
-            {/* Thumbnails Gallery Strip */}
+            {/* Gallery Thumbnails */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
@@ -220,7 +252,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
                       currentImage === imgUrl ? 'border-primary ring-2 ring-primary/40 scale-105 shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
                     }`}
                   >
-                    <img src={imgUrl} alt={`Photo ${idx}`} className="w-full h-full object-cover" />
+                    <img src={imgUrl} alt={`Photo ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                     <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
                       Photo {idx + 1}
                     </span>
@@ -230,7 +262,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </div>
           </div>
 
-          {/* 2. Property Information & Specifications */}
+          {/* 2. Above-The-Fold: Property Specifications Card */}
           <Card className="rounded-2xl border bg-card">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold">Property Information & Specifications</CardTitle>
@@ -271,13 +303,17 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </CardContent>
           </Card>
 
-          {/* 3. AI Verdict Card & Compact Tabbed Property Auditor */}
-          <VerixaPropertyAuditor property={project} builder={builder} />
+          {/* 3. Below-The-Fold: Progressive Lazy Loading for Verixa AI Property Auditor */}
+          <Suspense fallback={<ComponentSkeleton height="h-44" title="Generating AI Property Audit Report..." />}>
+            <VerixaPropertyAuditor property={project} builder={builder} />
+          </Suspense>
 
-          {/* 4. AI Fair Price Prediction Card (Just Below VERIXA AI VERDICT) */}
-          <AIFairPriceCard propertyId={project.id} property={project} />
+          {/* 4. Below-The-Fold: Progressive Lazy Loading for AI Fair Price Prediction */}
+          <Suspense fallback={<ComponentSkeleton height="h-32" title="Calculating Algorithmic Fair Price..." />}>
+            <AIFairPriceCard propertyId={project.id} property={project} />
+          </Suspense>
 
-          {/* 5. Property Description / Project Overview */}
+          {/* 5. Project Overview */}
           <Card className="rounded-2xl border bg-card">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold">Project Overview & Description</CardTitle>
@@ -303,7 +339,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           </Card>
         </div>
 
-        {/* RIGHT PERMANENT STICKY SIDEBAR COLUMN (lg:col-span-4 / 30% - Sticky down to Project Amenities) */}
+        {/* RIGHT PERMANENT STICKY SIDEBAR COLUMN (30% - Above-The-Fold Immediate Render) */}
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24 self-start">
           {/* Action CTAs Box */}
           <Card className="rounded-2xl border-2 border-primary/30 bg-card shadow-md">
@@ -314,7 +350,6 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
-              {/* 1. Request Site Visit Button */}
               <Button
                 onClick={handleRequestSiteVisit}
                 size="lg"
@@ -324,7 +359,6 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
                 <span>Request Site Visit</span>
               </Button>
 
-              {/* 2. Request Callback Button */}
               <Button
                 onClick={handleRequestCallback}
                 size="lg"
@@ -337,10 +371,10 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             </CardContent>
           </Card>
 
-          {/* 3. EMI Calculator Card (Permanently Embedded in Sticky Sidebar) */}
+          {/* EMI Calculator Card */}
           <EMICalculatorCard defaultPrice={project.priceNum} />
 
-          {/* 4. Developer Profile Card */}
+          {/* Developer Profile Card */}
           {builder && (
             <Card className="rounded-2xl border bg-card shadow-sm">
               <CardHeader className="p-4 border-b">
@@ -386,9 +420,11 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         </div>
       </div>
 
-      {/* FULL WIDTH LOCATION & SURROUNDING ECOSYSTEM SECTION (Below 2-Column Grid with No Side Gaps) */}
+      {/* FULL WIDTH LOCATION & SURROUNDING ECOSYSTEM SECTION (Lazy Loaded Below 2-Column Grid) */}
       <div className="w-full pt-4">
-        <PropertyMapSection property={project} />
+        <Suspense fallback={<ComponentSkeleton height="h-64" title="Loading Spatial Engine & Nearby Places..." />}>
+          <PropertyMapSection property={project} />
+        </Suspense>
       </div>
 
       {/* Request Site Visit / Callback Modal */}
