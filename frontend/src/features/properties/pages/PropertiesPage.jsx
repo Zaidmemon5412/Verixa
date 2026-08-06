@@ -9,7 +9,7 @@ import usePropertyComparison from '../../comparison/hooks/usePropertyComparison'
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
 
-const BATCH_SIZE = 30;
+const BATCH_SIZE = 60;
 
 export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlist }) {
   const { isWishlisted: checkIsWishlisted, toggleWishlist: defaultToggleWishlist } = useWishlist();
@@ -47,11 +47,11 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 
   const bottomSentinelRef = useRef(null);
 
-  // Debounce search query input (300ms delay)
+  // Ultra-fast search query input debounce (150ms delay)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 300);
+    }, 150);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
@@ -127,7 +127,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     selectedOrdering
   ]);
 
-  // Infinite Scroll Observer
+  // Ultra-Fast Lazy Loading Observer (600px pre-fetching margin, 0ms delay)
   useEffect(() => {
     if (loading || displayLimit >= projects.length) return;
 
@@ -135,13 +135,11 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       (entries) => {
         if (entries[0].isIntersecting && !loadingMore) {
           setLoadingMore(true);
-          setTimeout(() => {
-            setDisplayLimit((prev) => Math.min(prev + BATCH_SIZE, projects.length));
-            setLoadingMore(false);
-          }, 300);
+          setDisplayLimit((prev) => Math.min(prev + BATCH_SIZE, projects.length));
+          setLoadingMore(false);
         }
       },
-      { threshold: 0.1, rootMargin: '200px' }
+      { threshold: 0.05, rootMargin: '600px' }
     );
 
     const currentSentinel = bottomSentinelRef.current;
