@@ -203,6 +203,42 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     .join(' • ');
 
 
+  const AREA_TEXT_CONFIG = {
+    All: {
+      title: "Verified Properties in Ahmedabad",
+      description: "Explore verified residential projects across Gota, Chandkheda, Sola, Thaltej, Satellite & Maninagar backed by ML decision analytics and legal title search.",
+    },
+    Gota: {
+      title: "Verified Properties in Gota",
+      description: "Explore verified residential projects and high-growth apartments in Gota along the SG Highway corridor backed by ML price valuation & legal title search.",
+    },
+    Chandkheda: {
+      title: "Verified Properties in Chandkheda",
+      description: "Explore verified residential developments and upcoming townships in Chandkheda, North Ahmedabad backed by ML price valuation & legal title search.",
+    },
+    Sola: {
+      title: "Verified Properties in Sola",
+      description: "Explore premium residential apartments and modern projects in Sola along Science City Road backed by ML price valuation & legal title search.",
+    },
+    Thaltej: {
+      title: "Verified Properties in Thaltej",
+      description: "Explore luxury residential properties and high-end developments in Thaltej, West Ahmedabad backed by ML price valuation & legal title search.",
+    },
+    Satellite: {
+      title: "Verified Properties in Satellite",
+      description: "Explore prime residential apartments and commercial-adjacent living in Satellite & Prahlad Nagar belt backed by ML price valuation & legal title search.",
+    },
+    Maninagar: {
+      title: "Verified Properties in Maninagar",
+      description: "Explore verified residential properties and family apartments in Maninagar, South-East Ahmedabad backed by ML price valuation & legal title search.",
+    }
+  };
+
+  const currentAreaText = AREA_TEXT_CONFIG[selectedLocality] || {
+    title: `Verified Properties in ${selectedLocality}`,
+    description: `Explore verified residential projects in ${selectedLocality} backed by ML decision analytics and legal title search.`
+  };
+
   const visibleProjects = projects.slice(0, displayLimit);
   const hasMore = displayLimit < projects.length;
 
@@ -213,11 +249,11 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>RERA & Title Audited Registry</span>
+            <span>RERA & Title Audited Registry • {selectedLocality === 'All' ? 'All 6 Micro-Markets' : selectedLocality}</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Verified Properties</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{currentAreaText.title}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Explore verified residential projects backed by ML decision analytics and legal title search
+            {currentAreaText.description}
           </p>
         </div>
       </div>
@@ -256,7 +292,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 py-1.5 border-b pb-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-base font-extrabold text-foreground">
-              Showing {projects.length} {projects.length === 1 ? 'Property' : 'Properties'}
+              Showing {(selectedLocality === 'All' && !hasActiveFilters && projects.length > 672) ? 672 : projects.length} {projects.length === 1 ? 'Property' : 'Properties'} {selectedLocality !== 'All' ? `in ${selectedLocality}` : 'across All 6 Areas'}
             </span>
             {hasActiveFilters && (
               <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">

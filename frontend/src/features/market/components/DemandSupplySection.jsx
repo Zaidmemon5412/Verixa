@@ -18,6 +18,18 @@ export function DemandSupplySection({ demandSupplyData, isLoading }) {
     return <Skeleton className="h-72 rounded-2xl" />;
   }
 
+  if (!demandSupplyData || demandSupplyData.isAvailable === false || demandSupplyData.demandScore == null) {
+    return (
+      <Card className="rounded-2xl border border-border/70 p-8 text-center space-y-3 bg-muted/20">
+        <Scale className="w-8 h-8 text-muted-foreground mx-auto" />
+        <h3 className="text-base font-bold text-foreground">Demand data unavailable</h3>
+        <p className="text-xs text-muted-foreground max-w-md mx-auto">
+          {demandSupplyData?.message || "Platform buyer demand and interaction tracking datasets are unavailable for the selected filters."}
+        </p>
+      </Card>
+    );
+  }
+
   const { demandScore = 88, supplyScore = 72, marketStatus = "Seller's Market", recommendation = "Demand > Supply (High Absorption)" } = demandSupplyData || {};
   const isSellersMarket = String(marketStatus || '').includes("Seller");
 

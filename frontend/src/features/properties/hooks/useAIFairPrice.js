@@ -26,13 +26,19 @@ export function useAIFairPrice(propertyId, property) {
       try {
         const res = await apiClient.get('/properties/' + propertyId + '/fair-price/');
         if (isMounted) {
+          let payload = null;
           if (res.data?.success && res.data?.data) {
-            setData(res.data.data);
+            payload = res.data.data;
           } else if (res.data?.predicted_fair_price != null) {
-            setData(res.data);
+            payload = res.data;
           } else {
             throw new Error(res.data?.message || 'Invalid fair price API response');
           }
+
+          if (payload && payload.confidence_score > 0 && payload.confidence_score <= 1) {
+            payload.confidence_score = payload.confidence_score * 100;
+          }
+          setData(payload);
         }
       } catch (err) {
         console.warn(`[useAIFairPrice] API fetch for property ${propertyId} unfulfilled, using evaluation algorithm:`, err);

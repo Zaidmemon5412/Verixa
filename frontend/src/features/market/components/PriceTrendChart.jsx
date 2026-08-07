@@ -69,14 +69,20 @@ export function PriceTrendChart({ trendData, isLoading, activeTimeframe, onTimef
     );
   }
 
-  const chartData = trendData && trendData.length > 0 ? trendData : [
-    { period: "Jan", avgPrice: 70.0, pricePerSqft: 5180, medianPrice: 66.5, launches: 12, sales: 18 },
-    { period: "Feb", avgPrice: 71.4, pricePerSqft: 5280, medianPrice: 67.8, launches: 8, sales: 22 },
-    { period: "Mar", avgPrice: 72.8, pricePerSqft: 5380, medianPrice: 69.2, launches: 15, sales: 28 },
-    { period: "Apr", avgPrice: 74.2, pricePerSqft: 5480, medianPrice: 70.6, launches: 11, sales: 24 },
-    { period: "May", avgPrice: 75.6, pricePerSqft: 5590, medianPrice: 72.0, launches: 18, sales: 31 },
-    { period: "Jun", avgPrice: 77.0, pricePerSqft: 5690, medianPrice: 73.5, launches: 14, sales: 26 },
-  ];
+  const isDataAvailable = trendData && trendData.isAvailable !== false && (Array.isArray(trendData) ? trendData.length > 0 : (trendData.data && trendData.data.length > 0));
+  const chartData = Array.isArray(trendData) ? trendData : (trendData?.data || []);
+
+  if (!isDataAvailable) {
+    return (
+      <Card className="rounded-2xl border border-border/70 p-8 text-center space-y-3 bg-muted/20">
+        <Activity className="w-8 h-8 text-muted-foreground mx-auto" />
+        <h3 className="text-base font-bold text-foreground">Insufficient Historical Data</h3>
+        <p className="text-xs text-muted-foreground max-w-md mx-auto">
+          {trendData?.message || "Historical price trend records are insufficient for the selected filters in PostgreSQL database."}
+        </p>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-4">

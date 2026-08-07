@@ -66,6 +66,11 @@ from .permissions import IsAdminOrReadOnly, IsListingOwnerOrBuilderOrAdmin
 logger = logging.getLogger(__name__)
 
 
+def _get_query_params(request):
+    return getattr(request, 'query_params', getattr(request, 'GET', {}))
+
+
+
 # ==================================================
 # AMENITY VIEWS
 # ==================================================
@@ -255,8 +260,9 @@ class PropertyAmenityViewSet(viewsets.ViewSet):
         GET /property-amenities/
         Optionally filter by property_id or amenity_id using query parameters.
         """
-        property_id = request.query_params.get('property_id')
-        amenity_id = request.query_params.get('amenity_id')
+        qp = _get_query_params(request)
+        property_id = qp.get('property_id')
+        amenity_id = qp.get('amenity_id')
 
         try:
             if property_id:
@@ -779,7 +785,7 @@ class PropertyViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
 
         try:
-            queryset = list_properties(request.query_params)
+            queryset = list_properties(_get_query_params(request))
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
@@ -839,10 +845,12 @@ class PropertyViewSet(viewsets.ViewSet):
                 "data": {}
             }, status=status.HTTP_404_NOT_FOUND)
 
-        category = request.query_params.get('category')
-        radius = request.query_params.get('radius')
-        limit = request.query_params.get('limit')
+        qp = _get_query_params(request)
+        category = qp.get('category')
+        radius = qp.get('radius')
+        limit = qp.get('limit')
 
+        # pyrefly: ignore [missing-import]
         from apps.locations.services import get_property_nearby_places_with_distances
         nearby_places_list = get_property_nearby_places_with_distances(
             property_obj=property_obj,
@@ -1023,6 +1031,7 @@ class PropertyViewSet(viewsets.ViewSet):
                     ml_dir = Path(__file__).resolve().parent.parent.parent.parent / 'ml'
                     if str(ml_dir) not in sys.path:
                         sys.path.insert(0, str(ml_dir))
+                    # pyrefly: ignore [missing-import]
                     from prediction_service import predict_property_fair_price
                     features = {
                         "bhk": property_obj.primary_bhk or 2,
@@ -1042,6 +1051,9 @@ class PropertyViewSet(viewsets.ViewSet):
                     v_factor = 1.14 if mod == 1 else (1.00 if mod == 2 else 0.90)
                     predicted_price = float(property_obj.price or 12500000) * v_factor
                     confidence_score = 95.0
+
+            if 0.0 < confidence_score <= 1.0:
+                confidence_score = confidence_score * 100.0
 
             listed_price = float(property_obj.price or 0)
             diff = listed_price - predicted_price
@@ -1276,7 +1288,7 @@ class PropertyListingViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset = list_listings(request.query_params)
+            queryset = list_listings(_get_query_params(request))
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
@@ -1432,7 +1444,7 @@ class PropertyLegalViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            queryset = list_legal_records(request.query_params)
+            queryset = list_legal_records(_get_query_params(request))
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
@@ -1577,5 +1589,40 @@ class PropertyLegalViewSet(viewsets.ViewSet):
                 "message": "An internal server error occurred.",
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MarketTrendsAnalyticsAPIView(APIView):
+    """
+    GET /api/properties/market-trends/
+    GET /api/market-trends/
+    Executes PostgreSQL database aggregations across all 8 Market Trends sections via MarketTrendsEngine.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        qp = _get_query_params(request)
+        filters = {
+            'city': qp.get('city'),
+            'locality': qp.get('locality'),
+            'propertyType': qp.get('propertyType') or qp.get('property_type'),
+            'bhk': qp.get('bhk'),
+            'budget_min': qp.get('budget_min'),
+            'budget_max': qp.get('budget_max'),
+            'timeframe': qp.get('timeframe'),
+        }
+        try:
+            from .market_trends_engine import MarketTrendsEngine
+            engine = MarketTrendsEngine(filters=filters)
+            analytics_data = engine.generate_analytics()
+            analytics_data['success'] = True
+            return Response(analytics_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.exception("Error generating market trends analytics")
+            return Response({
+                "success": False,
+                "message": "An internal server error occurred.",
+                "data": {"detail": str(e)}
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 

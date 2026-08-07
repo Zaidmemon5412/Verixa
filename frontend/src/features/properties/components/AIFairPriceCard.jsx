@@ -105,7 +105,12 @@ export function AIFairPriceCard({ propertyId, property }) {
   // Normalized values
   const fairPriceNum = data.predicted_fair_price ?? data.ai_predicted_price ?? 0;
   const listedPriceNum = data.listed_price ?? property?.priceNum ?? 0;
-  const confidenceScore = data.confidence_score ?? 95;
+  
+  let rawConfidence = data.confidence_score ?? 95;
+  if (rawConfidence > 0 && rawConfidence <= 1) {
+    rawConfidence = rawConfidence * 100;
+  }
+  const confidenceScore = Number(rawConfidence.toFixed(1));
 
   const listedPriceFormatted = data.listed_price_formatted || (property?.price ? String(property.price) : formatPriceINR(listedPriceNum));
   const aiPredictedPriceFormatted = data.ai_predicted_price_formatted || formatPriceINR(fairPriceNum);

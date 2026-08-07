@@ -26,8 +26,26 @@ from .validators import (
 
 class LocalitySerializer(serializers.ModelSerializer):
     """
-    Read-only serializer returning all locality details.
+    Read-only serializer returning all locality details and engine analytics metrics.
+    Ensures 100% data consistency across list and detail views.
     """
+    avgPrice = serializers.SerializerMethodField()
+    avgPriceNum = serializers.SerializerMethodField()
+    psf = serializers.SerializerMethodField()
+    psfNum = serializers.SerializerMethodField()
+    rentalYield = serializers.SerializerMethodField()
+    growthScore = serializers.SerializerMethodField()
+    traffic = serializers.SerializerMethodField()
+    trafficDesc = serializers.SerializerMethodField()
+    safety = serializers.SerializerMethodField()
+    safetyDesc = serializers.SerializerMethodField()
+    scorecard = serializers.SerializerMethodField()
+    verdict = serializers.SerializerMethodField()
+    verdictSummary = serializers.SerializerMethodField()
+    infra = serializers.SerializerMethodField()
+    properties_count = serializers.SerializerMethodField()
+    priceTrends = serializers.SerializerMethodField()
+
     class Meta:
         model = Locality
         fields = [
@@ -41,8 +59,81 @@ class LocalitySerializer(serializers.ModelSerializer):
             'description',
             'created_at',
             'updated_at',
+            'avgPrice',
+            'avgPriceNum',
+            'psf',
+            'psfNum',
+            'rentalYield',
+            'growthScore',
+            'traffic',
+            'trafficDesc',
+            'safety',
+            'safetyDesc',
+            'scorecard',
+            'verdict',
+            'verdictSummary',
+            'infra',
+            'properties_count',
+            'priceTrends',
         ]
         read_only_fields = fields
+
+    def _get_analytics(self, obj):
+        if not hasattr(self, '_analytics_cache'):
+            self._analytics_cache = {}
+        if obj.pk not in self._analytics_cache:
+            from .scorecard_engine import LocalityScorecardEngine
+            engine = LocalityScorecardEngine(obj)
+            self._analytics_cache[obj.pk] = engine.calculate_metrics_and_scores()
+        return self._analytics_cache[obj.pk]
+
+    def get_avgPrice(self, obj):
+        return self._get_analytics(obj).get('avgPrice')
+
+    def get_avgPriceNum(self, obj):
+        return self._get_analytics(obj).get('avgPriceNum')
+
+    def get_psf(self, obj):
+        return self._get_analytics(obj).get('psf')
+
+    def get_psfNum(self, obj):
+        return self._get_analytics(obj).get('psfNum')
+
+    def get_rentalYield(self, obj):
+        return self._get_analytics(obj).get('rentalYield')
+
+    def get_growthScore(self, obj):
+        return self._get_analytics(obj).get('growthScore')
+
+    def get_traffic(self, obj):
+        return self._get_analytics(obj).get('traffic')
+
+    def get_trafficDesc(self, obj):
+        return self._get_analytics(obj).get('trafficDesc')
+
+    def get_safety(self, obj):
+        return self._get_analytics(obj).get('safety')
+
+    def get_safetyDesc(self, obj):
+        return self._get_analytics(obj).get('safetyDesc')
+
+    def get_scorecard(self, obj):
+        return self._get_analytics(obj).get('scorecard')
+
+    def get_verdict(self, obj):
+        return self._get_analytics(obj).get('verdict')
+
+    def get_verdictSummary(self, obj):
+        return self._get_analytics(obj).get('verdictSummary')
+
+    def get_infra(self, obj):
+        return self._get_analytics(obj).get('infra')
+
+    def get_properties_count(self, obj):
+        return self._get_analytics(obj).get('properties_count')
+
+    def get_priceTrends(self, obj):
+        return self._get_analytics(obj).get('priceTrends')
 
 
 class LocalityValidationMixin:

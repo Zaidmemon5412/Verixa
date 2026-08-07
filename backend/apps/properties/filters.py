@@ -46,7 +46,10 @@ class PropertyFilter:
         # 2. Property Type & Transaction Type
         property_type = params.get('property_type')
         if property_type and property_type != 'All':
-            queryset = queryset.filter(property_type__iexact=property_type)
+            queryset = queryset.filter(
+                Q(property_type__iexact=property_type) |
+                Q(property_type__icontains=property_type)
+            )
 
         transaction_type = params.get('transaction_type')
         if transaction_type and transaction_type != 'All':
@@ -55,7 +58,21 @@ class PropertyFilter:
         # 3. Status & Furnishing & Facing
         status = params.get('status') or params.get('possession_status')
         if status and status != 'All':
-            queryset = queryset.filter(status__iexact=status)
+            st_norm = str(status).strip().lower()
+            if 'ready' in st_norm:
+                queryset = queryset.filter(
+                    Q(status__iexact='ready') |
+                    Q(status__iexact='Ready to move') |
+                    Q(status__icontains='ready')
+                )
+            elif 'under' in st_norm or 'construction' in st_norm:
+                queryset = queryset.filter(
+                    Q(status__iexact='under_construction') |
+                    Q(status__iexact='Under Construction') |
+                    Q(status__icontains='construction')
+                )
+            else:
+                queryset = queryset.filter(status__iexact=status)
 
         furnishing_status = params.get('furnishing_status')
         if furnishing_status and furnishing_status != 'All':

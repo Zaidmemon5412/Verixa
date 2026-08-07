@@ -41,12 +41,19 @@ function extractCleanArea(item) {
 function extractArray(val) {
   if (!val) return [];
   if (Array.isArray(val)) return val;
-  if (val.data) {
-    if (Array.isArray(val.data)) return val.data;
-    if (val.data.results && Array.isArray(val.data.results)) return val.data.results;
-    if (val.data.data && Array.isArray(val.data.data)) return val.data.data;
+
+  const root = val.data !== undefined ? val.data : val;
+  if (Array.isArray(root)) return root;
+
+  if (root && root.data) {
+    if (Array.isArray(root.data)) return root.data;
+    if (root.data.results && Array.isArray(root.data.results)) return root.data.results;
   }
-  if (val.results && Array.isArray(val.results)) return val.results;
+
+  if (root && root.results && Array.isArray(root.results)) {
+    return root.results;
+  }
+
   return [];
 }
 
@@ -141,48 +148,73 @@ export function mapApiPropertyToUi(item) {
   };
 }
 
+const requestCache = new Map();
+const pendingRequests = new Map();
+
 export const propertyService = {
   /**
    * Primary service method to fetch property listings directly from the backend PostgreSQL database.
    */
   async getProperties(filters = {}) {
-    try {
-      const params = new URLSearchParams({ page_size: '600' });
-      if (filters.search) params.append('search', String(filters.search).trim());
-      if (filters.locality && filters.locality !== 'All') params.append('locality', filters.locality);
-      if (filters.city && filters.city !== 'All') params.append('city', filters.city);
-      if (filters.builder && filters.builder !== 'All') params.append('builder', filters.builder);
-      if (filters.status && filters.status !== 'All') params.append('status', filters.status);
-      if (filters.property_type && filters.property_type !== 'All') params.append('property_type', filters.property_type);
-      if (filters.transaction_type && filters.transaction_type !== 'All') params.append('transaction_type', filters.transaction_type);
-      
-      if (filters.bhk && filters.bhk !== 'All') {
-        const rawBhkList = Array.isArray(filters.bhk) ? filters.bhk : [filters.bhk];
-        const cleanedBhkList = rawBhkList
-          .map(b => String(b).replace(/[^0-9]/g, ''))
-          .filter(Boolean);
-        if (cleanedBhkList.length > 0) {
-          params.append('bhk', cleanedBhkList.join(','));
-        }
+    const params = new URLSearchParams({ page_size: '3000' });
+    if (filters.search) params.append('search', String(filters.search).trim());
+    if (filters.locality && filters.locality !== 'All') params.append('locality', filters.locality);
+    if (filters.city && filters.city !== 'All') params.append('city', filters.city);
+    if (filters.builder && filters.builder !== 'All') params.append('builder', filters.builder);
+    if (filters.status && filters.status !== 'All') params.append('status', filters.status);
+    if (filters.property_type && filters.property_type !== 'All') params.append('property_type', filters.property_type);
+    if (filters.transaction_type && filters.transaction_type !== 'All') params.append('transaction_type', filters.transaction_type);
+    
+    if (filters.bhk && filters.bhk !== 'All') {
+      const rawBhkList = Array.isArray(filters.bhk) ? filters.bhk : [filters.bhk];
+      const cleanedBhkList = rawBhkList
+        .map(b => String(b).replace(/[^0-9]/g, ''))
+        .filter(Boolean);
+      if (cleanedBhkList.length > 0) {
+        params.append('bhk', cleanedBhkList.join(','));
       }
-      if (filters.min_price) params.append('min_price', filters.min_price);
-      if (filters.max_price) params.append('max_price', filters.max_price);
-      if (filters.min_area) params.append('min_area', filters.min_area);
-      if (filters.max_area) params.append('max_area', filters.max_area);
-      if (filters.ordering) params.append('ordering', filters.ordering);
-
-      const response = await apiClient.get(`/properties/?${params.toString()}`);
-      const rawResults = extractArray(response);
-
-      if (rawResults.length > 0) {
-        return rawResults.map(mapApiPropertyToUi).filter(Boolean);
-      }
-
-      return [];
-    } catch (error) {
-      console.error('Failed to load property list from backend database:', error);
-      return [];
     }
+    if (filters.min_price) params.append('min_price', filters.min_price);
+    if (filters.max_price) params.append('max_price', filters.max_price);
+    if (filters.min_area) params.append('min_area', filters.min_area);
+    if (filters.max_area) params.append('max_area', filters.max_area);
+    if (filters.ordering) params.append('ordering', filters.ordering);
+
+    const cacheKey = params.toString();
+
+    // Check recent cache (valid for 15 seconds)
+    const cachedEntry = requestCache.get(cacheKey);
+    if (cachedEntry && (Date.now() - cachedEntry.timestamp < 15000)) {
+      return cachedEntry.data;
+    }
+
+    // Deduplicate in-flight request
+    if (pendingRequests.has(cacheKey)) {
+      return pendingRequests.get(cacheKey);
+    }
+
+    const fetchPromise = (async () => {
+      try {
+        const response = await apiClient.get(`/properties/?${cacheKey}`);
+        const rawResults = extractArray(response);
+
+        let mapped = [];
+        if (rawResults.length > 0) {
+          mapped = rawResults.map(mapApiPropertyToUi).filter(Boolean);
+        }
+
+        requestCache.set(cacheKey, { timestamp: Date.now(), data: mapped });
+        return mapped;
+      } catch (error) {
+        console.error('Failed to load property list from backend database:', error);
+        return [];
+      } finally {
+        pendingRequests.delete(cacheKey);
+      }
+    })();
+
+    pendingRequests.set(cacheKey, fetchPromise);
+    return fetchPromise;
   },
 
   async getPropertyById(id) {
