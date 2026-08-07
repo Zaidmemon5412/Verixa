@@ -32,8 +32,14 @@ class LocalityScorecardEngine:
         # 1. Base property stats from DB
         prop_count = props_qs.count()
         avg_price_raw = props_qs.aggregate(Avg('price'))['price__avg']
-        avg_psf_raw = props_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
-        stddev_psf_raw = props_qs.aggregate(StdDev('price_per_sqft'))['price_per_sqft__stddev']
+        
+        # Filter price_per_sqft outliers (1500 to 30000) for realistic residential PSF calculation
+        filtered_psf_qs = props_qs.filter(price_per_sqft__gte=1500, price_per_sqft__lte=30000)
+        avg_psf_raw = filtered_psf_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
+        if avg_psf_raw is None:
+            avg_psf_raw = props_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
+
+        stddev_psf_raw = filtered_psf_qs.aggregate(StdDev('price_per_sqft'))['price_per_sqft__stddev']
 
         avg_price_val = float(avg_price_raw) if avg_price_raw is not None else 6500000.0
         avg_psf_val = float(avg_psf_raw) if avg_psf_raw is not None else 5200.0

@@ -77,65 +77,57 @@ export function PropertyTypeRentalSection({ propertyTypes, rentalData, isLoading
       </Card>
 
       {/* Rental Market & Rent vs Buy Recommendation */}
-      <Card className="rounded-2xl border border-border/70 shadow-xs overflow-hidden">
-        <CardHeader className="border-b border-border/40 bg-muted/20 pb-4">
-          <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
-            <Percent className="w-4 h-4 text-emerald-500" />
-            Rental Yield & Rent vs Buy Recommendation
-          </CardTitle>
-          <CardDescription className="text-xs">
-            Investor yield benchmarks and decision analysis for property acquisition vs leasing
-          </CardDescription>
-        </CardHeader>
+      {rent && rent.isAvailable === false ? (
+        <Card className="rounded-2xl border border-border/70 p-8 text-center space-y-3 bg-muted/20 flex flex-col justify-center items-center">
+          <Percent className="w-8 h-8 text-muted-foreground mx-auto" />
+          <h3 className="text-base font-bold text-foreground">Rental Data Not Available</h3>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
+            {rent?.message || "Rental listings and lease transaction records are unavailable for the selected filters."}
+          </p>
+        </Card>
+      ) : (
+        <Card className="rounded-2xl border border-border/70 shadow-xs overflow-hidden">
+          <CardHeader className="border-b border-border/40 bg-muted/20 pb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
+              <Percent className="w-4 h-4 text-emerald-500" />
+              Rental Yield & Rent vs Buy Recommendation
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Investor yield benchmarks and decision analysis for property acquisition vs leasing
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent className="p-6 space-y-5">
-          {/* Rent vs Buy Decision Banner */}
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" /> Strategic Decision Index
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500 text-white shadow-xs">
-                {rent.recommendation || "Buying Recommended"}
-              </span>
+          <CardContent className="p-6 space-y-5">
+            {/* Rent vs Buy Decision Banner */}
+            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4" /> Strategic Decision Index
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500 text-white shadow-xs">
+                  {rent.recommendation || "Buying Recommended"}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {rent.reasoning || "Property value appreciation trajectory supports long-term acquisition."}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {rent.reasoning}
-            </p>
-          </div>
 
-          {/* Rental Metrics Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-3.5 rounded-xl border border-border/60 bg-card">
-              <div className="text-[11px] text-muted-foreground font-semibold">Average Rent</div>
-              <div className="text-lg font-black text-foreground mt-1">{rent.avgRent}</div>
-              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-semibold flex items-center">
-                <ArrowUpRight className="w-3 h-3" /> {rent.rentGrowthPct}
+            {/* Rental Metrics Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3.5 rounded-xl border border-border/60 bg-card">
+                <div className="text-[11px] text-muted-foreground font-semibold">Average Rent</div>
+                <div className="text-lg font-black text-foreground mt-1">{rent.avgRent || "--"}</div>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-border/60 bg-card">
+                <div className="text-[11px] text-muted-foreground font-semibold">Rental Yield (ROI)</div>
+                <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-1">{rent.rentalYield || "--"}</div>
               </div>
             </div>
-
-            <div className="p-3.5 rounded-xl border border-border/60 bg-card">
-              <div className="text-[11px] text-muted-foreground font-semibold">Rental Yield (ROI)</div>
-              <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-1">{rent.rentalYield}</div>
-              <div className="text-[10px] text-muted-foreground mt-1">Above Tier-1 city average</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-border/60 bg-card">
-              <div className="text-[11px] text-muted-foreground font-semibold">Occupancy Rate</div>
-              <div className="text-lg font-black text-foreground mt-1">{rent.occupancyTrend}</div>
-              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1 font-semibold flex items-center">
-                <CheckCircle2 className="w-3 h-3" /> High Tenant Demand
-              </div>
-            </div>
-
-            <div className="p-3.5 rounded-xl border border-border/60 bg-card">
-              <div className="text-[11px] text-muted-foreground font-semibold">Lease Growth</div>
-              <div className="text-lg font-black text-foreground mt-1">{rent.rentGrowthPct}</div>
-              <div className="text-[10px] text-muted-foreground mt-1">Strong leasing activity</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

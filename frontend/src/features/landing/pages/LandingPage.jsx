@@ -9,6 +9,7 @@ import { Button } from '../../../shared/components/ui/button';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { PropertyHeroSlider } from '../components/PropertyHeroSlider';
+import { FeaturedNewLaunchesSection } from '../components/FeaturedNewLaunchesSection';
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { PROJECTS } from '../../properties/constants/propertyData';
 
@@ -136,6 +137,9 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           </div>
         </div>
       </section>
+
+      {/* ─── SECTION 2.5: FEATURED NEW LAUNCHES CAROUSEL ────────────────────── */}
+      <FeaturedNewLaunchesSection onNavigate={onNavigate} onSelectProject={onSelectProject} />
 
       {/* ─── SECTION 3: PROBLEM IDENTIFICATION ("RELATABLE PAIN POINTS") ───────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">

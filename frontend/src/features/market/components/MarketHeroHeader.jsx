@@ -26,29 +26,11 @@ export function MarketHeroHeader({
 }) {
   const summaryText = marketInsights || aiInsights;
 
-  const defaultLocalities = [
-    "Maninagar",
-    "Chandkheda",
-    "Thaltej",
-    "Satellite",
-    "Sola",
-    "Gota",
-    "Science City",
-    "Science Park",
-    "Jagatpur",
-    "Sindhu Bhavan Road",
-    "Nigam Nagar",
-    "D Cabin",
-    "Godrej Garden City",
-    "Bhaikakanagar"
-  ];
-
-  // Combine and deduplicate localities (normalizing any Chandkheda sectors)
-  const localityList = Array.from(new Set(
-    [...defaultLocalities, ...availableLocalities].map(loc => 
-      loc.toLowerCase().includes('chandkheda') ? 'Chandkheda' : loc
-    )
-  )).sort();
+  // Use strictly the 6 primary target localities from the Localities section
+  const TARGET_6 = ["Chandkheda", "Gota", "Maninagar", "Satellite", "Sola", "Thaltej"];
+  const localityList = (availableLocalities && availableLocalities.length > 0)
+    ? availableLocalities
+    : TARGET_6;
 
   return (
     <div className="space-y-6">

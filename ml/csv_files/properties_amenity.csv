@@ -1,0 +1,2776 @@
+property_id,amenity_id,amenity_name
+Y81239177,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y81239177,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Y81239177,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Y81239177,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y81239177,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A91015358,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+A91015358,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+A91015358,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A91015358,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+A91015358,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R91671712,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R91671712,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R91671712,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R91671712,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R91671712,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T93097782,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T93097782,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T93097782,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T93097782,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T93097782,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U92600752,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U92600752,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+U92600752,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+U92600752,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U92600752,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90807312,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D90807312,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D90807312,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D90807312,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D90807312,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+J91887830,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J91887830,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+J91887830,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+J91887830,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+J91887830,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O91847466,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+O91847466,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O91847466,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+O91847466,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+O91847466,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V90825144,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+V90825144,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+V90825144,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V90825144,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+V90825144,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Z86666204,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z86666204,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Z86666204,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Z86666204,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Z86666204,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T92411264,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T92411264,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T92411264,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T92411264,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+T92411264,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y90824958,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y90824958,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y90824958,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y90824958,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Y90824958,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R90301862,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R90301862,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R90301862,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R90301862,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R90301862,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+A83042614,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+A83042614,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+A83042614,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A83042614,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A83042614,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P90387968,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+P90387968,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P90387968,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P90387968,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P90387968,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V90168218,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+V90168218,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V90168218,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+V90168218,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+V90168218,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+A91900172,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+A91900172,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+A91900172,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+A91900172,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+A91900172,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+K92491522,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K92491522,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+K92491522,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K92491522,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+K92491522,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+P78395799,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P78395799,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P78395799,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+P78395799,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P78395799,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+O89536902,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O89536902,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+O89536902,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+O89536902,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+O89536902,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T90438562,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+T90438562,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T90438562,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T90438562,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+T90438562,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T84121184,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+T84121184,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+T84121184,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T84121184,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T84121184,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+S92437870,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+S92437870,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S92437870,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+S92437870,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S92437870,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T90902836,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T90902836,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T90902836,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+T90902836,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T90902836,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Z89087299,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Z89087299,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Z89087299,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z89087299,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Z89087299,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+D84415018,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D84415018,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D84415018,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D84415018,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D84415018,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G90192538,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+G90192538,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+G90192538,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G90192538,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+G90192538,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D91144320,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D91144320,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D91144320,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D91144320,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D91144320,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R425110,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R425110,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R425110,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R425110,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R425110,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R377935,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R377935,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R377935,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R377935,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R377935,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A89445072,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+A89445072,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+A89445072,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A89445072,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A89445072,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V91959458,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V91959458,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V91959458,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+V91959458,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+V91959458,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R422991,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R422991,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R422991,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R422991,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R422991,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+B91846756,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+B91846756,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+B91846756,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B91846756,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+B91846756,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+X83417410,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+X83417410,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+X83417410,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X83417410,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+X83417410,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q85039764,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q85039764,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q85039764,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q85039764,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Q85039764,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N92972160,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+N92972160,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N92972160,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N92972160,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N92972160,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+S92511700,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+S92511700,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+S92511700,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+S92511700,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+S92511700,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+U92336416,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U92336416,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U92336416,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U92336416,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U92336416,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+D92618868,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+D92618868,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+D92618868,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D92618868,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D92618868,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+J92258152,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J92258152,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+J92258152,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J92258152,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+J92258152,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O75105913,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O75105913,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+O75105913,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O75105913,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+O75105913,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+E92068088,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+E92068088,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E92068088,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+E92068088,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+E92068088,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U83484950,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U83484950,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U83484950,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U83484950,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U83484950,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P91439420,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P91439420,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+P91439420,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P91439420,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P91439420,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+W78024359,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+W78024359,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+W78024359,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+W78024359,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+W78024359,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+L92721130,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+L92721130,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+L92721130,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+L92721130,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+L92721130,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+S87019752,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S87019752,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S87019752,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+S87019752,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+S87019752,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+L91420980,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+L91420980,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+L91420980,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L91420980,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+L91420980,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+W92660566,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+W92660566,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+W92660566,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+W92660566,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+W92660566,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+X90355264,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+X90355264,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X90355264,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+X90355264,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X90355264,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T91802002,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+T91802002,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+T91802002,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T91802002,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T91802002,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V92264116,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+V92264116,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+V92264116,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V92264116,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V92264116,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+V92678690,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V92678690,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V92678690,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+V92678690,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+V92678690,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J91888688,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J91888688,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J91888688,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+J91888688,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J91888688,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+M92571144,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+M92571144,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+M92571144,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+M92571144,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M92571144,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q91358728,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q91358728,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q91358728,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q91358728,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Q91358728,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+C87216146,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C87216146,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C87216146,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C87216146,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+C87216146,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y93009562,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y93009562,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y93009562,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y93009562,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y93009562,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J93120144,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+J93120144,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+J93120144,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J93120144,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J93120144,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+W91824994,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+W91824994,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+W91824994,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+W91824994,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+W91824994,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+X91933358,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+X91933358,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+X91933358,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+X91933358,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+X91933358,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N92352398,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+N92352398,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N92352398,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N92352398,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N92352398,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z92975108,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Z92975108,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Z92975108,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Z92975108,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Z92975108,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R81027789,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R81027789,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R81027789,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R81027789,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R81027789,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+V90047758,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+V90047758,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+V90047758,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V90047758,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V90047758,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Q86088532,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Q86088532,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Q86088532,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q86088532,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q86088532,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P92619372,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P92619372,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+P92619372,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P92619372,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P92619372,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+S92866220,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+S92866220,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S92866220,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+S92866220,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+S92866220,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R457095,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R457095,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R457095,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R457095,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R457095,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R397200,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R397200,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R397200,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R397200,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R397200,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+I92150370,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+I92150370,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+I92150370,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+I92150370,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I92150370,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N92502602,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N92502602,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+N92502602,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N92502602,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N92502602,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V91626914,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V91626914,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+V91626914,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V91626914,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+V91626914,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P92878800,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P92878800,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P92878800,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P92878800,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P92878800,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R93117454,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R93117454,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R93117454,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R93117454,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R93117454,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U91654728,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U91654728,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U91654728,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+U91654728,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U91654728,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I91085736,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I91085736,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+I91085736,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I91085736,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+I91085736,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+J90613942,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+J90613942,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J90613942,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J90613942,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J90613942,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+O92150108,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+O92150108,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+O92150108,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O92150108,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+O92150108,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+F91731930,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+F91731930,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+F91731930,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F91731930,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F91731930,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G91703428,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G91703428,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+G91703428,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+G91703428,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+G91703428,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G92222916,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+G92222916,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G92222916,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G92222916,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+G92222916,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Q82687504,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Q82687504,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Q82687504,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q82687504,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Q82687504,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+H83543874,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+H83543874,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+H83543874,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+H83543874,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H83543874,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+O92774482,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O92774482,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O92774482,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+O92774482,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O92774482,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R75228787,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R75228787,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R75228787,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R75228787,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R75228787,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P92259194,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P92259194,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P92259194,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P92259194,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+P92259194,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+K90131192,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+K90131192,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K90131192,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K90131192,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K90131192,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+M93077736,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+M93077736,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M93077736,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+M93077736,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+M93077736,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+C90831026,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+C90831026,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+C90831026,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+C90831026,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C90831026,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+U92168454,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+U92168454,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U92168454,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U92168454,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+U92168454,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y92661484,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Y92661484,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y92661484,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y92661484,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y92661484,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y67964956,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y67964956,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Y67964956,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y67964956,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Y67964956,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+U91998378,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U91998378,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U91998378,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U91998378,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U91998378,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M92229324,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M92229324,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+M92229324,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+M92229324,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+M92229324,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R87480870,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R87480870,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R87480870,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R87480870,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R87480870,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+N90914032,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N90914032,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N90914032,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N90914032,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+N90914032,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+I92647216,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+I92647216,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+I92647216,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+I92647216,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+I92647216,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y92338466,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Y92338466,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Y92338466,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y92338466,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Y92338466,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+K93107962,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K93107962,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+K93107962,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K93107962,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K93107962,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J91076006,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J91076006,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+J91076006,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J91076006,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J91076006,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R88509448,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R88509448,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R88509448,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R88509448,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R88509448,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G90807654,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G90807654,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G90807654,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+G90807654,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G90807654,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+W90654276,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+W90654276,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+W90654276,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+W90654276,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+W90654276,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+B92685206,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+B92685206,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+B92685206,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+B92685206,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B92685206,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+F90549038,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+F90549038,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+F90549038,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F90549038,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F90549038,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y91813596,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Y91813596,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y91813596,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Y91813596,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y91813596,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X88625526,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+X88625526,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+X88625526,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+X88625526,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+X88625526,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y91118402,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y91118402,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y91118402,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y91118402,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y91118402,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+E92411810,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+E92411810,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+E92411810,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E92411810,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+E92411810,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V88838190,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V88838190,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V88838190,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+V88838190,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V88838190,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B83643024,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+B83643024,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B83643024,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+B83643024,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B83643024,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J88505868,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J88505868,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+J88505868,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J88505868,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J88505868,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+L92149328,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+L92149328,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+L92149328,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L92149328,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+L92149328,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G90131550,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+G90131550,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+G90131550,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G90131550,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G90131550,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A88322676,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+A88322676,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A88322676,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A88322676,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A88322676,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V88962552,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+V88962552,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V88962552,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V88962552,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+V88962552,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E85230674,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+E85230674,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+E85230674,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+E85230674,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+E85230674,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+M84537064,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M84537064,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M84537064,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M84537064,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+M84537064,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R84308336,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R84308336,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R84308336,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R84308336,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R84308336,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V92398342,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V92398342,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V92398342,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+V92398342,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+V92398342,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+F90007782,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F90007782,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+F90007782,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F90007782,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+F90007782,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Z89296653,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z89296653,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Z89296653,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Z89296653,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Z89296653,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y92583400,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Y92583400,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Y92583400,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y92583400,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y92583400,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U89579456,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+U89579456,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+U89579456,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U89579456,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U89579456,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+T92108440,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+T92108440,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T92108440,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T92108440,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+T92108440,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N92778198,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N92778198,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N92778198,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N92778198,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+N92778198,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P81539967,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P81539967,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+P81539967,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P81539967,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P81539967,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K91852824,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K91852824,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+K91852824,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K91852824,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+K91852824,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R92109734,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R92109734,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R92109734,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R92109734,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R92109734,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R421330,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R421330,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R421330,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R421330,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R421330,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+M92962856,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M92962856,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M92962856,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M92962856,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+M92962856,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S80642005,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S80642005,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+S80642005,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+S80642005,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S80642005,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C89206689,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+C89206689,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C89206689,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C89206689,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+C89206689,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+B74084097,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+B74084097,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B74084097,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+B74084097,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B74084097,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N90163204,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N90163204,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N90163204,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N90163204,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N90163204,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J92710098,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+J92710098,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J92710098,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+J92710098,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+J92710098,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P92194694,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P92194694,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P92194694,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+P92194694,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+P92194694,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P86156666,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P86156666,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P86156666,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P86156666,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P86156666,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A89133231,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A89133231,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+A89133231,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A89133231,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A89133231,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T82968400,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T82968400,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T82968400,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T82968400,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+T82968400,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+O92533516,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+O92533516,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O92533516,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+O92533516,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+O92533516,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+M91726016,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+M91726016,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+M91726016,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+M91726016,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+M91726016,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T90057188,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T90057188,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+T90057188,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T90057188,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T90057188,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+E66696880,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+E66696880,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+E66696880,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+E66696880,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+E66696880,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N90976748,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N90976748,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+N90976748,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+N90976748,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N90976748,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Q90705658,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q90705658,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Q90705658,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Q90705658,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q90705658,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M90300660,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+M90300660,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M90300660,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+M90300660,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+M90300660,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+I89011344,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+I89011344,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I89011344,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+I89011344,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I89011344,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+G90398142,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G90398142,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G90398142,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G90398142,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+G90398142,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+L90326312,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+L90326312,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+L90326312,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+L90326312,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+L90326312,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y79989361,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y79989361,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y79989361,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y79989361,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Y79989361,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P93050966,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+P93050966,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P93050966,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P93050966,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P93050966,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q89024366,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Q89024366,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q89024366,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Q89024366,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Q89024366,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+F83677906,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+F83677906,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F83677906,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+F83677906,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F83677906,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D90172882,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+D90172882,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90172882,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D90172882,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D90172882,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N92389936,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N92389936,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N92389936,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+N92389936,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+N92389936,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+W92685128,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+W92685128,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+W92685128,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+W92685128,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+W92685128,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Y91685054,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y91685054,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Y91685054,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Y91685054,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Y91685054,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+O83170676,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O83170676,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+O83170676,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+O83170676,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+O83170676,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+C83962768,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C83962768,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+C83962768,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C83962768,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+C83962768,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+P82296006,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P82296006,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P82296006,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P82296006,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+P82296006,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+C86944394,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+C86944394,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C86944394,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+C86944394,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C86944394,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P89493934,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P89493934,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P89493934,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P89493934,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+P89493934,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U78059795,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U78059795,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+U78059795,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U78059795,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U78059795,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E81564091,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E81564091,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+E81564091,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E81564091,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E81564091,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L91803244,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+L91803244,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L91803244,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+L91803244,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+L91803244,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M84853184,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M84853184,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+M84853184,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M84853184,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M84853184,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+N90604242,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+N90604242,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N90604242,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+N90604242,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N90604242,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+D90261854,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D90261854,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D90261854,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D90261854,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+D90261854,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R406898,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R406898,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R406898,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R406898,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R406898,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R411844,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R411844,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R411844,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R411844,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R411844,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R419827,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R419827,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R419827,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R419827,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R419827,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R417224,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R417224,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R417224,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R417224,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R417224,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R317925,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R317925,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R317925,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R317925,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R317925,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R436205,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R436205,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R436205,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R436205,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R436205,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R266903,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R266903,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R266903,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R266903,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R266903,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R326243,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R326243,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R326243,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R326243,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R326243,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Z92740238,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Z92740238,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Z92740238,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Z92740238,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Z92740238,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R277037,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R277037,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R277037,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R277037,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R277037,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R371407,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R371407,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R371407,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R371407,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R371407,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H91741916,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+H91741916,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+H91741916,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+H91741916,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+H91741916,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P92171462,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P92171462,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P92171462,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P92171462,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+P92171462,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+H92892432,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+H92892432,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H92892432,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+H92892432,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+H92892432,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P83892864,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+P83892864,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P83892864,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P83892864,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P83892864,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+M89064380,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+M89064380,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M89064380,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M89064380,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+M89064380,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+L91161782,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+L91161782,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+L91161782,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+L91161782,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+L91161782,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X87837428,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+X87837428,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+X87837428,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+X87837428,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+X87837428,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+U80326849,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U80326849,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+U80326849,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U80326849,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U80326849,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+F91217774,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+F91217774,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+F91217774,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+F91217774,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+F91217774,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+B92027984,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B92027984,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+B92027984,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B92027984,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B92027984,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+F92083368,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+F92083368,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+F92083368,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F92083368,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F92083368,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+M93127852,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+M93127852,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+M93127852,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+M93127852,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+M93127852,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D88337496,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D88337496,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D88337496,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D88337496,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D88337496,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+X92972914,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+X92972914,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+X92972914,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X92972914,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X92972914,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+K91169754,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+K91169754,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K91169754,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K91169754,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+K91169754,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+S89151559,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+S89151559,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S89151559,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S89151559,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+S89151559,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X83855946,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X83855946,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+X83855946,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X83855946,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+X83855946,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+J79707463,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J79707463,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+J79707463,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J79707463,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J79707463,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R467204,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R467204,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R467204,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R467204,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R467204,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R464293,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R464293,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R464293,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R464293,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R464293,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+H91376624,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+H91376624,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H91376624,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+H91376624,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+H91376624,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+F90828414,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+F90828414,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F90828414,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F90828414,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+F90828414,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R315835,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R315835,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R315835,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R315835,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R315835,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R430109,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R430109,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R430109,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R430109,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R430109,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R462096,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R462096,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R462096,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R462096,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R462096,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R423127,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R423127,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R423127,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R423127,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R423127,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R218129,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R218129,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R218129,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R218129,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R218129,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R416923,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R416923,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R416923,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R416923,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R416923,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+B92624574,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B92624574,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+B92624574,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+B92624574,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B92624574,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R378396,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R378396,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R378396,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R378396,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R378396,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J77536333,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J77536333,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+J77536333,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J77536333,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J77536333,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B92536388,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+B92536388,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B92536388,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+B92536388,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B92536388,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L83486482,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+L83486482,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+L83486482,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+L83486482,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L83486482,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R81488227,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R81488227,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R81488227,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R81488227,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R81488227,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M90655810,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+M90655810,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+M90655810,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+M90655810,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+M90655810,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Z90890486,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Z90890486,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Z90890486,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Z90890486,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Z90890486,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+W74795927,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+W74795927,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+W74795927,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+W74795927,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+W74795927,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R401742,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R401742,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R401742,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R401742,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R401742,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+J86744608,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+J86744608,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+J86744608,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J86744608,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J86744608,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Q79491003,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Q79491003,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Q79491003,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Q79491003,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Q79491003,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T74044149,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+T74044149,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T74044149,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T74044149,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T74044149,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D91967284,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+D91967284,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+D91967284,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D91967284,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D91967284,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P81782196,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P81782196,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P81782196,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+P81782196,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+P81782196,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D75567167,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D75567167,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+D75567167,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D75567167,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D75567167,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R92423336,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R92423336,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R92423336,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R92423336,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R92423336,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I91621898,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+I91621898,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I91621898,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+I91621898,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+I91621898,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F93054570,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+F93054570,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+F93054570,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F93054570,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+F93054570,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+I92844998,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+I92844998,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+I92844998,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+I92844998,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+I92844998,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+A89973754,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A89973754,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+A89973754,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+A89973754,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+A89973754,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+T91639522,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T91639522,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T91639522,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T91639522,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T91639522,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M92782594,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+M92782594,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+M92782594,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+M92782594,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+M92782594,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+O88362228,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+O88362228,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O88362228,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+O88362228,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+O88362228,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N92782678,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N92782678,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+N92782678,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N92782678,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N92782678,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92825728,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+I92825728,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+I92825728,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+I92825728,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+I92825728,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H51611048,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H51611048,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+H51611048,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+H51611048,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+H51611048,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+K92483506,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K92483506,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+K92483506,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+K92483506,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K92483506,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+I84513000,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I84513000,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+I84513000,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I84513000,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I84513000,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R92782848,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R92782848,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R92782848,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R92782848,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R92782848,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X89713542,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X89713542,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+X89713542,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+X89713542,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X89713542,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Y85207188,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y85207188,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y85207188,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y85207188,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Y85207188,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+K92033524,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K92033524,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+K92033524,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K92033524,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K92033524,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+K86699698,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K86699698,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K86699698,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+K86699698,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K86699698,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N87803322,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N87803322,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N87803322,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+N87803322,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+N87803322,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+G88253956,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+G88253956,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G88253956,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G88253956,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G88253956,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+A89695568,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+A89695568,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+A89695568,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+A89695568,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A89695568,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+S79303001,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S79303001,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S79303001,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+S79303001,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+S79303001,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P63538544,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P63538544,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+P63538544,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P63538544,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P63538544,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q87600374,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Q87600374,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q87600374,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Q87600374,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q87600374,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y92521314,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y92521314,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y92521314,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Y92521314,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y92521314,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+A91944284,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+A91944284,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A91944284,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A91944284,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+A91944284,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R92895400,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R92895400,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R92895400,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R92895400,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R92895400,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+M90677456,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+M90677456,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+M90677456,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+M90677456,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+M90677456,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A88667168,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A88667168,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A88667168,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+A88667168,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+A88667168,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+K91879608,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+K91879608,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+K91879608,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+K91879608,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K91879608,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V87169366,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V87169366,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V87169366,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V87169366,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+V87169366,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M89363515,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+M89363515,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M89363515,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+M89363515,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M89363515,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D88445934,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+D88445934,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D88445934,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+D88445934,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D88445934,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Z91520018,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Z91520018,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Z91520018,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Z91520018,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Z91520018,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+F90162524,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F90162524,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+F90162524,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+F90162524,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F90162524,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R86196306,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R86196306,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R86196306,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R86196306,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R86196306,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Y87919100,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y87919100,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y87919100,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y87919100,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y87919100,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q92685508,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Q92685508,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q92685508,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Q92685508,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q92685508,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H78583679,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H78583679,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+H78583679,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+H78583679,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H78583679,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H91138534,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+H91138534,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+H91138534,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H91138534,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+H91138534,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R449620,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R449620,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R449620,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R449620,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R449620,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q81276809,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Q81276809,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Q81276809,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q81276809,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Q81276809,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+S80844225,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S80844225,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S80844225,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+S80844225,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+S80844225,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N81986686,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N81986686,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+N81986686,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N81986686,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N81986686,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R423636,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R423636,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R423636,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R423636,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R423636,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q90954426,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q90954426,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Q90954426,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q90954426,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Q90954426,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+H91460390,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+H91460390,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+H91460390,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H91460390,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H91460390,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R92044980,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R92044980,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R92044980,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R92044980,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R92044980,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+K92408206,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+K92408206,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K92408206,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+K92408206,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+K92408206,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+G91749132,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G91749132,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G91749132,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+G91749132,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G91749132,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K92346880,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K92346880,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K92346880,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K92346880,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K92346880,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+D90769450,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D90769450,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+D90769450,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90769450,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D90769450,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H93021440,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H93021440,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+H93021440,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H93021440,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+H93021440,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K92209630,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+K92209630,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K92209630,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K92209630,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+K92209630,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D80407927,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D80407927,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D80407927,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+D80407927,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+D80407927,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+I92417716,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+I92417716,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+I92417716,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+I92417716,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92417716,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+M91868150,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M91868150,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M91868150,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+M91868150,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M91868150,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+I87380568,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+I87380568,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+I87380568,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I87380568,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+I87380568,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+G93018194,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+G93018194,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G93018194,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G93018194,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+G93018194,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B88452546,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+B88452546,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+B88452546,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+B88452546,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+B88452546,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A92567606,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A92567606,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+A92567606,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+A92567606,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A92567606,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T91440818,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+T91440818,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T91440818,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T91440818,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+T91440818,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R189413,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R189413,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R189413,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R189413,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R189413,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R420353,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R420353,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R420353,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R420353,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R420353,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+I91696538,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+I91696538,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+I91696538,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+I91696538,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I91696538,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T93049780,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T93049780,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T93049780,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T93049780,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T93049780,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F86489038,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F86489038,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+F86489038,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+F86489038,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+F86489038,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+U92768862,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U92768862,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+U92768862,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U92768862,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+U92768862,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+S85426874,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S85426874,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S85426874,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S85426874,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+S85426874,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P89919090,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+P89919090,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+P89919090,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P89919090,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P89919090,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P91934212,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P91934212,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+P91934212,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P91934212,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P91934212,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Y92769136,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Y92769136,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y92769136,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y92769136,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y92769136,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T93029848,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+T93029848,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T93029848,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T93029848,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+T93029848,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+O86861356,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+O86861356,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+O86861356,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+O86861356,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+O86861356,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J87477516,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J87477516,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J87477516,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J87477516,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J87477516,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T91376086,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T91376086,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T91376086,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T91376086,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+T91376086,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V92834228,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+V92834228,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+V92834228,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+V92834228,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V92834228,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D92872032,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D92872032,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D92872032,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D92872032,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D92872032,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+X92833724,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+X92833724,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+X92833724,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+X92833724,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X92833724,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J90784636,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J90784636,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J90784636,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+J90784636,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+J90784636,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M90031272,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+M90031272,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+M90031272,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M90031272,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+M90031272,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R426093,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R426093,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R426093,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R426093,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R426093,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R462561,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R462561,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R462561,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R462561,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R462561,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R458788,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R458788,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R458788,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R458788,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R458788,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R389184,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R389184,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R389184,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R389184,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R389184,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R457116,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R457116,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R457116,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R457116,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R457116,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R440113,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R440113,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R440113,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R440113,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R440113,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R393896,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R393896,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R393896,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R393896,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R393896,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R438182,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R438182,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R438182,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R438182,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R438182,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R412724,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R412724,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R412724,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R412724,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R412724,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D89796334,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D89796334,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D89796334,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+D89796334,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D89796334,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+X93053440,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+X93053440,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X93053440,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+X93053440,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+X93053440,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+K90535720,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K90535720,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+K90535720,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K90535720,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K90535720,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+D92453824,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+D92453824,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D92453824,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D92453824,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D92453824,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E91703264,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E91703264,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+E91703264,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+E91703264,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+E91703264,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A92560130,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+A92560130,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A92560130,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A92560130,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+A92560130,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+E90391398,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+E90391398,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+E90391398,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+E90391398,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E90391398,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X88732654,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+X88732654,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+X88732654,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+X88732654,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+X88732654,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D90904702,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D90904702,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D90904702,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D90904702,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90904702,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P92071634,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P92071634,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P92071634,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+P92071634,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P92071634,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+N93063042,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N93063042,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+N93063042,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N93063042,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+N93063042,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+I92479742,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I92479742,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I92479742,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+I92479742,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+I92479742,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+L91128620,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+L91128620,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+L91128620,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+L91128620,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L91128620,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+U76710517,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U76710517,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U76710517,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U76710517,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U76710517,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Q90911238,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Q90911238,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q90911238,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q90911238,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Q90911238,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+S93063354,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+S93063354,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+S93063354,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+S93063354,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S93063354,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+L92228458,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L92228458,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+L92228458,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+L92228458,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L92228458,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+F88725170,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F88725170,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+F88725170,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+F88725170,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+F88725170,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+V91437716,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+V91437716,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V91437716,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+V91437716,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+V91437716,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+X85460832,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+X85460832,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+X85460832,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+X85460832,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+X85460832,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+G90293022,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+G90293022,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G90293022,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+G90293022,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G90293022,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Q92075728,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q92075728,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Q92075728,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q92075728,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Q92075728,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+H74047017,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+H74047017,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+H74047017,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H74047017,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+H74047017,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A93021174,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+A93021174,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+A93021174,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A93021174,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A93021174,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+J92179932,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+J92179932,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+J92179932,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+J92179932,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J92179932,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B88724918,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+B88724918,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+B88724918,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B88724918,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B88724918,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U92709790,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U92709790,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U92709790,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+U92709790,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+U92709790,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U92915754,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+U92915754,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U92915754,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U92915754,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U92915754,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U91324264,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U91324264,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+U91324264,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U91324264,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U91324264,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+J91971860,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J91971860,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J91971860,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J91971860,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J91971860,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P92423138,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+P92423138,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+P92423138,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P92423138,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P92423138,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U92655832,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U92655832,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+U92655832,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U92655832,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+U92655832,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R396174,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R396174,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R396174,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R396174,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R396174,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R412504,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R412504,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R412504,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R412504,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R412504,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R467626,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R467626,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R467626,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R467626,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R467626,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R92213554,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R92213554,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R92213554,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R92213554,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R92213554,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N90394658,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+N90394658,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+N90394658,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N90394658,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N90394658,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+S91762378,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S91762378,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+S91762378,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+S91762378,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S91762378,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T92505068,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+T92505068,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T92505068,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T92505068,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T92505068,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y91740908,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Y91740908,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y91740908,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y91740908,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y91740908,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G91503068,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+G91503068,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+G91503068,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G91503068,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G91503068,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A92496968,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+A92496968,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A92496968,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+A92496968,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+A92496968,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U78068369,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U78068369,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U78068369,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U78068369,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U78068369,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+B90596784,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B90596784,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+B90596784,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+B90596784,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+B90596784,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R93167356,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R93167356,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R93167356,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R93167356,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R93167356,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y92357036,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y92357036,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Y92357036,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y92357036,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y92357036,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+S92696244,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+S92696244,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+S92696244,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+S92696244,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+S92696244,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P92362126,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+P92362126,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P92362126,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P92362126,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P92362126,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+F93100970,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+F93100970,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F93100970,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+F93100970,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+F93100970,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L89575590,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+L89575590,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+L89575590,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+L89575590,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+L89575590,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L92589870,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L92589870,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+L92589870,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+L92589870,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+L92589870,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q93090262,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Q93090262,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q93090262,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Q93090262,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q93090262,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P91991784,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+P91991784,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+P91991784,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+P91991784,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+P91991784,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+S90836454,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+S90836454,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+S90836454,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+S90836454,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+S90836454,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U92427564,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U92427564,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+U92427564,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U92427564,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U92427564,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J90919132,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J90919132,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J90919132,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+J90919132,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J90919132,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Z92928666,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Z92928666,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z92928666,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Z92928666,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Z92928666,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+H88429306,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H88429306,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+H88429306,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+H88429306,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+H88429306,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Y90572898,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y90572898,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y90572898,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Y90572898,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y90572898,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q87941202,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Q87941202,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q87941202,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q87941202,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q87941202,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T90494988,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T90494988,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+T90494988,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T90494988,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+T90494988,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+V90842424,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V90842424,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+V90842424,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V90842424,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+V90842424,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C88417500,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+C88417500,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C88417500,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+C88417500,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+C88417500,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+W86137742,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+W86137742,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+W86137742,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+W86137742,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+W86137742,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+S92113822,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S92113822,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S92113822,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S92113822,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+S92113822,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+E92662974,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+E92662974,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+E92662974,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+E92662974,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+E92662974,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+B85976194,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+B85976194,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+B85976194,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+B85976194,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+B85976194,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+J91717912,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J91717912,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J91717912,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J91717912,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+J91717912,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+L89471418,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+L89471418,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L89471418,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+L89471418,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+L89471418,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+V82390360,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V82390360,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V82390360,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+V82390360,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+V82390360,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+C79254513,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C79254513,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+C79254513,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+C79254513,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+C79254513,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+A91072722,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+A91072722,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A91072722,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+A91072722,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+A91072722,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R90573018,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R90573018,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R90573018,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R90573018,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R90573018,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+C92811958,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+C92811958,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+C92811958,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+C92811958,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+C92811958,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D89566864,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D89566864,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D89566864,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D89566864,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D89566864,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+B90847298,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+B90847298,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+B90847298,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+B90847298,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+B90847298,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+W90577272,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+W90577272,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+W90577272,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+W90577272,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+W90577272,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+D89602876,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D89602876,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D89602876,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D89602876,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D89602876,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+N87317964,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N87317964,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N87317964,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N87317964,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N87317964,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Q83499330,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Q83499330,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Q83499330,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q83499330,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q83499330,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A86011926,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A86011926,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+A86011926,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+A86011926,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A86011926,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N88723820,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N88723820,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N88723820,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N88723820,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+N88723820,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+G68107296,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G68107296,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G68107296,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+G68107296,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G68107296,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+N88389294,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N88389294,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N88389294,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N88389294,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N88389294,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+O83548188,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O83548188,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+O83548188,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O83548188,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O83548188,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+G93207464,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G93207464,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G93207464,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G93207464,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G93207464,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R419816,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R419816,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R419816,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R419816,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R419816,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R402571,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R402571,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R402571,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R402571,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R402571,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R426600,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R426600,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R426600,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R426600,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R426600,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R438107,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R438107,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R438107,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R438107,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R438107,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T92832654,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T92832654,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T92832654,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+T92832654,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T92832654,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+E91449024,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+E91449024,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+E91449024,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E91449024,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E91449024,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+K91138540,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+K91138540,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K91138540,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K91138540,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+K91138540,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+E92365618,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+E92365618,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+E92365618,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+E92365618,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E92365618,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Y92246954,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Y92246954,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y92246954,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y92246954,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Y92246954,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K90073012,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K90073012,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+K90073012,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K90073012,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K90073012,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N81257369,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N81257369,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N81257369,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N81257369,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N81257369,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z92626708,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Z92626708,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Z92626708,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Z92626708,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Z92626708,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U81643871,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+U81643871,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U81643871,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U81643871,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U81643871,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+G92177378,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+G92177378,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G92177378,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+G92177378,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+G92177378,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Q92597126,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Q92597126,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Q92597126,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Q92597126,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q92597126,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R442028,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R442028,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R442028,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R442028,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R442028,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+A92763458,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+A92763458,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A92763458,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A92763458,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+A92763458,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+D90547808,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+D90547808,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+D90547808,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D90547808,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+D90547808,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+I92471658,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+I92471658,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+I92471658,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+I92471658,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+I92471658,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+W91362134,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+W91362134,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+W91362134,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+W91362134,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+W91362134,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+O92893028,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+O92893028,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+O92893028,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+O92893028,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+O92893028,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+H92647844,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H92647844,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+H92647844,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+H92647844,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H92647844,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Q92181888,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q92181888,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Q92181888,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Q92181888,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Q92181888,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E92147280,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E92147280,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+E92147280,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+E92147280,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E92147280,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R90921300,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R90921300,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R90921300,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R90921300,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R90921300,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K92247842,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+K92247842,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K92247842,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+K92247842,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+K92247842,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+T77861613,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+T77861613,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T77861613,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T77861613,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+T77861613,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+H90349044,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+H90349044,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+H90349044,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+H90349044,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H90349044,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+F92319414,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+F92319414,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+F92319414,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F92319414,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F92319414,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H92268574,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+H92268574,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+H92268574,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+H92268574,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+H92268574,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R91168428,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R91168428,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R91168428,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R91168428,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R91168428,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G92148574,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+G92148574,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G92148574,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+G92148574,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G92148574,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D91747326,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D91747326,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D91747326,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D91747326,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D91747326,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R81094011,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R81094011,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R81094011,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R81094011,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R81094011,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+J92782376,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+J92782376,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J92782376,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J92782376,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+J92782376,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+B92891164,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+B92891164,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+B92891164,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B92891164,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+B92891164,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+U92845518,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U92845518,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+U92845518,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+U92845518,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U92845518,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R93028936,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R93028936,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R93028936,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R93028936,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R93028936,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+D92350368,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+D92350368,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D92350368,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D92350368,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D92350368,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N60219294,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N60219294,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+N60219294,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N60219294,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N60219294,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J92173598,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+J92173598,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+J92173598,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+J92173598,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+J92173598,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+X89202267,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+X89202267,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+X89202267,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+X89202267,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+X89202267,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R458914,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R458914,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R458914,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R458914,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R458914,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R454037,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R454037,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R454037,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R454037,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R454037,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R451311,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R451311,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R451311,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R451311,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R451311,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R448200,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R448200,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R448200,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R448200,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R448200,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+V89848362,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V89848362,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V89848362,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+V89848362,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+V89848362,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+P80954639,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+P80954639,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+P80954639,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+P80954639,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P80954639,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+A92590122,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+A92590122,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+A92590122,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A92590122,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A92590122,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T90464786,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+T90464786,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T90464786,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+T90464786,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T90464786,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+C91153868,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+C91153868,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+C91153868,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+C91153868,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+C91153868,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+F92296200,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+F92296200,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F92296200,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+F92296200,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F92296200,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+W91847576,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+W91847576,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+W91847576,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+W91847576,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+W91847576,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+W90930764,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+W90930764,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+W90930764,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+W90930764,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+W90930764,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+E80509233,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+E80509233,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+E80509233,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+E80509233,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+E80509233,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+X81367473,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+X81367473,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+X81367473,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+X81367473,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+X81367473,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U92627292,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+U92627292,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+U92627292,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U92627292,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+U92627292,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+P92059766,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+P92059766,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P92059766,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+P92059766,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+P92059766,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I92578528,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+I92578528,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+I92578528,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+I92578528,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+I92578528,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+M89984760,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M89984760,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+M89984760,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+M89984760,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M89984760,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A81037199,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+A81037199,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A81037199,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+A81037199,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+A81037199,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92681106,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+I92681106,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+I92681106,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+I92681106,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+I92681106,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G92454130,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G92454130,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+G92454130,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+G92454130,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G92454130,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+B91845442,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+B91845442,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+B91845442,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+B91845442,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+B91845442,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+V91844478,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+V91844478,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+V91844478,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V91844478,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V91844478,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G89623158,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G89623158,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G89623158,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G89623158,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+G89623158,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+C89819738,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+C89819738,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C89819738,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+C89819738,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+C89819738,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+C93065184,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+C93065184,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+C93065184,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+C93065184,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+C93065184,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+O89888286,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+O89888286,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+O89888286,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O89888286,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+O89888286,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+C91762766,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+C91762766,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+C91762766,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+C91762766,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+C91762766,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+L46191811,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+L46191811,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+L46191811,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+L46191811,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L46191811,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+L92061494,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+L92061494,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+L92061494,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+L92061494,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+L92061494,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+K91941018,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K91941018,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K91941018,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K91941018,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K91941018,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+X91205894,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+X91205894,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+X91205894,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+X91205894,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+X91205894,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+L87901806,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+L87901806,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+L87901806,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+L87901806,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+L87901806,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+S87295212,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+S87295212,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+S87295212,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+S87295212,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+S87295212,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+N88462868,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N88462868,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N88462868,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N88462868,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+N88462868,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U92004850,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U92004850,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U92004850,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+U92004850,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U92004850,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D88223530,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D88223530,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D88223530,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D88223530,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D88223530,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Z92084354,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Z92084354,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+Z92084354,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Z92084354,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Z92084354,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+O91935182,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+O91935182,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+O91935182,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+O91935182,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O91935182,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F92404396,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F92404396,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+F92404396,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F92404396,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+F92404396,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+E90823018,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+E90823018,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+E90823018,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E90823018,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E90823018,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N90397136,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N90397136,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N90397136,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+N90397136,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+N90397136,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R78177527,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R78177527,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+R78177527,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R78177527,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R78177527,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+M92071800,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+M92071800,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+M92071800,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+M92071800,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+M92071800,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U89820552,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+U89820552,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U89820552,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+U89820552,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U89820552,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+P91012760,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+P91012760,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+P91012760,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+P91012760,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+P91012760,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+T91728322,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+T91728322,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T91728322,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+T91728322,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+T91728322,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N81496413,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+N81496413,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+N81496413,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+N81496413,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+N81496413,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G91497956,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G91497956,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G91497956,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+G91497956,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G91497956,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U89659436,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+U89659436,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+U89659436,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+U89659436,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U89659436,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+D90786768,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D90786768,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D90786768,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+D90786768,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+D90786768,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92184432,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+I92184432,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+I92184432,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+I92184432,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+I92184432,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+U92788624,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+U92788624,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+U92788624,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+U92788624,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+U92788624,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+W90077626,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+W90077626,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+W90077626,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+W90077626,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+W90077626,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+R414403,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R414403,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R414403,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R414403,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+R414403,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+R86005,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R86005,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R86005,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R86005,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R86005,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K92695338,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K92695338,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K92695338,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K92695338,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+K92695338,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+T90209074,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+T90209074,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+T90209074,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T90209074,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+T90209074,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+I92638768,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+I92638768,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+I92638768,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92638768,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+I92638768,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G91453514,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+G91453514,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+G91453514,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+G91453514,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+G91453514,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+C86602304,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+C86602304,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C86602304,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+C86602304,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+C86602304,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+I93218104,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+I93218104,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I93218104,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+I93218104,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+I93218104,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Z89942850,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Z89942850,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Z89942850,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Z89942850,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+Z89942850,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T90444678,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+T90444678,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+T90444678,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T90444678,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T90444678,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Y92533410,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+Y92533410,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+Y92533410,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y92533410,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+Y92533410,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J88742484,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+J88742484,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+J88742484,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+J88742484,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+J88742484,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q91858628,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+Q91858628,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Q91858628,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+Q91858628,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+Q91858628,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Y92845564,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Y92845564,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+Y92845564,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Y92845564,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Y92845564,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R464428,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R464428,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R464428,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R464428,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R464428,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+R417230,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+R417230,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+R417230,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+R417230,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R417230,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+K91614732,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+K91614732,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+K91614732,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K91614732,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+K91614732,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+N90855332,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+N90855332,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+N90855332,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N90855332,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+N90855332,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+U89355833,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+U89355833,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+U89355833,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+U89355833,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+U89355833,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+S92839482,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+S92839482,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+S92839482,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+S92839482,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+S92839482,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F90471934,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+F90471934,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+F90471934,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+F90471934,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+F90471934,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T87227896,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+T87227896,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+T87227896,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+T87227896,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+T87227896,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+W92460134,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+W92460134,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+W92460134,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+W92460134,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+W92460134,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+T91458028,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+T91458028,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+T91458028,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+T91458028,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+T91458028,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+C92982324,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+C92982324,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+C92982324,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+C92982324,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+C92982324,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+Z92838886,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+Z92838886,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Z92838886,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Z92838886,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Z92838886,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+H90148904,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+H90148904,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+H90148904,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+H90148904,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+H90148904,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+K92246980,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K92246980,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K92246980,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+K92246980,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+K92246980,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+M91205744,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+M91205744,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+M91205744,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+M91205744,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+M91205744,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+N92471416,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+N92471416,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+N92471416,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+N92471416,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+N92471416,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+Q89895872,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+Q89895872,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+Q89895872,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+Q89895872,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+Q89895872,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+R441826,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R441826,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R441826,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+R441826,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R441826,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R411641,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R411641,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R411641,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+R411641,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R411641,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E85348826,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+E85348826,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+E85348826,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+E85348826,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+E85348826,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I92545090,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+I92545090,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+I92545090,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+I92545090,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+I92545090,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+D90134334,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D90134334,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+D90134334,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+D90134334,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90134334,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+V91563444,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+V91563444,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+V91563444,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+V91563444,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V91563444,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+R91040076,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+R91040076,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R91040076,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+R91040076,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+R91040076,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K90479130,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K90479130,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+K90479130,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+K90479130,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+K90479130,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+A92904310,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+A92904310,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+A92904310,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A92904310,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+A92904310,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+D89863240,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+D89863240,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D89863240,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+D89863240,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+D89863240,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+V91194250,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+V91194250,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V91194250,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+V91194250,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+V91194250,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E90471332,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+E90471332,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+E90471332,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+E90471332,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+E90471332,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+D90573574,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D90573574,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D90573574,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+D90573574,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+D90573574,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+G91742204,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+G91742204,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+G91742204,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+G91742204,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+G91742204,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y89822772,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+Y89822772,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+Y89822772,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+Y89822772,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+Y89822772,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+R87659720,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+R87659720,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+R87659720,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+R87659720,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+R87659720,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+K92290492,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K92290492,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+K92290492,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+K92290492,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+K92290492,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+D91770312,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+D91770312,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+D91770312,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+D91770312,3ed183c8-4fd3-5363-8989-1c14b3b5e576,Children's Play Area
+D91770312,c00036c6-5822-57a4-8135-875804bb1bb0,Intercom Facility
+O86605522,a7ef433d-8b43-57a5-8941-f726e8221f50,Clubhouse
+O86605522,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+O86605522,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+O86605522,43e4f790-69fb-58bd-bfa6-cc11f3df673d,24/7 Water Supply
+O86605522,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+G91084742,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+G91084742,1842cff0-ef07-58ed-8c94-eb2bd882567a,Sewage Treatment Plant
+G91084742,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+G91084742,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+G91084742,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+K90768908,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+K90768908,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+K90768908,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+K90768908,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+K90768908,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E92754494,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+E92754494,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+E92754494,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+E92754494,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+E92754494,5442e631-db9d-53a8-8f43-6a3cd7043ef8,Swimming Pool
+C93200382,34acd343-d128-5ba5-81e6-bd56a583a27f,Power Backup
+C93200382,bcfcf0e6-3fb8-5b7f-98eb-ac0a96e122c7,Fire Fighting Systems
+C93200382,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+C93200382,1615d083-1ef1-5559-9759-68f2f0d1e1c0,24x7 Security & CCTV
+C93200382,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+A81958624,916d8d1f-c53a-5265-b64d-c13343cd9a5f,Landscaped Garden
+A81958624,54cbc6a3-7950-59fb-b8f6-f7844a0f1bb5,Indoor Games Room
+A81958624,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+A81958624,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+A81958624,ff9628a0-f200-5798-860d-ccebc7946b7e,Gymnasium
+B82434428,070bbf34-55b7-5bea-bbbf-18a3fdf9d2cf,Jogging & Cycling Track
+B82434428,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall
+B82434428,7576c562-6235-5e9c-b9ca-ee447ac4896f,Gated Community
+B82434428,ddc1588a-cb56-5d0f-82bd-d4daa6a0b8b9,Lifts / Elevator
+B82434428,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V92499566,b32f482a-7710-5bd6-a8cc-900cdfa850e0,Maintenance Staff
+V92499566,56585937-8b43-5f85-936b-c9925eae5e36,Visitor Parking
+V92499566,9e0e6619-d5ff-50af-96d2-55b45ae4f868,Rainwater Harvesting
+V92499566,fe84f2b0-1b34-5550-ad06-8b4658620ff8,Car Parking
+V92499566,afc08780-a91d-5884-bd76-316eac00d892,Multipurpose Hall

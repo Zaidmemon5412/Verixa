@@ -415,7 +415,8 @@ class PropertyListSerializer(serializers.ModelSerializer):
         ]
 
     def get_primary_image(self, obj):
-        primary_img = obj.images.filter(is_primary=True).first() or obj.images.first()
+        all_imgs = list(obj.images.all())
+        primary_img = next((img for img in all_imgs if getattr(img, 'is_primary', False)), all_imgs[0] if all_imgs else None)
         return primary_img.image_url if primary_img else None
 
     def get_latitude(self, obj):

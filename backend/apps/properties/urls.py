@@ -16,6 +16,7 @@ from .views import (
     PropertyImageReorderView,
     PropertyDocumentListCreateView,
     PropertyDocumentDetailView,
+    MarketTrendsAnalyticsAPIView,
 )
 
 app_name = 'properties'
@@ -28,6 +29,8 @@ router.register(r'property-listings', PropertyListingViewSet, basename='property
 router.register(r'property-legals', PropertyLegalViewSet, basename='property-legal')
 
 urlpatterns = [
+    path('properties/market-trends/', MarketTrendsAnalyticsAPIView.as_view(), name='market-trends-analytics'),
+    path('market-trends/', MarketTrendsAnalyticsAPIView.as_view(), name='market-trends-root-analytics'),
     path('', include(router.urls)),
 
     # Property Images Endpoints

@@ -242,6 +242,22 @@ export const AppRoutes = () => {
             </AppSuspense>
           }
         />
+        <Route
+          path="/market-trends"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <MarketTrendsPage />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/market/trends"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <MarketTrendsPage />
+            </AppSuspense>
+          }
+        />
       </Route>
 
       {/* 2. Public Authentication Routes (Isolated AuthLayout Shell) */}

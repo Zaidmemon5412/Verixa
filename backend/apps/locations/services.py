@@ -77,29 +77,43 @@ def get_locality(locality_id: Union[uuid.UUID, str]) -> Locality:
     except (ValueError, TypeError):
         pass
 
-    # Try name or slug match
     clean_id = str(locality_id).strip().lower().replace('-', ' ')
+
+    # Support static frontend IDs ("1", "2", "3", "4", "5", "6")
+    id_map = {
+        "1": "satellite",
+        "2": "thaltej",
+        "3": "gota",
+        "4": "chandkheda",
+        "5": "sola",
+        "6": "maninagar",
+    }
+    if clean_id in id_map:
+        clean_id = id_map[clean_id]
+
+    # 1. Try exact name match
     loc = Locality.objects.filter(name__iexact=clean_id).first()
     if loc:
         return loc
 
-    loc = Locality.objects.filter(name__icontains=clean_id).first()
+    # 2. Try exact name + city suffix match (e.g. "Gota, Ahmedabad")
+    loc = Locality.objects.filter(name__iexact=f"{clean_id}, ahmedabad").first()
     if loc:
         return loc
 
-    # Support static frontend IDs ("1", "2", "3", "4", "5")
-    id_map = {
-        "1": "Satellite",
-        "2": "Thaltej",
-        "3": "Gota",
-        "4": "Chandkheda",
-        "5": "Sola",
-    }
-    if str(locality_id) in id_map:
-        target_name = id_map[str(locality_id)]
-        loc = Locality.objects.filter(name__iexact=target_name).first()
-        if loc:
-            return loc
+    # 3. Try name starting with match (prefer primary locality over sub-locality)
+    loc = Locality.objects.filter(name__istartswith=f"{clean_id},").first()
+    if loc:
+        return loc
+
+    loc = Locality.objects.filter(name__istartswith=clean_id).first()
+    if loc:
+        return loc
+
+    # 4. Fallback to contains match
+    loc = Locality.objects.filter(name__icontains=clean_id).first()
+    if loc:
+        return loc
 
     raise Locality.DoesNotExist(f"Locality not found for query '{locality_id}'")
 

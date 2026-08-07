@@ -213,7 +213,7 @@ export function PropertyFilters({
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary" />
-            Area Wise Filter (Gota, Chandkheda, Sola, Thaltej, Satellite)
+            Area Wise Filter (Gota, Chandkheda, Sola, Thaltej, Satellite, Maninagar)
           </span>
           {selectedLocality !== 'All' && (
             <button
