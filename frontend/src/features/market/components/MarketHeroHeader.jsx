@@ -21,9 +21,34 @@ export function MarketHeroHeader({
   totalDbRecords, 
   filters, 
   onFilterChange, 
-  onResetFilters 
+  onResetFilters,
+  availableLocalities = [] 
 }) {
   const summaryText = marketInsights || aiInsights;
+
+  const defaultLocalities = [
+    "Maninagar",
+    "Chandkheda",
+    "Thaltej",
+    "Satellite",
+    "Sola",
+    "Gota",
+    "Science City",
+    "Science Park",
+    "Jagatpur",
+    "Sindhu Bhavan Road",
+    "Nigam Nagar",
+    "D Cabin",
+    "Godrej Garden City",
+    "Bhaikakanagar"
+  ];
+
+  // Combine and deduplicate localities (normalizing any Chandkheda sectors)
+  const localityList = Array.from(new Set(
+    [...defaultLocalities, ...availableLocalities].map(loc => 
+      loc.toLowerCase().includes('chandkheda') ? 'Chandkheda' : loc
+    )
+  )).sort();
 
   return (
     <div className="space-y-6">
@@ -131,20 +156,12 @@ export function MarketHeroHeader({
             <select
               value={filters.locality}
               onChange={(e) => onFilterChange('locality', e.target.value)}
-              className="w-full text-xs rounded-xl border border-border/60 bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full text-xs rounded-xl border border-border/60 bg-background px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-semibold"
             >
               <option value="All">All Micro-Markets</option>
-              <option value="Chandkheda">Chandkheda</option>
-              <option value="Thaltej">Thaltej</option>
-              <option value="Satellite">Satellite</option>
-              <option value="Sola">Sola</option>
-              <option value="Gota">Gota</option>
-              <option value="Science City">Science City</option>
-              <option value="Jagatpur">Jagatpur</option>
-              <option value="Sindhu Bhavan Road">Sindhu Bhavan Road</option>
-              <option value="Nigam Nagar">Nigam Nagar</option>
-              <option value="D Cabin">D Cabin</option>
-              <option value="Godrej Garden City">Godrej Garden City</option>
+              {localityList.map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
             </select>
           </div>
 

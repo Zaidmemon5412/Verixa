@@ -16,8 +16,8 @@ export function MarketKpiCards({ isLoading, totalListings, kpiMetrics }) {
   const [kpiPeriod, setKpiPeriod] = useState('Monthly'); // 'Monthly' | 'Quarterly' | 'Yearly'
 
   const getKpiData = () => {
-    const baseAvgPrice = kpiMetrics?.avgPrice || "₹85.6 Lakhs";
-    const basePriceSqft = kpiMetrics?.pricePerSqft || "₹6,980";
+    const baseAvgPrice = kpiMetrics?.avgPrice || "₹77.0 Lakhs";
+    const basePriceSqft = kpiMetrics?.pricePerSqft || "₹5,690";
     const baseListings = kpiMetrics?.activeListings !== undefined ? kpiMetrics.activeListings : (totalListings || 185);
     const baseNewListings = kpiMetrics?.newListings || "28";
 

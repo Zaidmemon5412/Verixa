@@ -28,9 +28,12 @@ function extractArray(val) {
 // Helper to extract strictly DB-backed locality names from property records
 function extractSubLocality(p) {
   if (!p || typeof p !== 'object') return 'Satellite';
-  const locObjName = p.locality_name || p.locality_detail?.name || (typeof p.locality === 'string' ? p.locality : null) || p.location;
+  const locObjName = p.locality_name || p.locality_detail?.name || (typeof p.locality === 'string' ? p.locality : (p.locality?.name || null)) || p.location;
   if (locObjName && typeof locObjName === 'string') {
     const cleanName = locObjName.split(',')[0].trim();
+    if (cleanName.toLowerCase().includes('chandkheda')) {
+      return 'Chandkheda';
+    }
     if (cleanName && cleanName !== 'Ahmedabad' && cleanName !== 'Gujarat') {
       return cleanName;
     }
@@ -38,16 +41,21 @@ function extractSubLocality(p) {
 
   const text = `${p.address || ''} ${p.property_name || ''} ${p.name || ''}`.toLowerCase();
 
+  if (text.includes('chandkheda')) return 'Chandkheda';
   if (text.includes('sindhu bhavan')) return 'Sindhu Bhavan Road';
   if (text.includes('science city')) return 'Science City';
   if (text.includes('science park')) return 'Science Park';
+  if (text.includes('bhaikaka')) return 'Bhaikakanagar';
+  if (text.includes('maninagar')) return 'Maninagar';
   if (text.includes('thaltej')) return 'Thaltej';
   if (text.includes('satellite')) return 'Satellite';
   if (text.includes('sola')) return 'Sola';
   if (text.includes('gota')) return 'Gota';
-  if (text.includes('jagatpur') || text.includes('godrej')) return 'Jagatpur';
+  if (text.includes('jagatpur')) return 'Jagatpur';
+  if (text.includes('godrej garden city') || text.includes('godrej')) return 'Godrej Garden City';
+  if (text.includes('nigam nagar')) return 'Nigam Nagar';
+  if (text.includes('d cabin')) return 'D Cabin';
   if (text.includes('bopal') || text.includes('shela')) return 'South Bopal';
-  if (text.includes('chandkheda')) return 'Chandkheda';
   if (text.includes('sg highway')) return 'SG Highway';
 
   return 'Satellite';
@@ -77,6 +85,25 @@ export const marketService = {
       const rawProperties = propertiesRes.status === 'fulfilled' ? extractArray(propertiesRes.value) : [];
       const rawLocalities = localitiesRes.status === 'fulfilled' ? extractArray(localitiesRes.value) : [];
       const rawBuilders = buildersRes.status === 'fulfilled' ? extractArray(buildersRes.value) : [];
+
+      // Extract all available localities dynamically from DB & baseline data (normalizing Chandkheda)
+      const localitySet = new Set();
+      rawLocalities.forEach(loc => {
+        if (loc && loc.name) {
+          let cleanName = loc.name.split(',')[0].trim();
+          if (cleanName.toLowerCase().includes('chandkheda')) {
+            cleanName = 'Chandkheda';
+          }
+          if (cleanName && cleanName !== 'Ahmedabad') localitySet.add(cleanName);
+        }
+      });
+      ENRICHED_LOCALITY_HEATMAP.forEach(item => {
+        if (item && item.name) {
+          const cleanName = item.name.toLowerCase().includes('chandkheda') ? 'Chandkheda' : item.name;
+          localitySet.add(cleanName);
+        }
+      });
+      const availableLocalities = Array.from(localitySet).sort();
 
       // Apply client-side filter logic to DB records if filters are specified
       const activeFilters = filters || {};
@@ -118,43 +145,62 @@ export const marketService = {
           if (!p) return;
           const name = extractSubLocality(p);
           let priceSqft = parseNumber(p.price_per_sqft);
-          if (priceSqft <= 0) {
-            const price = parseNumber(p.price);
-            const area = parseNumber(p.carpet_area || p.builtup_area);
-            if (price > 0 && area > 0) {
-              priceSqft = price / area;
-            }
+          const price = parseNumber(p.price);
+          const area = parseNumber(p.carpet_area || p.builtup_area);
+
+          if (priceSqft <= 0 && price > 0 && area > 0) {
+            priceSqft = price / area;
           }
 
           if (!locMap[name]) {
-            locMap[name] = { totalSqftPrice: 0, count: 0, listings: 0 };
+            locMap[name] = { totalSqftPrice: 0, sqftCount: 0, totalPriceSum: 0, priceCount: 0, listings: 0 };
           }
           if (priceSqft > 0) {
             const priceInK = priceSqft > 100 ? priceSqft / 1000 : priceSqft;
             locMap[name].totalSqftPrice += priceInK;
-            locMap[name].count += 1;
+            locMap[name].sqftCount += 1;
+          }
+          if (price > 0) {
+            locMap[name].totalPriceSum += price;
+            locMap[name].priceCount += 1;
           }
           locMap[name].listings += 1;
         });
 
         const dbLocalityList = Object.keys(locMap).map(locName => {
-          const avgSqftK = locMap[locName].count > 0 
-            ? (locMap[locName].totalSqftPrice / locMap[locName].count).toFixed(1) 
+          const avgSqftK = locMap[locName].sqftCount > 0 
+            ? (locMap[locName].totalSqftPrice / locMap[locName].sqftCount).toFixed(1) 
             : "6.8";
-          const growth = (6.5 + (locName.length % 6) * 1.4).toFixed(1);
-          const demandScore = Math.min(96, Math.max(70, 72 + (locMap[locName].listings * 2)));
           
-          let rating = "Stable Market";
-          if (demandScore >= 86) rating = "Hot Market";
-          else if (demandScore >= 78) rating = "Growing Market";
-          else if (demandScore < 72) rating = "Declining Market";
+          let avgTotalPriceStr = "";
+          if (locMap[locName].priceCount > 0) {
+            const rawAvgPrice = locMap[locName].totalPriceSum / locMap[locName].priceCount;
+            avgTotalPriceStr = rawAvgPrice >= 10000000 
+              ? `₹${(rawAvgPrice / 10000000).toFixed(2)} Cr`
+              : `₹${(rawAvgPrice / 100000).toFixed(1)} Lakhs`;
+          } else {
+            const baselineItem = ENRICHED_LOCALITY_HEATMAP.find(e => e.name.toLowerCase() === locName.toLowerCase());
+            avgTotalPriceStr = baselineItem?.avgTotalPrice || `₹${(parseFloat(avgSqftK) * 11).toFixed(1)} Lakhs`;
+          }
+
+          const baselineItem = ENRICHED_LOCALITY_HEATMAP.find(e => e.name.toLowerCase() === locName.toLowerCase());
+          const growth = baselineItem?.growthPct || `+${(6.5 + (locName.length % 6) * 1.4).toFixed(1)}%`;
+          const demandScore = baselineItem?.demandScore || Math.min(96, Math.max(70, 72 + (locMap[locName].listings * 2)));
+          
+          let rating = baselineItem?.rating || "Stable Market";
+          if (!baselineItem?.rating) {
+            if (demandScore >= 86) rating = "Hot Market";
+            else if (demandScore >= 78) rating = "Growing Market";
+            else if (demandScore < 72) rating = "Declining Market";
+          }
 
           return {
             name: locName,
             avgPrice: `₹${avgSqftK}k/sqft`,
+            avgTotalPrice: avgTotalPriceStr,
             priceVal: parseFloat(avgSqftK),
-            growthPct: `+${growth}%`,
-            growthVal: parseFloat(growth),
+            growthPct: growth,
+            growthVal: parseFloat(growth.replace(/[^0-9.]/g, '')),
             demandScore,
             rating,
             totalListings: locMap[locName].listings
@@ -190,8 +236,8 @@ export const marketService = {
       }
 
       // 4. Compute Dynamic Locality-Specific KPI Metrics
-      let calculatedAvgPriceLakhs = "85.6 Lakhs";
-      let calculatedPricePerSqft = 6980;
+      let calculatedAvgPriceLakhs = "77.0 Lakhs";
+      let calculatedPricePerSqft = 5690;
       const selectedLocalityName = activeFilters.locality || 'All';
 
       if (filteredProps.length > 0) {
@@ -227,11 +273,11 @@ export const marketService = {
         const foundHeatmap = processedLocalityHeatmap.find(h => h && h.name && String(h.name).toLowerCase().includes(String(activeFilters.locality).toLowerCase()));
         if (foundHeatmap) {
           calculatedPricePerSqft = Math.round((foundHeatmap.priceVal || 6.8) * 1000);
-          calculatedAvgPriceLakhs = ((foundHeatmap.priceVal || 6.8) * 9.5).toFixed(1) + " Lakhs";
+          calculatedAvgPriceLakhs = foundHeatmap.avgTotalPrice || (((foundHeatmap.priceVal || 6.8) * 9.5).toFixed(1) + " Lakhs");
         }
       }
 
-      const activeListingsCount = filteredProps.length || rawProperties.length || 185;
+      const activeListingsCount = filteredProps.length || (selectedLocalityName !== 'All' ? 12 : rawProperties.length || 185);
       const estimatedDemandScore = 88;
       const isSellersMarket = estimatedDemandScore > 80;
 
@@ -244,15 +290,25 @@ export const marketService = {
       };
 
       // 5. Synthesize Executive Market Insights Text
-      const topLocalityName = processedLocalityHeatmap[0]?.name || "Chandkheda";
-      const topGrowthRate = processedLocalityHeatmap[0]?.growthPct || "+12.4%";
-      const insightsText = `${filters.city || "Ahmedabad"} property market exhibits strong momentum with an average price index appreciation of +8.4% over the last 12 months.\n\n` +
-        `Sub-market demand is accelerating in ${topLocalityName} (${topGrowthRate} growth), Thaltej, and Satellite due to increasing inventory absorption and infrastructure growth.\n\n` +
-        `Rental yields remain robust at 3.85%, making these database micro-markets prime targets for both home buyers and investors.`;
+      let insightsText = "";
+      if (selectedLocalityName !== 'All') {
+        const selLocData = processedLocalityHeatmap.find(h => h.name.toLowerCase() === selectedLocalityName.toLowerCase());
+        const locGrowth = selLocData?.growthPct || "+9.2%";
+        insightsText = `The ${selectedLocalityName} micro-market exhibits high demand with an average property price of ${dynamicKpiMetrics.avgPrice} (${dynamicKpiMetrics.pricePerSqft}/sqft) and a ${locGrowth} annual appreciation trajectory.\n\n` +
+          `Active property inventory in ${selectedLocalityName} currently stands at ${activeListingsCount} listings with strong buyer absorption and steady capital value appreciation.\n\n` +
+          `Rental yields in ${selectedLocalityName} remain competitive at ~3.8%, making it an attractive option for both end-users and real estate investors.`;
+      } else {
+        const topLocalityName = processedLocalityHeatmap[0]?.name || "Sindhu Bhavan Road";
+        const topGrowthRate = processedLocalityHeatmap[0]?.growthPct || "+14.5%";
+        insightsText = `${filters.city || "Ahmedabad"} property market exhibits strong momentum with an average price index appreciation of +8.4% over the last 12 months.\n\n` +
+          `Sub-market demand is accelerating in ${topLocalityName} (${topGrowthRate} growth), Science City, Thaltej, Satellite, and Maninagar due to increasing inventory absorption and infrastructure growth.\n\n` +
+          `Rental yields remain robust at 3.85%, making these micro-markets prime targets for both home buyers and real estate investors.`;
+      }
 
       return {
         isLiveDb: hasDbData,
         totalDbRecords: rawProperties.length || rawLocalities.length,
+        availableLocalities,
         kpiMetrics: dynamicKpiMetrics,
         marketHealth: MARKET_HEALTH_DATA,
         historicalTrends: activeTrendChart,
@@ -278,8 +334,8 @@ export const marketService = {
         isLiveDb: false,
         totalDbRecords: 0,
         kpiMetrics: {
-          avgPrice: "₹85.6 Lakhs",
-          pricePerSqft: "₹6,980",
+          avgPrice: "₹77.0 Lakhs",
+          pricePerSqft: "₹5,690",
           activeListings: 185,
           newListings: "28",
           localityName: filters.locality || "All"
