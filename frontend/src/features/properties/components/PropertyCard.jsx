@@ -43,15 +43,17 @@ export function PropertyCard({
 
           {/* Badges Overlay */}
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-            {project.badges?.map((badge, idx) => (
-              <span
-                key={idx}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-background/90 text-foreground backdrop-blur-md shadow-sm border border-white/20"
-              >
-                {badge === "RERA Verified" && <Shield className="w-3 h-3 text-emerald-500 fill-emerald-500/20" />}
-                {badge}
-              </span>
-            ))}
+            {project.badges
+              ?.filter((badge) => badge && !badge.toLowerCase().includes('legal'))
+              .map((badge, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-background/90 text-foreground backdrop-blur-md shadow-sm border border-white/20"
+                >
+                  {badge === "RERA Verified" && <Shield className="w-3 h-3 text-emerald-500 fill-emerald-500/20" />}
+                  {badge}
+                </span>
+              ))}
           </div>
 
           {/* Wishlist Action Button (Heart Icon) */}
@@ -70,19 +72,14 @@ export function PropertyCard({
             <Heart className={`w-4 h-4 ${isWishlisted ? "fill-white text-white" : ""}`} />
           </button>
 
-          {/* Price & Location Overlay */}
+          {/* Title & Price Overlay */}
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white z-10">
             <div>
-              <p className="text-xs text-white/90 font-semibold flex items-center gap-1 truncate max-w-[220px]" title={project.address || project.location}>
-                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span className="truncate">{project.address || project.location}</span>
-              </p>
-
-              <h3 className="text-lg font-bold tracking-tight drop-shadow-sm">
+              <h3 className="text-lg font-bold tracking-tight drop-shadow-sm line-clamp-1">
                 {project.name}
               </h3>
             </div>
-            <div className="text-right">
+            <div className="text-right shrink-0">
               <span className="text-xs text-white/70 block">Asking price</span>
               <span className="text-base font-extrabold text-amber-400">
                 {project.price}
@@ -93,6 +90,12 @@ export function PropertyCard({
 
         {/* Card Body Content */}
         <CardContent className="p-4 space-y-3">
+          {/* Address / Location */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium" title={project.address || project.location}>
+            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">{project.address || project.location}</span>
+          </div>
+
           {/* Key Specs */}
           <div className="grid grid-cols-2 gap-2 text-xs py-2 border-y border-border/60 text-muted-foreground">
             <div className="flex items-center gap-1.5">

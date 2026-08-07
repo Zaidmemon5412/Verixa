@@ -120,9 +120,8 @@ export function mapApiPropertyToUi(item) {
     images: finalGalleryImages,
     badges: [
       statusStr,
-      cleanFurnishing(item.furnishing_status),
-      `Legal ${legalStatus}`
-    ],
+      cleanFurnishing(item.furnishing_status)
+    ].filter(Boolean),
     rera: item.rera_number || item.rera || 'PR/GJ/AHM/VERIXA/2026',
     investScore: legalStatus === 'VERIFIED' ? 88 : legalStatus === 'PENDING' ? 76 : 54,
     growthScore: 82,

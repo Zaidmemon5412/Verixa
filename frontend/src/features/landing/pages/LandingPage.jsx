@@ -44,11 +44,6 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Text & CTA Column */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>Verixa AI Real Estate Decision Platform</span>
-            </div>
-
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
               Buy Verified Properties with <span className="text-primary">100% Legal Confidence</span>
             </h1>

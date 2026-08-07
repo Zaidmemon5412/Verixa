@@ -14,6 +14,25 @@ from apps.properties.models import Property, PropertyImage, PropertyScore, Prope
 from apps.locations.models import Locality, NearbyPlace
 from apps.builders.models import Builder
 
+def find_csv_path(filename, alt_names=()):
+    candidates = [
+        os.path.join(r"c:\Project_sem4", filename),
+        os.path.join(r"c:\Project_sem4\Verixa", filename),
+        os.path.join(os.path.dirname(__file__), filename),
+        os.path.join(r"d:\Verixa", filename),
+    ]
+    for alt in alt_names:
+        candidates.extend([
+            os.path.join(r"c:\Project_sem4", alt),
+            os.path.join(r"c:\Project_sem4\Verixa", alt),
+            os.path.join(os.path.dirname(__file__), alt),
+            os.path.join(r"d:\Verixa", alt),
+        ])
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    raise FileNotFoundError(f"Could not locate CSV file '{filename}'. Looked in: {candidates}")
+
 def audit():
     results = {}
 
@@ -58,8 +77,10 @@ def audit():
     }
 
     # PHASE 3: DATA PRESERVATION AUDIT
-    df_src_p = pd.read_csv(r"d:\Verixa\Maninagar.csv")
-    df_src_img = pd.read_csv(r"d:\Verixa\Maninagar_img.csv")
+    p_csv = find_csv_path("Maninagar_cleaned_properties.csv", ["Maninagar.csv"])
+    i_csv = find_csv_path("Maninagar_cloudinary_images.csv", ["Maninagar_img.csv"])
+    df_src_p = pd.read_csv(p_csv)
+    df_src_img = pd.read_csv(i_csv)
 
     src_p_count = len(df_src_p)
     src_img_count = len(df_src_img)
