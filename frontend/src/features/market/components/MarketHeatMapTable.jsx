@@ -90,7 +90,8 @@ export function MarketHeatMapTable({ localityData, isLoading }) {
           <thead>
             <tr className="border-b border-border/40 bg-muted/30 text-muted-foreground font-semibold">
               <th className="py-3 px-4">Locality</th>
-              <th className="py-3 px-4">Avg Price</th>
+              <th className="py-3 px-4">Avg Property Price</th>
+              <th className="py-3 px-4">Avg Rate (/sqft)</th>
               <th className="py-3 px-4">Growth %</th>
               <th className="py-3 px-4">Demand Score</th>
               <th className="py-3 px-4">Market Classification</th>
@@ -104,7 +105,8 @@ export function MarketHeatMapTable({ localityData, isLoading }) {
                   <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
                   {row.name}
                 </td>
-                <td className="py-3 px-4 font-semibold text-foreground">{row.avgPrice}</td>
+                <td className="py-3 px-4 font-extrabold text-foreground">{row.avgTotalPrice || `₹${((row.priceVal || 6.8) * 11).toFixed(1)} Lakhs`}</td>
+                <td className="py-3 px-4 font-semibold text-muted-foreground">{row.avgPrice}</td>
                 <td className="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400">
                   {row.growthPct}
                 </td>

@@ -70,12 +70,12 @@ export function PriceTrendChart({ trendData, isLoading, activeTimeframe, onTimef
   }
 
   const chartData = trendData && trendData.length > 0 ? trendData : [
-    { period: "Jan", avgPrice: 78.0, pricePerSqft: 6400, medianPrice: 73.0, launches: 12, sales: 18 },
-    { period: "Feb", avgPrice: 79.5, pricePerSqft: 6520, medianPrice: 74.5, launches: 8, sales: 22 },
-    { period: "Mar", avgPrice: 81.0, pricePerSqft: 6650, medianPrice: 76.0, launches: 15, sales: 28 },
-    { period: "Apr", avgPrice: 82.8, pricePerSqft: 6780, medianPrice: 77.5, launches: 11, sales: 24 },
-    { period: "May", avgPrice: 84.2, pricePerSqft: 6890, medianPrice: 79.0, launches: 18, sales: 31 },
-    { period: "Jun", avgPrice: 85.6, pricePerSqft: 6980, medianPrice: 80.5, launches: 14, sales: 26 },
+    { period: "Jan", avgPrice: 70.0, pricePerSqft: 5180, medianPrice: 66.5, launches: 12, sales: 18 },
+    { period: "Feb", avgPrice: 71.4, pricePerSqft: 5280, medianPrice: 67.8, launches: 8, sales: 22 },
+    { period: "Mar", avgPrice: 72.8, pricePerSqft: 5380, medianPrice: 69.2, launches: 15, sales: 28 },
+    { period: "Apr", avgPrice: 74.2, pricePerSqft: 5480, medianPrice: 70.6, launches: 11, sales: 24 },
+    { period: "May", avgPrice: 75.6, pricePerSqft: 5590, medianPrice: 72.0, launches: 18, sales: 31 },
+    { period: "Jun", avgPrice: 77.0, pricePerSqft: 5690, medianPrice: 73.5, launches: 14, sales: 26 },
   ];
 
   return (

@@ -72,6 +72,7 @@ export function MarketTrendsPage() {
         filters={filters}
         onFilterChange={handleFilterChange}
         onResetFilters={handleResetFilters}
+        availableLocalities={marketData?.availableLocalities}
       />
 
       {/* 2. Key Market Metrics Cards */}
