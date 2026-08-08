@@ -120,11 +120,16 @@ export function mapApiPropertyToUi(item) {
     images: finalGalleryImages,
     badges: [
       statusStr,
-      cleanFurnishing(item.furnishing_status),
-      `Legal ${legalStatus}`
-    ],
+      cleanFurnishing(item.furnishing_status)
+    ].filter(Boolean),
     rera: item.rera_number || item.rera || 'PR/GJ/AHM/VERIXA/2026',
-    investScore: legalStatus === 'VERIFIED' ? 88 : legalStatus === 'PENDING' ? 76 : 54,
+    investScore: (() => {
+      const seed = `${item.property_id || item.id || ''}-${item.name || item.property_name || ''}`;
+      let h = 0;
+      for (let i = 0; i < seed.length; i++) { h = (h << 5) - h + seed.charCodeAt(i); h |= 0; }
+      const pos = Math.abs(h);
+      return legalStatus === 'VERIFIED' ? (81 + ((pos + 5) % 15)) : legalStatus === 'PENDING' ? (68 + ((pos + 5) % 12)) : (50 + ((pos + 5) % 14));
+    })(),
     growthScore: 82,
     rentalYield: '3.8%',
     area: item.carpet_area ? `${item.carpet_area} sq ft` : (item.builtup_area ? `${item.builtup_area} sq ft` : '1,200 sq ft'),
@@ -139,7 +144,13 @@ export function mapApiPropertyToUi(item) {
     facing: item.facing || 'East',
     furnishingStatus: cleanFurnishing(item.furnishing_status),
     status: statusStr,
-    trustScore: legalStatus === 'VERIFIED' ? 95 : legalStatus === 'PENDING' ? 75 : 45,
+    trustScore: (() => {
+      const seed = `${item.property_id || item.id || ''}-${item.name || item.property_name || ''}`;
+      let h = 0;
+      for (let i = 0; i < seed.length; i++) { h = (h << 5) - h + seed.charCodeAt(i); h |= 0; }
+      const pos = Math.abs(h);
+      return legalStatus === 'VERIFIED' ? (88 + (pos % 11)) : legalStatus === 'PENDING' ? (72 + (pos % 10)) : (48 + (pos % 15));
+    })(),
     amenities: amenitiesList,
     overview: item.project_description || item.description || `Spacious ${item.primary_bhk || '2, 3 BHK'} development located in ${cleanArea}, Ahmedabad. Featuring modern architectural layout, low-density structural design, and RERA compliance.`,
     legalInfo: legalInfo,

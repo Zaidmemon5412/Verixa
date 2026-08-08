@@ -156,16 +156,14 @@ export function AIFairPriceCard({ propertyId, property }) {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                  Verixa AI Fair Price
+                  Verixa Fair Price
                 </h3>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60">
                   <Sparkles className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
                   AI Model Verified
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
-                {data.model_type || 'XGBoost & Random Forest Engine'} · Automated Market Valuation
-              </p>
+
             </div>
           </div>
 
@@ -316,7 +314,7 @@ export function AIFairPriceCard({ propertyId, property }) {
       <div className="bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 px-5 py-3 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2">
         <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         <span>
-          Verixa AI Fair Price Engine evaluates multi-source real estate market datasets. Consult an authorized financial or property advisor prior to final commitments.
+          Verixa Fair Price Engine evaluates multi-source real estate market datasets. Consult an authorized financial or property advisor prior to final commitments.
         </span>
       </div>
     </div>
