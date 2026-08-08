@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Building2, Search, ArrowRight, Shield, Star, 
-  CheckCircle, XCircle, Sparkles, TrendingUp, Award, 
-  Check, AlertTriangle, FileText, Lock, Users, HelpCircle, 
+import {
+  Building2, Search, ArrowRight, Shield, Star,
+  CheckCircle, XCircle, Sparkles, TrendingUp, Award,
+  Check, AlertTriangle, FileText, Lock, Users, HelpCircle,
   ChevronRight, ArrowUpRight
 } from 'lucide-react';
 import { Button } from '../../../shared/components/ui/button';
@@ -93,9 +93,9 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
 
           {/* Right Column: Hero Auto Property Photo Slider */}
           <div className="lg:col-span-5">
-            <PropertyHeroSlider 
-              onSelectProject={onSelectProject} 
-              onNavigate={onNavigate} 
+            <PropertyHeroSlider
+              onSelectProject={onSelectProject}
+              onNavigate={onNavigate}
             />
           </div>
         </div>
@@ -200,7 +200,7 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
             Easy-to-Implement Features
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight">
-            Verixa AI Decision Engine Solutions
+            Verixa Decision Engine Solutions
           </h2>
           <p className="text-sm text-muted-foreground">
             Smart tools that eliminate property buying stress and protect your lifelong savings.

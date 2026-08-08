@@ -75,15 +75,15 @@ export function VerixaPropertyAuditor({ property, builder }) {
 
   return (
     <Card className="rounded-2xl border-2 border-border/80 bg-card shadow-md overflow-hidden text-foreground">
-      {/* VERIXA AI VERDICT HEADER CARD */}
+      {/* VERIXA VERDICT HEADER CARD */}
       <div className="bg-slate-900 text-white p-6 space-y-4 border-b border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
-              VERIXA AI PROPERTY AUDITOR
+              VERIXA  PROPERTY AUDITOR
             </span>
             <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5">
-              VERIXA AI VERDICT
+              VERIXA VERDICT
             </h2>
           </div>
           <div>
@@ -103,13 +103,13 @@ export function VerixaPropertyAuditor({ property, builder }) {
                 {bullet}
               </li>
             )) || (
-              <>
-                <li>Fair price valuation comparison performed against micro-market baseline.</li>
-                <li>Developer track record and RERA compliance records verified.</li>
-                <li>Locality growth indicators and rental demand evaluated.</li>
-                <li>Title records and land registration details checked against database.</li>
-              </>
-            )}
+                <>
+                  <li>Fair price valuation comparison performed against micro-market baseline.</li>
+                  <li>Developer track record and RERA compliance records verified.</li>
+                  <li>Locality growth indicators and rental demand evaluated.</li>
+                  <li>Title records and land registration details checked against database.</li>
+                </>
+              )}
           </ul>
         </div>
       </div>
@@ -127,11 +127,10 @@ export function VerixaPropertyAuditor({ property, builder }) {
                 <button
                   key={cat.id}
                   onClick={() => setActiveTab(cat.id)}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center min-h-[44px] ${
-                    isActive
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center min-h-[44px] ${isActive
                       ? 'bg-primary text-primary-foreground border-primary shadow-sm scale-[1.02]'
                       : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border-transparent'
-                  }`}
+                    }`}
                 >
                   <span>{cat.label}</span>
                 </button>
@@ -205,8 +204,8 @@ export function VerixaPropertyAuditor({ property, builder }) {
                     {localityData?.strengths?.map((str, idx) => (
                       <li key={idx}>{str}</li>
                     )) || (
-                      <li>This information could not be verified from the available records.</li>
-                    )}
+                        <li>This information could not be verified from the available records.</li>
+                      )}
                   </ul>
                 </div>
 
@@ -216,8 +215,8 @@ export function VerixaPropertyAuditor({ property, builder }) {
                     {localityData?.weaknesses?.map((wk, idx) => (
                       <li key={idx}>{wk}</li>
                     )) || (
-                      <li>This information could not be verified from the available records.</li>
-                    )}
+                        <li>This information could not be verified from the available records.</li>
+                      )}
                   </ul>
                 </div>
               </div>
