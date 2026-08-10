@@ -1,0 +1,184 @@
+================================================================================
+VERIXA PLATFORM - DEVELOPER SETUP & DATABASE RESTORATION GUIDE
+================================================================================
+
+Welcome to Verixa! This guide will walk you step-by-step through setting up the 
+project, creating and activating Python virtual environments, configuring `.env`, 
+restoring the database snapshot, and running both backend and frontend services.
+
+--------------------------------------------------------------------------------
+PROJECT FILE DIRECTORY LOCATIONS
+--------------------------------------------------------------------------------
+Root Directory Path:      [project-root]/ (e.g., verixa/)
+Environment Setup File:   [project-root]/.env
+Environment Template:     [project-root]/.env.example
+Database Backup Snapshot: [project-root]/backend/db_backup.json
+Backend Directory:        [project-root]/backend/
+Backend Requirements:     [project-root]/backend/requirements.txt
+Backend Manage Script:    [project-root]/backend/manage.py
+Frontend Directory:       [project-root]/frontend/
+Frontend Package File:    [project-root]/frontend/package.json
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. System Prerequisites
+2. Setting Up Environment Variables (.env)
+3. Creating & Activating Virtual Environment (venv)
+4. Database Setup & Restoring Data from `db_backup.json`
+5. Running the Backend Service (Django API)
+6. Running the Frontend Service (React / Vite)
+7. Troubleshooting & Useful Commands
+
+--------------------------------------------------------------------------------
+1. SYSTEM PREREQUISITES
+--------------------------------------------------------------------------------
+Make sure you have the following installed on your system:
+- Python (v3.10 or higher recommended)
+- Node.js (v18 or higher recommended) & npm
+- PostgreSQL (v14 or higher)
+
+--------------------------------------------------------------------------------
+2. SETTING UP ENVIRONMENT VARIABLES (.env)
+--------------------------------------------------------------------------------
+Before running the project, you MUST create your local environment configuration file.
+
+Step 2.1: Copy `.env.example` to `.env` in the PROJECT ROOT directory:
+   File Location: [project-root]/.env
+   
+   - On Windows (PowerShell from project root):
+     Copy-Item .env.example .env
+
+   - On Linux/Mac (from project root):
+     cp .env.example .env
+
+Step 2.2: Open `[project-root]/.env` in your text editor and update your credentials:
+   - DB_USER: Your local PostgreSQL username (default: postgres)
+   - DB_PASSWORD: Your local PostgreSQL password
+   - DB_NAME: verixa_db
+   - DB_HOST: 127.0.0.1
+   - DB_PORT: 5432
+   - DJANGO_SECRET_KEY: Set a unique secret key for development.
+   - CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET (optional for image uploads)
+   - EMAIL_HOST_USER, EMAIL_HOST_PASSWORD (optional for email services)
+
+--------------------------------------------------------------------------------
+3. CREATING & ACTIVATING VIRTUAL ENVIRONMENT (venv)
+--------------------------------------------------------------------------------
+It is highly recommended to isolate Python dependencies in a virtual environment.
+
+Step 3.1: Navigate to the backend directory:
+   Directory Location: [project-root]/backend/
+   
+   Command:
+     cd backend
+
+Step 3.2: Create Virtual Environment inside [project-root]/backend/venv/:
+   Command:
+     python -m venv venv
+
+Step 3.3: ACTIVATE Virtual Environment:
+   - On Windows (PowerShell inside backend directory):
+     .\venv\Scripts\Activate.ps1
+
+   - On Windows (Command Prompt - cmd inside backend directory):
+     venv\Scripts\activate.bat
+
+   - On Linux / macOS (inside backend directory):
+     source venv/bin/activate
+
+   (Once activated, your terminal prompt will display `(venv)` at the beginning)
+
+Step 3.4: Install Required Packages from [project-root]/backend/requirements.txt:
+   Command (inside active venv):
+     pip install -r requirements.txt
+
+--------------------------------------------------------------------------------
+4. DATABASE SETUP & RESTORING DATA FROM `db_backup.json`
+--------------------------------------------------------------------------------
+* Make sure your virtual environment `(venv)` is activated first! *
+Backup Data File Location: [project-root]/backend/db_backup.json
+
+Step 4.1: Create PostgreSQL Database
+   Open PostgreSQL command line (psql) or pgAdmin / DBeaver, and run:
+   CREATE DATABASE verixa_db;
+
+Step 4.2: Apply Django Database Migrations
+   Directory Location: [project-root]/backend/
+   Command (with venv active):
+     python manage.py migrate
+
+Step 4.3: Import Pre-loaded Project Data from `[project-root]/backend/db_backup.json`
+   To insert all properties, builders, localities, and project records into your database:
+
+   OPTION A (Standard Django Command inside backend directory):
+     python manage.py loaddata db_backup.json
+
+   OPTION B (If encountering encoding issues on Windows PowerShell):
+     python manage.py shell -c "import io; from django.core.management import call_command; f=io.open('db_backup.json', 'r', encoding='utf-8'); call_command('loaddata', 'db_backup.json'); print('Data successfully restored!')"
+
+   After running this step, your local database will contain all initial 
+   properties, localities, amenities, and builder datasets!
+
+--------------------------------------------------------------------------------
+5. RUNNING THE BACKEND SERVICE (DJANGO API)
+--------------------------------------------------------------------------------
+
+Step 5.1: Open a terminal window, navigate to backend directory, and activate venv:
+   Directory Location: [project-root]/backend/
+   Commands:
+     cd backend
+     # Windows PowerShell:
+     .\venv\Scripts\Activate.ps1
+     # Linux / macOS:
+     source venv/bin/activate
+
+Step 5.2: Start the Django Development Server:
+   Manage File Location: [project-root]/backend/manage.py
+   Command:
+     python manage.py runserver 0.0.0.0:8000
+
+   - Backend API is accessible at: http://localhost:8000/
+   - Admin panel is accessible at:  http://localhost:8000/admin/
+
+--------------------------------------------------------------------------------
+6. RUNNING THE FRONTEND SERVICE (REACT / VITE)
+--------------------------------------------------------------------------------
+
+Step 6.1: Open a second terminal window and navigate to the frontend directory:
+   Directory Location: [project-root]/frontend/
+   Command:
+     cd frontend
+
+Step 6.2: Install Node.js Dependencies from [project-root]/frontend/package.json:
+   Command:
+     npm install
+
+Step 6.3: Start the Vite Development Server:
+   Command:
+     npm run dev
+
+   - Frontend Web Application is accessible at: http://localhost:5173/
+
+--------------------------------------------------------------------------------
+7. TROUBLESHOOTING & USEFUL COMMANDS
+--------------------------------------------------------------------------------
+
+- Creating a Superuser (Admin Account):
+  Directory: [project-root]/backend/
+  Command:   python manage.py createsuperuser
+
+- Exporting a new backup of your database:
+  Directory: [project-root]/backend/
+  File Created: [project-root]/backend/db_backup.json
+  Command:
+    python manage.py shell -c "import io; from django.core.management import call_command; f=io.open('db_backup.json', 'w', encoding='utf-8'); call_command('dumpdata', stdout=f, indent=2); f.close(); print('Backup generated successfully!')"
+
+- Port 8000 or 5173 already in use?
+  If port 8000 is occupied, run backend on another port:
+  python manage.py runserver 8001
+  (Make sure to update VITE_API_URL in [project-root]/.env to match the new port!)
+
+================================================================================
+Happy Coding! - Verixa Development Team
+================================================================================
