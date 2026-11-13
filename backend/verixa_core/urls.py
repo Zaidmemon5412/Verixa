@@ -7,9 +7,13 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from apps.core.views import HealthCheckAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Infrastructure Liveness & Readiness Probe
+    path('api/health/', HealthCheckAPIView.as_view(), name='health-check'),
 
     # Accounts authentication and profiles endpoints
     path('api/accounts/', include('apps.accounts.urls')),

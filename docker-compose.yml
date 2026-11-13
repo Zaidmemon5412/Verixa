@@ -23,6 +23,7 @@ services:
     image: redis:7-alpine
     container_name: verixa_cache
     restart: always
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
       - "6379:6379"
     volumes:
@@ -46,11 +47,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_SETTINGS_MODULE=verixa_core.settings.local
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-verixa_core.settings.production}
       - DB_HOST=db
       - REDIS_URL=redis://redis:6379/0
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     depends_on:
       db:
         condition: service_healthy
@@ -69,7 +75,7 @@ services:
       - ./ml/models:/app/ml_models
       - ./scrapers:/app/scrapers
     environment:
-      - DJANGO_SETTINGS_MODULE=verixa_core.settings.local
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-verixa_core.settings.production}
       - DB_HOST=db
       - REDIS_URL=redis://redis:6379/0
     env_file:

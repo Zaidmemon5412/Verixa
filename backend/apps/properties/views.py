@@ -62,8 +62,11 @@ from .services import (
 )
 from .pagination import PropertyPagination, StandardResultsSetPagination
 from .permissions import IsAdminOrReadOnly, IsListingOwnerOrBuilderOrAdmin
+from .ai_advisor import generate_ai_property_advisory
+from common.throttling import AIAdvisorRateThrottle, WriteActionRateThrottle
 
 logger = logging.getLogger(__name__)
+
 
 
 def _get_query_params(request):
@@ -446,6 +449,7 @@ def api_response(success, data=None, message="", errors=None, status_code=status
 
 class PropertyImageListCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    throttle_classes = [WriteActionRateThrottle]
 
     def get(self, request, property_id):
         """
@@ -607,6 +611,7 @@ class PropertyImageReorderView(APIView):
 
 class PropertyDocumentListCreateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    throttle_classes = [WriteActionRateThrottle]
 
     def get(self, request, property_id):
         """
@@ -1003,7 +1008,7 @@ class PropertyViewSet(viewsets.ViewSet):
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=True, methods=['get'], url_path='fair-price')
+    @action(detail=True, methods=['get'], url_path='fair-price', throttle_classes=[AIAdvisorRateThrottle])
     def fair_price(self, request, pk=None, *args, **kwargs):
         """
         Retrieves the AI Fair Price prediction and confidence score for a property.
@@ -1096,7 +1101,7 @@ class PropertyViewSet(viewsets.ViewSet):
                 "data": {"detail": str(e)}
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=True, methods=['get'], url_path='audit')
+    @action(detail=True, methods=['get'], url_path='audit', throttle_classes=[AIAdvisorRateThrottle])
     def audit(self, request, pk=None, *args, **kwargs):
         """
         Generates an executive Verixa AI Property Audit decision report for buyers.
@@ -1213,6 +1218,21 @@ class PropertyViewSet(viewsets.ViewSet):
                 f"Risk Evaluation: {len(risks)} primary risk factors identified based on verified records."
             ]
 
+            ai_context = {
+                "property_name": property_obj.property_name,
+                "bhk": getattr(property_obj, 'bhk', '3 BHK') or '3 BHK',
+                "listed_price": listed_price,
+                "fair_price": predicted_price,
+                "diff_pct": diff_pct,
+                "builder_name": builder_name,
+                "builder_years_exp": years_exp,
+                "builder_trust_score": trust_score,
+                "locality_name": loc_name,
+                "legal_status": legal_status,
+                "missing_legal": missing_legal,
+            }
+            ai_advisor_data = generate_ai_property_advisory(ai_context)
+
             return Response({
                 "success": True,
                 "message": "Verixa AI Property Audit report generated successfully.",
@@ -1266,9 +1286,11 @@ class PropertyViewSet(viewsets.ViewSet):
                         "badge": rec_badge,
                         "color": rec_color,
                         "rationale_bullets": rationale_bullets
-                    }
+                    },
+                    "ai_advisor": ai_advisor_data
                 }
             }, status=status.HTTP_200_OK)
+
         except Exception as e:
             logger.exception(f"Error generating audit for property ID {pk}")
             return Response({

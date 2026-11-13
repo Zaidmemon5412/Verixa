@@ -1,28 +1,84 @@
+from django.core.exceptions import ImproperlyConfigured
 from .base import *  # noqa: F403, F401
 
 DEBUG = False
 
-# Must configure explicitly in environment (.env)
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')  # noqa: F405
+# ------------------------------------------------------------------------------
+# Secret Key & Host Validation (Fail-Fast in Production)
+# ------------------------------------------------------------------------------
+if (
+    not SECRET_KEY  # noqa: F405
+    or SECRET_KEY == 'fallback-insecure-key-1234'  # noqa: F405
+    or SECRET_KEY.startswith('django-insecure-')  # noqa: F405
+):
+    raise ImproperlyConfigured(
+        "Production deployment blocked: DJANGO_SECRET_KEY must be set to a strong, "
+        "non-default cryptographic secret in the environment."
+    )
 
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=[])  # noqa: F405
+if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
+    raise ImproperlyConfigured(
+        "Production deployment blocked: DJANGO_ALLOWED_HOSTS must be explicitly "
+        "configured with production domain names and cannot contain '*'."
+    )
+
+# ------------------------------------------------------------------------------
+# CORS & CSRF Domain Locking
+# ------------------------------------------------------------------------------
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS', default=[])  # noqa: F405
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])  # noqa: F405
 
-# Strict security policies
-SECURE_SSL_REDIRECT = True
+# ------------------------------------------------------------------------------
+# Reverse Proxy, TLS/HTTPS & Cookie Hardening
+# ------------------------------------------------------------------------------
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)  # noqa: F405
+
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 X_FRAME_OPTIONS = 'DENY'
 
-# Production logging to files / analytics
+# ------------------------------------------------------------------------------
+# Database Connection Persistence & Health Checks
+# ------------------------------------------------------------------------------
+DATABASES['default']['CONN_MAX_AGE'] = env.int('CONN_MAX_AGE', default=60)  # noqa: F405
+DATABASES['default']['CONN_HEALTH_CHECKS'] = True  # noqa: F405
+
+# ------------------------------------------------------------------------------
+# Distributed Redis Cache (Shared Rate-Limiting & Caching Across Workers)
+# ------------------------------------------------------------------------------
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,  # noqa: F405
+    }
+}
+
+# ------------------------------------------------------------------------------
+# Production Structured JSON Logging Configuration
+# ------------------------------------------------------------------------------
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
+        'json': {
+            '()': 'common.logging_formatters.StructuredJsonFormatter',
+        },
         'verbose': {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
@@ -31,11 +87,28 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'json',
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'WARNING',
+        'level': env.str('DJANGO_LOG_LEVEL', default='INFO'),  # noqa: F405
+    },
+    'loggers': {
+        'django.security': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'common.throttling': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'common.middleware': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }

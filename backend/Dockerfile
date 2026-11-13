@@ -5,14 +5,18 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies, including Tesseract OCR & PostgreSQL client
+# Install system dependencies, including Tesseract OCR, PostgreSQL client & curl for healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     tesseract-ocr \
     libtesseract-dev \
     netcat-openbsd \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root system user for container security
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
 WORKDIR /app
 
@@ -20,11 +24,11 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code
+# Copy source code and set ownership
 COPY . .
+RUN chmod +x entrypoint.sh && mkdir -p /app/staticfiles /app/media && chown -R appuser:appgroup /app
 
-# Copy and make entrypoint executable
-RUN chmod +x entrypoint.sh
+USER appuser
 
 EXPOSE 8000
 

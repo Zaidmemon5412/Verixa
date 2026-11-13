@@ -5,6 +5,7 @@ Maps accounts authentication, profile, verification, saved properties, and passw
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from common.throttling import AuthRateThrottle
 
 from .views import (
     RegisterView,
@@ -43,9 +44,9 @@ urlpatterns = [
     path('reset-password/verify/', VerifyResetTokenView.as_view(), name='reset-password-verify'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
 
-    # Simple JWT Token verification routes
-    path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
-    path('token/verify/', TokenVerifyView.as_view(), name='token-verify'),
+    # Simple JWT Token verification routes (Rate-limited against token abuse)
+    path('token/refresh/', TokenRefreshView.as_view(throttle_classes=[AuthRateThrottle]), name='token-refresh'),
+    path('token/verify/', TokenVerifyView.as_view(throttle_classes=[AuthRateThrottle]), name='token-verify'),
 
     # Third Party OAuth Routes
     path('auth/google/', GoogleOAuthView.as_view(), name='google-oauth'),

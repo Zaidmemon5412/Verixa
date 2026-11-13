@@ -1,0 +1,248 @@
+# ==============================================================================
+# Verixa Production Kubernetes Manifests (Namespace, ConfigMap, Deployments,
+# Services, HorizontalPodAutoscaler, and TLS Ingress)
+# ==============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: verixa-prod
+  labels:
+    app.kubernetes.io/part-of: verixa-platform
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: verixa-config
+  namespace: verixa-prod
+data:
+  DJANGO_SETTINGS_MODULE: "verixa_core.settings.production"
+  DJANGO_DEBUG: "False"
+  DJANGO_ALLOWED_HOSTS: "verixa.com,api.verixa.com"
+  DJANGO_CORS_ALLOWED_ORIGINS: "https://verixa.com"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "https://verixa.com,https://api.verixa.com"
+  THROTTLE_RATE_ANON: "120/min"
+  THROTTLE_RATE_USER: "300/min"
+  THROTTLE_RATE_AUTH: "10/min"
+  THROTTLE_RATE_PASSWORD_RESET: "5/hour"
+  THROTTLE_RATE_AI_ADVISOR: "15/min"
+  THROTTLE_RATE_WRITE_ACTION: "20/min"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verixa-backend
+  namespace: verixa-prod
+  labels:
+    app: verixa-backend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: verixa-backend
+  template:
+    metadata:
+      labels:
+        app: verixa-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: backend
+          image: verixa/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: verixa-config
+            - secretRef:
+                name: verixa-secrets
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /api/health/
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health/
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: verixa-backend-svc
+  namespace: verixa-prod
+spec:
+  selector:
+    app: verixa-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verixa-celery-worker
+  namespace: verixa-prod
+  labels:
+    app: verixa-celery-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: verixa-celery-worker
+  template:
+    metadata:
+      labels:
+        app: verixa-celery-worker
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: celery-worker
+          image: verixa/backend:latest
+          command: ["celery", "-A", "verixa_core", "worker", "--loglevel=warning", "--concurrency=2", "--max-tasks-per-child=100"]
+          envFrom:
+            - configMapRef:
+                name: verixa-config
+            - secretRef:
+                name: verixa-secrets
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verixa-frontend
+  namespace: verixa-prod
+  labels:
+    app: verixa-frontend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: verixa-frontend
+  template:
+    metadata:
+      labels:
+        app: verixa-frontend
+    spec:
+      containers:
+        - name: frontend-nginx
+          image: verixa/frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: verixa-frontend-svc
+  namespace: verixa-prod
+spec:
+  selector:
+    app: verixa-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: verixa-backend-hpa
+  namespace: verixa-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: verixa-backend
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: verixa-ingress
+  namespace: verixa-prod
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/limit-rps: "25"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - verixa.com
+        - api.verixa.com
+      secretName: verixa-tls-cert
+  rules:
+    - host: verixa.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: verixa-backend-svc
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: verixa-frontend-svc
+                port:
+                  number: 80
+

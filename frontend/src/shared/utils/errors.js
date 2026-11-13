@@ -68,6 +68,12 @@ export const getFriendlyErrorMessage = (error) => {
       return 'Requested resource was not found on the server.';
     case 422:
       return 'Could not process submitted input data due to semantic issues.';
+    case 429: {
+      const retryAfter = data?.retry_after || error.response?.headers?.['retry-after'];
+      return retryAfter
+        ? `Too many requests. Please wait ${retryAfter} seconds before trying again.`
+        : 'Too many requests. Please slow down and try again in a moment.';
+    }
     case 500:
       return 'Internal server error occurred. Please try again in a few moments.';
     default:

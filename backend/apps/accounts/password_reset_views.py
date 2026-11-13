@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from common.throttling import AuthRateThrottle, PasswordResetRateThrottle
 
 from .password_reset_serializers import (
     ForgotPasswordSerializer,
@@ -28,6 +29,7 @@ class ForgotPasswordView(APIView):
     Public endpoint. Does not leak whether the email exists.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetRateThrottle]
     serializer_class = ForgotPasswordSerializer
 
     def post(self, request, *args, **kwargs):
@@ -70,6 +72,7 @@ class VerifyResetTokenView(APIView):
     Public endpoint.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [AuthRateThrottle]
 
     def get(self, request, *args, **kwargs):
         uid = request.query_params.get('uid')
@@ -118,6 +121,7 @@ class ResetPasswordView(APIView):
     Public endpoint.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetRateThrottle]
     serializer_class = ResetPasswordSerializer
 
     def post(self, request, *args, **kwargs):

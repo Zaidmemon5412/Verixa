@@ -2,15 +2,28 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { usePropertyAuditor } from '../hooks/usePropertyAuditor';
+import { 
+  Sparkles, 
+  MessageSquareQuote, 
+  ShieldAlert, 
+  Target, 
+  CheckCircle2, 
+  Copy, 
+  Check, 
+  Bot, 
+  TrendingDown, 
+  AlertTriangle 
+} from 'lucide-react';
 
 /**
  * Verixa AI Property Auditor Component
- * Compact Tab/Card-Based Executive Decision Report.
- * Renders verified analytical findings strictly without hallucination, marketing fluff, or emojis.
+ * Executive Decision & AI Deal Advisory Report.
+ * Renders verified analytical findings and live Gemini LLM negotiations insights.
  */
 export function VerixaPropertyAuditor({ property, builder }) {
   const { auditData, isLoading } = usePropertyAuditor(property, builder);
-  const [activeTab, setActiveTab] = useState('price'); // 'price' | 'locality' | 'legal' | 'investment'
+  const [activeTab, setActiveTab] = useState('advisor'); // 'advisor' | 'price' | 'locality' | 'legal' | 'investment'
+  const [copiedPitch, setCopiedPitch] = useState(false);
 
   if (isLoading) {
     return (
@@ -30,8 +43,17 @@ export function VerixaPropertyAuditor({ property, builder }) {
     legal_analysis: legalData,
     investment_analysis: investData,
     risk_analysis: riskData,
-    final_recommendation: finalData
+    final_recommendation: finalData,
+    ai_advisor: aiAdvisorData
   } = auditData;
+
+  const handleCopyPitch = () => {
+    if (aiAdvisorData?.negotiation_script) {
+      navigator.clipboard.writeText(aiAdvisorData.negotiation_script);
+      setCopiedPitch(true);
+      setTimeout(() => setCopiedPitch(false), 2000);
+    }
+  };
 
   const formatCurrency = (amount) => {
     if (!amount) return 'Unverified';
@@ -67,6 +89,7 @@ export function VerixaPropertyAuditor({ property, builder }) {
   };
 
   const categories = [
+    { id: 'advisor', label: 'AI Deal Advisor', isSpecial: true },
     { id: 'price', label: 'Price Analysis' },
     { id: 'locality', label: 'Locality & Growth' },
     { id: 'legal', label: 'Legal Verification' },
@@ -79,9 +102,14 @@ export function VerixaPropertyAuditor({ property, builder }) {
       <div className="bg-slate-900 text-white p-6 space-y-4 border-b border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
-              VERIXA  PROPERTY AUDITOR
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
+                VERIXA AI PROPERTY AUDITOR
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                <Sparkles className="w-2.5 h-2.5" /> LLM Powered
+              </span>
+            </div>
             <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5">
               VERIXA VERDICT
             </h2>
@@ -103,13 +131,13 @@ export function VerixaPropertyAuditor({ property, builder }) {
                 {bullet}
               </li>
             )) || (
-                <>
-                  <li>Fair price valuation comparison performed against micro-market baseline.</li>
-                  <li>Developer track record and RERA compliance records verified.</li>
-                  <li>Locality growth indicators and rental demand evaluated.</li>
-                  <li>Title records and land registration details checked against database.</li>
-                </>
-              )}
+              <>
+                <li>Fair price valuation comparison performed against micro-market baseline.</li>
+                <li>Developer track record and RERA compliance records verified.</li>
+                <li>Locality growth indicators and rental demand evaluated.</li>
+                <li>Title records and land registration details checked against database.</li>
+              </>
+            )}
           </ul>
         </div>
       </div>
@@ -120,18 +148,24 @@ export function VerixaPropertyAuditor({ property, builder }) {
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
             Select Audit Module:
           </span>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {categories.map((cat) => {
               const isActive = activeTab === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveTab(cat.id)}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center min-h-[44px] ${isActive
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm scale-[1.02]'
-                      : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border-transparent'
-                    }`}
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 min-h-[44px] ${
+                    isActive
+                      ? cat.isSpecial
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent shadow-sm scale-[1.02]'
+                        : 'bg-primary text-primary-foreground border-primary shadow-sm scale-[1.02]'
+                      : cat.isSpecial
+                        ? 'bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100/60'
+                        : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border-transparent'
+                  }`}
                 >
+                  {cat.isSpecial && <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />}
                   <span>{cat.label}</span>
                 </button>
               );
@@ -141,6 +175,153 @@ export function VerixaPropertyAuditor({ property, builder }) {
 
         {/* SELECTED AUDIT CONTENT CONTAINER */}
         <div className="pt-2">
+
+          {/* 0. AI DEAL ADVISOR CONTENT */}
+          {activeTab === 'advisor' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              {/* Header Banner */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-900 text-white border border-indigo-800/50 shadow-sm">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    <Bot className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-white flex items-center gap-1.5">
+                      Verixa AI Deal & Negotiation Advisor
+                    </h3>
+                    <p className="text-[11px] text-slate-300">
+                      Unfiltered buyer guidance & micro-market negotiation strategy
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 self-start sm:self-center">
+                  <Badge variant="outline" className="bg-indigo-900/60 text-indigo-200 border-indigo-700/60 text-[10px] py-0.5">
+                    {aiAdvisorData?.model_used || 'Gemini 1.5 Flash'}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* 1. The Hard Truth Card */}
+              <div className="p-4 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400">
+                  <MessageSquareQuote className="w-4 h-4 shrink-0" />
+                  <span>The Hard Truth (Unfiltered Reality)</span>
+                </div>
+                <p className="text-xs sm:text-sm text-foreground font-medium leading-relaxed">
+                  {aiAdvisorData?.hard_truth || (
+                    'The property pricing reflects developer brand equity in this locality. Analyze comparable unit transaction rates before committing to advance earnest tokens.'
+                  )}
+                </p>
+                {aiAdvisorData?.ai_verdict_summary && (
+                  <p className="text-xs text-muted-foreground pt-1 border-t border-border/60">
+                    <strong className="text-foreground">Executive Takeaway:</strong> {aiAdvisorData.ai_verdict_summary}
+                  </p>
+                )}
+              </div>
+
+              {/* 2. Target Counter-Offer & Pitch Card */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Target Price Card */}
+                <div className="p-4 rounded-xl border border-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-950/20 flex flex-col justify-between space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+                    <Target className="w-4 h-4" />
+                    <span>Recommended Counter-Offer</span>
+                  </div>
+                  <div className="py-2">
+                    <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+                      {aiAdvisorData?.recommended_counter_offer || formatCurrency(priceData?.fair_price)}
+                    </span>
+                    <span className="block text-[11px] text-muted-foreground mt-0.5">
+                      Target closing valuation based on verified micro-market comps.
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-indigo-800 dark:text-indigo-300 font-semibold bg-indigo-100/70 dark:bg-indigo-900/40 p-2 rounded-lg">
+                    💡 Do not offer full asking price upfront.
+                  </div>
+                </div>
+
+                {/* Negotiation Script Card */}
+                <div className="md:col-span-2 p-4 rounded-xl border border-border/80 bg-card space-y-2.5 flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                      <TrendingDown className="w-4 h-4 text-emerald-600" />
+                      <span>Verbatim Builder Negotiation Pitch</span>
+                    </div>
+                    <button
+                      onClick={handleCopyPitch}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-md bg-muted hover:bg-muted/80 text-foreground transition-all"
+                      title="Copy script to clipboard"
+                    >
+                      {copiedPitch ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          <span className="text-emerald-600">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>Copy Pitch</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-muted/40 border border-border/60 text-xs sm:text-sm text-foreground italic leading-relaxed">
+                    "{aiAdvisorData?.negotiation_script || (
+                      `We have evaluated recent registered sale deeds in this micro-market and our algorithmic benchmark is lower than asking rate. We are ready with an immediate cheque if the basic cost includes parking allocation.`
+                    )}"
+                  </div>
+
+                  <span className="text-[11px] text-muted-foreground block">
+                    Use this exact dialogue during negotiation meetings to anchor the developer's sales desk.
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. Leverage Points & Red Flags */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                {/* Leverage Points */}
+                <div className="p-3.5 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+                  <span className="font-bold text-foreground flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    Buyer Negotiation Leverage Points:
+                  </span>
+                  <ul className="space-y-1.5 text-muted-foreground list-none">
+                    {(aiAdvisorData?.negotiation_leverage_points || [
+                      'Asking rate exceeds micro-market registered transactions.',
+                      'Title clearance search records require formal submission.',
+                      'Ready-cheque booking leverage for 3-5% discount.'
+                    ]).map((pt, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5">
+                        <span className="text-emerald-600 font-bold">•</span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Critical Red Flags */}
+                <div className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-50/30 dark:bg-rose-950/20 space-y-2">
+                  <span className="font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    Ground Checks Before Token Advance:
+                  </span>
+                  <ul className="space-y-1.5 text-muted-foreground list-none">
+                    {(aiAdvisorData?.critical_red_flags || [
+                      'Verify Khata and City Survey registration numbers with collector records.',
+                      'Confirm carpet area ratio matches Gujarat RERA approved floor plans.'
+                    ]).map((flag, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5">
+                        <span className="text-rose-600 font-bold">⚠️</span>
+                        <span>{flag}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 1. PRICE ANALYSIS CONTENT */}
           {activeTab === 'price' && (
             <div className="space-y-3 animate-in fade-in duration-200">
@@ -204,8 +385,8 @@ export function VerixaPropertyAuditor({ property, builder }) {
                     {localityData?.strengths?.map((str, idx) => (
                       <li key={idx}>{str}</li>
                     )) || (
-                        <li>This information could not be verified from the available records.</li>
-                      )}
+                      <li>This information could not be verified from the available records.</li>
+                    )}
                   </ul>
                 </div>
 
@@ -215,8 +396,8 @@ export function VerixaPropertyAuditor({ property, builder }) {
                     {localityData?.weaknesses?.map((wk, idx) => (
                       <li key={idx}>{wk}</li>
                     )) || (
-                        <li>This information could not be verified from the available records.</li>
-                      )}
+                      <li>This information could not be verified from the available records.</li>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -322,6 +503,7 @@ export function VerixaPropertyAuditor({ property, builder }) {
               </div>
             </div>
           )}
+
         </div>
       </CardContent>
     </Card>

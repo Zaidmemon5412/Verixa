@@ -9,6 +9,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
+from common.throttling import (
+    AnonSustainedRateThrottle,
+    UserSustainedRateThrottle,
+    WriteActionRateThrottle,
+)
 
 from .serializers import (
     EnquirySerializer,
@@ -37,6 +42,11 @@ class EnquiryViewSet(viewsets.ViewSet):
     ViewSet for managing property enquiries.
     """
     pagination_class = StandardPagination
+    throttle_classes = [
+        AnonSustainedRateThrottle,
+        UserSustainedRateThrottle,
+        WriteActionRateThrottle,
+    ]
 
     def get_permissions(self):
         if self.action == 'create':

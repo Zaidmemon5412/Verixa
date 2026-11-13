@@ -16,7 +16,7 @@ SECRET_KEY = env.str('DJANGO_SECRET_KEY', default='fallback-insecure-key-1234')
 
 DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # Application definition
 INSTALLED_APPS = [
@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'common.middleware.RequestLogMiddleware',
 ]
 
 ROOT_URLCONF = 'verixa_core.urls'
@@ -126,8 +127,35 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'common.throttling.AnonSustainedRateThrottle',
+        'common.throttling.UserSustainedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': env.str('THROTTLE_RATE_ANON', default='120/min'),
+        'user': env.str('THROTTLE_RATE_USER', default='300/min'),
+        'auth': env.str('THROTTLE_RATE_AUTH', default='10/min'),
+        'password_reset': env.str('THROTTLE_RATE_PASSWORD_RESET', default='5/hour'),
+        'ai_advisor': env.str('THROTTLE_RATE_AI_ADVISOR', default='15/min'),
+        'write_action': env.str('THROTTLE_RATE_WRITE_ACTION', default='20/min'),
+    },
+    'EXCEPTION_HANDLER': 'common.exceptions.custom_exception_handler',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# Cache Configuration (Overridden by Redis in production.py)
+REDIS_URL = env.str('REDIS_URL', default='redis://localhost:6379/0')
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'verixa-local-cache',
+    }
+}
+
+# Request & File Upload Abuse Protection Limits (10 MB default)
+DATA_UPLOAD_MAX_MEMORY_SIZE = env.int('DATA_UPLOAD_MAX_MEMORY_SIZE', default=10 * 1024 * 1024)
+FILE_UPLOAD_MAX_MEMORY_SIZE = env.int('FILE_UPLOAD_MAX_MEMORY_SIZE', default=10 * 1024 * 1024)
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 # Simple JWT Authentication configuration
 SIMPLE_JWT = {
@@ -175,13 +203,19 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
-# Celery Configurations
+# Celery Configurations (Hardened for reliable background processing)
 CELERY_BROKER_URL = env.str('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = env.str('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_ACKS_LATE = True
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_SOFT_TIME_LIMIT = env.int('CELERY_TASK_SOFT_TIME_LIMIT', default=240)
+CELERY_TASK_TIME_LIMIT = env.int('CELERY_TASK_TIME_LIMIT', default=300)
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # OCR Path Setting
 TESSERACT_CMD_PATH = env.str('TESSERACT_CMD_PATH', default='/usr/bin/tesseract')
@@ -195,9 +229,9 @@ EMAIL_BACKEND = env.str('EMAIL_BACKEND', default='django.core.mail.backends.smtp
 EMAIL_HOST = env.str('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = env.int('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
-EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='verixa.contact.us@gmail.com')
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='').replace(' ', '')
-DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Verixa Support <verixa.contact.us@gmail.com>')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='Verixa Support <noreply@verixa.com>')
 FRONTEND_URL = env.str('FRONTEND_URL', default='http://localhost:5173')
 
 
@@ -205,5 +239,9 @@ FRONTEND_URL = env.str('FRONTEND_URL', default='http://localhost:5173')
 CLOUDINARY_CLOUD_NAME = env.str('CLOUDINARY_CLOUD_NAME', default='')
 CLOUDINARY_API_KEY = env.str('CLOUDINARY_API_KEY', default='')
 CLOUDINARY_API_SECRET = env.str('CLOUDINARY_API_SECRET', default='')
+
+# Google Gemini LLM API Configuration
+GEMINI_API_KEY = env.str('GEMINI_API_KEY', default='')
+
 
 

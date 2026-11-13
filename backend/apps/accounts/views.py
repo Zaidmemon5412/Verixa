@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from common.throttling import AuthRateThrottle, PasswordResetRateThrottle
 
 from .serializers import (
     RegisterSerializer,
@@ -32,6 +33,7 @@ class RegisterView(APIView):
     Allows anyone to register.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [AuthRateThrottle]
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
@@ -66,6 +68,7 @@ class LoginView(APIView):
     Returns JWT access/refresh tokens alongside serialized user profile info.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [AuthRateThrottle]
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -163,6 +166,7 @@ class ChangePasswordView(APIView):
     API View to change the authenticated user's password.
     """
     permission_classes = [IsAuthenticated]
+    throttle_classes = [PasswordResetRateThrottle]
     serializer_class = ChangePasswordSerializer
 
     def post(self, request, *args, **kwargs):
@@ -232,6 +236,7 @@ class GoogleOAuthView(APIView):
     Placeholder API View for Google OAuth integration.
     """
     permission_classes = [AllowAny]
+    throttle_classes = [AuthRateThrottle]
     serializer_class = GoogleOAuthSerializer
 
     def post(self, request, *args, **kwargs):

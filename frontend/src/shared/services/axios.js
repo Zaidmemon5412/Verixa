@@ -2,7 +2,10 @@ import axios from 'axios';
 import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken, clearTokens } from '../utils/token';
 import { API_ENDPOINTS } from './endpoints';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const rawEnvUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = rawEnvUrl.endsWith('/api')
+  ? rawEnvUrl
+  : `${rawEnvUrl.replace(/\/+$/, '')}/api`;
 
 // Create Axios Instance
 const apiClient = axios.create({
@@ -23,9 +26,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Queue arrays to store pending failed requests during refresh executions
@@ -109,6 +110,29 @@ apiClient.interceptors.response.use(
         window.dispatchEvent(new Event('auth:logout'));
         return Promise.reject(refreshError);
       }
+    }
+
+    // Surface structured rate-limit metadata on HTTP 429 responses
+    if (error.response?.status === 429) {
+      const retryAfter =
+        error.response.data?.retry_after ||
+        error.response.headers?.['retry-after'] ||
+        null;
+      error.isRateLimited = true;
+      error.retryAfter = retryAfter;
+      window.dispatchEvent(
+        new CustomEvent('api:rate-limited', {
+          detail: {
+            message:
+              error.response.data?.message ||
+              (retryAfter
+                ? `Too many requests. Please wait ${retryAfter} seconds.`
+                : 'Too many requests. Please slow down and try again shortly.'),
+            retryAfter,
+          },
+        })
+      );
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);

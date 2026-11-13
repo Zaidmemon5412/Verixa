@@ -21,6 +21,16 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || true
 
-# Start server
-echo "Starting Django REST Framework Development Server..."
-exec python manage.py runserver 0.0.0.0:8000
+# Start server based on environment mode
+if [ "$DJANGO_SETTINGS_MODULE" = "verixa_core.settings.production" ]; then
+    echo "Starting Verixa Production WSGI Server (Gunicorn)..."
+    exec gunicorn verixa_core.wsgi:application \
+        --bind 0.0.0.0:8000 \
+        --workers "${GUNICORN_WORKERS:-4}" \
+        --timeout 120 \
+        --access-logfile - \
+        --error-logfile -
+else
+    echo "Starting Django REST Framework Development Server..."
+    exec python manage.py runserver 0.0.0.0:8000
+fi

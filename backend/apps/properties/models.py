@@ -232,6 +232,12 @@ class Property(BaseModel):
         verbose_name = "Property"
         verbose_name_plural = "Properties"
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['locality', 'price'], name='idx_prop_locality_price'),
+            models.Index(fields=['property_type', 'status'], name='idx_prop_type_status'),
+            models.Index(fields=['bhk', 'price'], name='idx_prop_bhk_price'),
+            models.Index(fields=['-created_at'], name='idx_prop_created_desc'),
+        ]
         constraints = [
             CheckConstraint(
                 check=Q(price__gte=0),

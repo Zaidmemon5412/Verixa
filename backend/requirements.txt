@@ -2,8 +2,9 @@
 # Verixa Backend Service Python Requirements (Pinned Versions)
 # ==============================================================================
 
-# Core Web Framework
+# Core Web Framework & Production WSGI Server
 Django==4.2.30
+gunicorn==23.0.0
 djangorestframework==3.17.1
 djangorestframework-simplejwt==5.5.1
 django-cors-headers==4.9.0

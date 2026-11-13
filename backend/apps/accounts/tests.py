@@ -379,3 +379,76 @@ class APIViewsTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data["success"])
 
+
+class RateLimitingTestCase(APITestCase):
+    """
+    Verifies DRF rate-limiting and structured HTTP 429 responses on sensitive endpoints.
+    """
+    def setUp(self):
+        from django.core.cache import caches
+        self.login_url = '/api/accounts/login/'
+        self.forgot_url = '/api/accounts/forgot-password/'
+        caches['default'].clear()
+
+    def test_auth_rate_throttle_blocks_brute_force(self):
+        from django.test import override_settings
+        from django.core.cache import caches
+        from unittest.mock import patch
+        from common.throttling import AuthRateThrottle
+
+        with override_settings(
+            CACHES={
+                'default': {
+                    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                    'LOCATION': 'throttle-test-cache',
+                }
+            }
+        ):
+            caches['default'].clear()
+            with patch.object(AuthRateThrottle, 'get_rate', return_value='3/min'):
+                payload = {"email": "nobody@example.com", "password": "WrongPassword123!"}
+                for _ in range(3):
+                    resp = self.client.post(self.login_url, payload)
+                    self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+                # 4th attempt within the same minute must be rate-limited (HTTP 429)
+                throttled_resp = self.client.post(self.login_url, payload)
+                self.assertEqual(throttled_resp.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+                self.assertFalse(throttled_resp.data["success"])
+                self.assertEqual(throttled_resp.data["status_code"], status.HTTP_429_TOO_MANY_REQUESTS)
+                self.assertIn("retry_after", throttled_resp.data)
+
+    def test_health_check_endpoint(self):
+        response = self.client.get('/api/health/', HTTP_X_REQUEST_ID='custom-trace-123')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["success"])
+        self.assertEqual(response.data["status"], "healthy")
+        self.assertEqual(response.data["checks"]["database"], "healthy")
+        self.assertEqual(response["X-Request-ID"], "custom-trace-123")
+        self.assertIn("X-Response-Time-Ms", response)
+
+    def test_structured_json_formatter(self):
+        import json
+        import logging
+        from common.logging_formatters import StructuredJsonFormatter
+
+        formatter = StructuredJsonFormatter()
+        record = logging.LogRecord(
+            name="verixa.audit",
+            level=logging.INFO,
+            pathname=__file__,
+            lineno=10,
+            msg="Property %s audited",
+            args=("prop-101",),
+            exc_info=None,
+        )
+        formatted = formatter.format(record)
+        parsed = json.loads(formatted)
+        self.assertEqual(parsed["level"], "INFO")
+        self.assertEqual(parsed["logger"], "verixa.audit")
+        self.assertEqual(parsed["message"], "Property prop-101 audited")
+        self.assertIn("timestamp", parsed)
+
+
+
+
