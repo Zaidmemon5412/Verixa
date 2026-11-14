@@ -40,6 +40,8 @@ CORS_ALLOWED_ORIGINS = list(
 )
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",
+    r"^https://.*\.onrender\.com$",
+    r"^https://.*\.netlify\.app$",
 ]
 CSRF_TRUSTED_ORIGINS = list(
     set(
@@ -47,6 +49,7 @@ CSRF_TRUSTED_ORIGINS = list(
             'https://verixa-phi.vercel.app',
             'https://*.vercel.app',
             'https://*.onrender.com',
+            'https://*.netlify.app',
         ]
         + env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])  # noqa: F405
     )
