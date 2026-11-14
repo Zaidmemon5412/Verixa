@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -9,7 +10,25 @@ from drf_spectacular.views import (
 )
 from apps.core.views import HealthCheckAPIView
 
+
+def api_root_view(request):
+    return JsonResponse({
+        "success": True,
+        "service": "Verixa Intelligent Property Decision & Verification API",
+        "status": "online",
+        "endpoints": {
+            "health": "/api/health/",
+            "properties": "/api/properties/",
+            "builders": "/api/builders/",
+            "localities": "/api/locations/localities/",
+            "market_trends": "/api/properties/market-trends/",
+            "swagger_docs": "/api/schema/swagger-ui/",
+        },
+    })
+
+
 urlpatterns = [
+    path('', api_root_view, name='api-root'),
     path('admin/', admin.site.urls),
 
     # Infrastructure Liveness & Readiness Probe

@@ -16,7 +16,10 @@ if (
         "non-default cryptographic secret in the environment."
     )
 
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=[])  # noqa: F405
+ALLOWED_HOSTS = env.list(  # noqa: F405
+    'DJANGO_ALLOWED_HOSTS',
+    default=['.onrender.com', 'localhost', '127.0.0.1'],
+)
 if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
     raise ImproperlyConfigured(
         "Production deployment blocked: DJANGO_ALLOWED_HOSTS must be explicitly "
@@ -27,8 +30,27 @@ if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
 # CORS & CSRF Domain Locking
 # ------------------------------------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS', default=[])  # noqa: F405
-CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])  # noqa: F405
+_default_frontend_origins = [
+    'https://verixa-phi.vercel.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+CORS_ALLOWED_ORIGINS = list(
+    set(_default_frontend_origins + env.list('DJANGO_CORS_ALLOWED_ORIGINS', default=[]))  # noqa: F405
+)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+CSRF_TRUSTED_ORIGINS = list(
+    set(
+        [
+            'https://verixa-phi.vercel.app',
+            'https://*.vercel.app',
+            'https://*.onrender.com',
+        ]
+        + env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])  # noqa: F405
+    )
+)
 
 # ------------------------------------------------------------------------------
 # Reverse Proxy, TLS/HTTPS & Cookie Hardening
@@ -36,7 +58,9 @@ CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS', default=[])  # no
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 
-SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)  # noqa: F405
+# Default False inside container because Render/Nginx edge handles HTTPS redirect
+# and internal HTTP healthchecks hit localhost over plain HTTP
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=False)  # noqa: F405
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True

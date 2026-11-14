@@ -24,9 +24,9 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code and set ownership
+# Copy source code and set ownership (normalize CRLF on entrypoint.sh for Linux)
 COPY . .
-RUN chmod +x entrypoint.sh && mkdir -p /app/staticfiles /app/media && chown -R appuser:appgroup /app
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh && mkdir -p /app/staticfiles /app/media && chown -R appuser:appgroup /app
 
 USER appuser
 

@@ -2,15 +2,28 @@ import axios from 'axios';
 import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken, clearTokens } from '../utils/token';
 import { API_ENDPOINTS } from './endpoints';
 
-const rawEnvUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const defaultBackendOrigin = isLocalBrowser
+  ? 'http://localhost:8000'
+  : 'https://verixa-backend-hwqz.onrender.com';
+
+const envCandidate = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '';
+const rawEnvUrl =
+  !isLocalBrowser && (envCandidate.includes('localhost') || envCandidate.includes('127.0.0.1') || !envCandidate)
+    ? defaultBackendOrigin
+    : envCandidate || defaultBackendOrigin;
+
 const API_BASE_URL = rawEnvUrl.endsWith('/api')
   ? rawEnvUrl
   : `${rawEnvUrl.replace(/\/+$/, '')}/api`;
 
-// Create Axios Instance
+// Create Axios Instance (60s timeout to accommodate Render free-tier cold start)
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

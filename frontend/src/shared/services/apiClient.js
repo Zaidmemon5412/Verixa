@@ -1,7 +1,20 @@
 import axios from 'axios';
 import { getAccessToken } from '../utils/token';
 
-const rawEnvUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const defaultBackendOrigin = isLocalBrowser
+  ? 'http://127.0.0.1:8000'
+  : 'https://verixa-backend-hwqz.onrender.com';
+
+const envCandidate = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '';
+const rawEnvUrl =
+  !isLocalBrowser && (envCandidate.includes('localhost') || envCandidate.includes('127.0.0.1') || !envCandidate)
+    ? defaultBackendOrigin
+    : envCandidate || defaultBackendOrigin;
+
 const resolvedBaseUrl = rawEnvUrl.endsWith('/api')
   ? rawEnvUrl
   : `${rawEnvUrl.replace(/\/+$/, '')}/api`;
@@ -11,7 +24,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+  timeout: 60000,
 });
 
 apiClient.interceptors.request.use(
