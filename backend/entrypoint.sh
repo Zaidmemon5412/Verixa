@@ -25,12 +25,12 @@ python manage.py collectstatic --noinput --clear || true
 if [ "$DJANGO_SETTINGS_MODULE" = "verixa_core.settings.production" ]; then
     echo "Starting Verixa Production WSGI Server (Gunicorn)..."
     exec gunicorn verixa_core.wsgi:application \
-        --bind 0.0.0.0:8000 \
-        --workers "${GUNICORN_WORKERS:-4}" \
+        --bind "0.0.0.0:${PORT:-8000}" \
+        --workers "${GUNICORN_WORKERS:-2}" \
         --timeout 120 \
         --access-logfile - \
         --error-logfile -
 else
     echo "Starting Django REST Framework Development Server..."
-    exec python manage.py runserver 0.0.0.0:8000
+    exec python manage.py runserver "0.0.0.0:${PORT:-8000}"
 fi

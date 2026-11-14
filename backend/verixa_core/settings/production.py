@@ -61,13 +61,15 @@ DATABASES['default']['CONN_HEALTH_CHECKS'] = True  # noqa: F405
 
 # ------------------------------------------------------------------------------
 # Distributed Redis Cache (Shared Rate-Limiting & Caching Across Workers)
+# Falls back to in-memory LocMemCache on single-instance free tiers if REDIS_URL is not set
 # ------------------------------------------------------------------------------
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': REDIS_URL,  # noqa: F405
+if REDIS_URL and 'localhost' not in REDIS_URL and '127.0.0.1' not in REDIS_URL:  # noqa: F405
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,  # noqa: F405
+        }
     }
-}
 
 # ------------------------------------------------------------------------------
 # Production Structured JSON Logging Configuration
