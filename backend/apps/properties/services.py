@@ -393,6 +393,34 @@ class PropertyDocumentService:
 # PROPERTY CRUD SERVICES
 # ==================================================
 
+def get_properties_cache_version() -> int:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_props_cache_ver')
+        if ver is None:
+            cache.set('verixa_props_cache_ver', 1, timeout=None)
+            return 1
+        return int(ver)
+    except Exception:
+        return 1
+
+
+def bump_properties_cache_version(*args, **kwargs) -> None:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_props_cache_ver')
+        cache.set('verixa_props_cache_ver', (int(ver) + 1) if ver is not None else 2, timeout=None)
+    except Exception:
+        pass
+
+
+from django.db.models.signals import post_save, post_delete
+post_save.connect(bump_properties_cache_version, sender=Property)
+post_delete.connect(bump_properties_cache_version, sender=Property)
+post_save.connect(bump_properties_cache_version, sender=PropertyImage)
+post_delete.connect(bump_properties_cache_version, sender=PropertyImage)
+
+
 def create_property(validated_data: dict) -> Property:
     """
     Creates a new Property record.
@@ -409,6 +437,7 @@ def create_property(validated_data: dict) -> Property:
             price=property_obj.price,
             recorded_date=timezone.now().date()
         )
+    bump_properties_cache_version()
     return property_obj
 
 
@@ -519,7 +548,7 @@ def list_properties(params: dict = None) -> QuerySet[Property]:
     for s in six_slugs:
         six_q |= Q(locality__name__icontains=s) | Q(address__icontains=s)
 
-    queryset = Property.objects.select_related('locality', 'builder').prefetch_related('images', 'listings', 'legal_info').filter(six_q, price__gt=0)
+    queryset = Property.objects.select_related('locality', 'builder').prefetch_related('images').filter(six_q, price__gt=0)
     if params:
         from .filters import PropertyFilter
         queryset = PropertyFilter.filter_queryset(queryset, params)

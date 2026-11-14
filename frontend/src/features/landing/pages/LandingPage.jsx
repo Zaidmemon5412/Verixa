@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Building2, Search, ArrowRight, Shield, Star,
   CheckCircle, XCircle, Sparkles, TrendingUp, Award,
@@ -12,9 +12,19 @@ import { PropertyHeroSlider } from '../components/PropertyHeroSlider';
 import { FeaturedNewLaunchesSection } from '../components/FeaturedNewLaunchesSection';
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { PROJECTS } from '../../properties/constants/propertyData';
+import { propertyService } from '../../properties/services/propertyService';
 
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
   const featuredProjects = PROJECTS.slice(0, 3);
+
+  // Background pre-warm property registry cache so clicking "Explore Verified Properties" loads in 0ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      propertyService.getProperties({ ordering: 'newest' }).catch(() => {});
+      propertyService.getFilterOptions().catch(() => {});
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="space-y-20 pb-20">

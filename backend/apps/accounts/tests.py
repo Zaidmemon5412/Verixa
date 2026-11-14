@@ -407,16 +407,32 @@ class RateLimitingTestCase(APITestCase):
             caches['default'].clear()
             with patch.object(AuthRateThrottle, 'get_rate', return_value='3/min'):
                 payload = {"email": "nobody@example.com", "password": "WrongPassword123!"}
-                for _ in range(3):
-                    resp = self.client.post(self.login_url, payload)
+                for i in range(3):
+                    # Simulate rotating Cloudflare/Render proxy IPs behind the same client IP (203.0.113.50)
+                    resp = self.client.post(
+                        self.login_url,
+                        payload,
+                        HTTP_X_FORWARDED_FOR=f"203.0.113.50, 172.68.10.{i + 1}, 10.0.0.{i + 1}",
+                    )
                     self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+                    self.assertEqual(resp["X-RateLimit-Limit"], "3")
+                    self.assertEqual(resp["X-RateLimit-Remaining"], str(2 - i))
+                    self.assertEqual(resp["X-RateLimit-Scope"], "auth")
+                    self.assertEqual(resp["X-Content-Type-Options"], "nosniff")
+                    self.assertEqual(resp["X-Frame-Options"], "DENY")
 
                 # 4th attempt within the same minute must be rate-limited (HTTP 429)
-                throttled_resp = self.client.post(self.login_url, payload)
+                throttled_resp = self.client.post(
+                    self.login_url,
+                    payload,
+                    HTTP_X_FORWARDED_FOR="203.0.113.50, 172.68.99.99, 10.0.9.9",
+                )
                 self.assertEqual(throttled_resp.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
                 self.assertFalse(throttled_resp.data["success"])
                 self.assertEqual(throttled_resp.data["status_code"], status.HTTP_429_TOO_MANY_REQUESTS)
                 self.assertIn("retry_after", throttled_resp.data)
+                self.assertEqual(throttled_resp["X-RateLimit-Remaining"], "0")
+                self.assertIn("Retry-After", throttled_resp)
 
     def test_health_check_endpoint(self):
         response = self.client.get('/api/health/', HTTP_X_REQUEST_ID='custom-trace-123')

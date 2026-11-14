@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Put near top
+    'django.middleware.gzip.GZipMiddleware',  # Compress JSON/HTML payloads (80%+ size reduction)
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +56,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'common.middleware.RequestLogMiddleware',
+]
+
+CORS_EXPOSE_HEADERS = [
+    'X-Request-ID',
+    'X-Response-Time-Ms',
+    'X-RateLimit-Limit',
+    'X-RateLimit-Remaining',
+    'X-RateLimit-Reset',
+    'X-RateLimit-Scope',
+    'X-Cache-Status',
+    'Retry-After',
 ]
 
 ROOT_URLCONF = 'verixa_core.urls'
@@ -130,6 +142,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'common.throttling.AnonSustainedRateThrottle',
         'common.throttling.UserSustainedRateThrottle',
+        'common.throttling.WriteActionRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': env.str('THROTTLE_RATE_ANON', default='120/min'),

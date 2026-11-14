@@ -7,9 +7,13 @@ logger = logging.getLogger(__name__)
 
 class RequestLogMiddleware:
     """
-    Production observability middleware:
+    Production observability & security headers middleware:
     - Assigns or propagates an `X-Request-ID` correlation header on every request/response.
     - Attaches `X-Response-Time-Ms` performance header.
+    - Attaches `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, and
+      `X-RateLimit-Scope` headers whenever DRF throttling evaluates the request.
+    - Enforces enterprise HTTP security headers (`Permissions-Policy`, `X-Content-Type-Options`,
+      `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy`).
     - Emits structured access telemetry for downstream log aggregation.
     """
     def __init__(self, get_response):
@@ -26,6 +30,30 @@ class RequestLogMiddleware:
         duration_ms = (time.perf_counter() - start_time) * 1000.0
         response['X-Request-ID'] = request_id
         response['X-Response-Time-Ms'] = f"{duration_ms:.2f}"
+
+        # Attach rate-limit headers if a DRF throttle evaluated the request
+        rate_info = getattr(request, '_rate_limit_info', None)
+        if rate_info:
+            response['X-RateLimit-Limit'] = str(rate_info['limit'])
+            response['X-RateLimit-Remaining'] = str(rate_info['remaining'])
+            response['X-RateLimit-Reset'] = str(rate_info['reset'])
+            response['X-RateLimit-Scope'] = str(rate_info['scope'])
+            if response.status_code == 429 and not response.has_header('Retry-After'):
+                response['Retry-After'] = str(rate_info['reset'])
+
+        # Enforce defense-in-depth security headers
+        if not response.has_header('X-Content-Type-Options'):
+            response['X-Content-Type-Options'] = 'nosniff'
+        if not response.has_header('X-Frame-Options'):
+            response['X-Frame-Options'] = 'DENY'
+        if not response.has_header('Referrer-Policy'):
+            response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        if not response.has_header('Permissions-Policy'):
+            response['Permissions-Policy'] = 'geolocation=(self), microphone=(), camera=(), payment=()'
+        if not response.has_header('Cross-Origin-Opener-Policy'):
+            response['Cross-Origin-Opener-Policy'] = 'same-origin'
+        if request.path.startswith('/api/') and not response.has_header('Content-Security-Policy'):
+            response['Content-Security-Policy'] = "default-src 'none'; frame-ancestors 'none'"
 
         logger.info(
             "request_id=%s method=%s path=%s status=%s duration_ms=%.2f",

@@ -14,6 +14,7 @@ app_name = 'builders'
 
 router = SimpleRouter()
 router.register(r'projects', BuilderProjectViewSet, basename='builder-project')
+router.register(r'builder-projects', BuilderProjectViewSet, basename='builder-projects-alias')
 router.register(r'project-images', BuilderProjectImageViewSet, basename='builder-project-image')
 router.register(r'', BuilderViewSet, basename='builder')
 

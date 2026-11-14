@@ -88,13 +88,27 @@ DATABASES['default']['CONN_HEALTH_CHECKS'] = True  # noqa: F405
 
 # ------------------------------------------------------------------------------
 # Distributed Redis Cache (Shared Rate-Limiting & Caching Across Workers)
-# Falls back to in-memory LocMemCache on single-instance free tiers if REDIS_URL is not set
+# Falls back to process-shared FileBasedCache on multi-worker containers if REDIS_URL is not set
 # ------------------------------------------------------------------------------
+import tempfile
+
 if REDIS_URL and 'localhost' not in REDIS_URL and '127.0.0.1' not in REDIS_URL:  # noqa: F405
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.redis.RedisCache',
             'LOCATION': REDIS_URL,  # noqa: F405
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': os.path.join(tempfile.gettempdir(), 'verixa_shared_cache'),  # noqa: F405
+            'TIMEOUT': 300,
+            'OPTIONS': {
+                'MAX_ENTRIES': 10000,
+                'CULL_FREQUENCY': 4,
+            },
         }
     }
 

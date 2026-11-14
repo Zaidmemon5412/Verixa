@@ -193,9 +193,9 @@ export const propertyService = {
 
     const cacheKey = params.toString();
 
-    // Check recent cache (valid for 15 seconds)
+    // Check recent cache (valid for 5 minutes for instant navigation)
     const cachedEntry = requestCache.get(cacheKey);
-    if (cachedEntry && (Date.now() - cachedEntry.timestamp < 15000)) {
+    if (cachedEntry && (Date.now() - cachedEntry.timestamp < 300000)) {
       return cachedEntry.data;
     }
 

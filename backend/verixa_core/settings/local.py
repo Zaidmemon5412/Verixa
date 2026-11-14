@@ -43,3 +43,14 @@ EMAIL_BACKEND = env.str(  # noqa: F405
     'EMAIL_BACKEND',
     default='django.core.mail.backends.smtp.EmailBackend',
 )
+
+# Use isolated in-memory SQLite during automated test runs so tests never touch live cloud DBs
+import sys
+if any(arg in sys.argv[0].lower() or arg in [a.lower() for a in sys.argv] for arg in ('pytest', 'test')):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

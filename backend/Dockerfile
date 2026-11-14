@@ -4,6 +4,7 @@ FROM python:3.11-slim
 # Prevent Python from writing .pyc files & buffer output
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=verixa_core.settings.production
 
 # Install system dependencies, including Tesseract OCR, PostgreSQL client & curl for healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \

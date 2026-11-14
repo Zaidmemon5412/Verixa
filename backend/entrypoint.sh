@@ -22,12 +22,16 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear || true
 
 # Start server based on environment mode
+export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-verixa_core.settings.production}"
 if [ "$DJANGO_SETTINGS_MODULE" = "verixa_core.settings.production" ]; then
     echo "Starting Verixa Production WSGI Server (Gunicorn)..."
     exec gunicorn verixa_core.wsgi:application \
         --bind "0.0.0.0:${PORT:-8000}" \
         --workers "${GUNICORN_WORKERS:-2}" \
+        --threads "${GUNICORN_THREADS:-4}" \
+        --worker-class gthread \
         --timeout 120 \
+        --keep-alive 5 \
         --access-logfile - \
         --error-logfile -
 else

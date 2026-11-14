@@ -17,13 +17,59 @@ logger = logging.getLogger(__name__)
 class SafeCacheThrottleMixin:
     """
     Fail-open resilience wrapper around DRF's cache-backed throttling.
-    If the underlying cache (e.g., Redis) is temporarily unreachable, logs a
-    warning and allows the request rather than crashing the API with HTTP 500.
+    - Extracts true client IP behind Cloudflare / Render / Nginx reverse proxies.
+    - Attaches real-time rate-limit telemetry (`limit`, `remaining`, `reset`, `scope`)
+      onto `request._rate_limit_info` so response middleware can emit `X-RateLimit-*` headers.
+    - If the underlying cache is temporarily unreachable, logs a warning and fails open.
     """
+
+    def get_ident(self, request):
+        cf_ip = request.META.get('HTTP_CF_CONNECTING_IP')
+        if cf_ip:
+            return cf_ip.strip()
+
+        real_ip = request.META.get('HTTP_X_REAL_IP')
+        if real_ip:
+            return real_ip.strip()
+
+        xff = request.META.get('HTTP_X_FORWARDED_FOR')
+        if xff:
+            first_ip = xff.split(',')[0].strip()
+            if first_ip:
+                return first_ip
+
+        return super().get_ident(request)
 
     def allow_request(self, request, view):
         try:
-            return super().allow_request(request, view)
+            allowed = super().allow_request(request, view)
+            num_requests = getattr(self, 'num_requests', None)
+            duration = getattr(self, 'duration', None)
+            if num_requests is not None and duration is not None:
+                history = getattr(self, 'history', []) or []
+                now = getattr(self, 'now', 0)
+                remaining = max(0, num_requests - len(history)) if allowed else 0
+                if history and now:
+                    reset = int(max(1, duration - (now - history[-1])))
+                else:
+                    reset = int(duration)
+
+                info = {
+                    'limit': num_requests,
+                    'remaining': remaining,
+                    'reset': reset,
+                    'scope': getattr(self, 'scope', 'api'),
+                }
+                raw_request = getattr(request, '_request', request)
+                existing = getattr(raw_request, '_rate_limit_info', None)
+                if (
+                    existing is None
+                    or not allowed
+                    or info['remaining'] <= existing['remaining']
+                ):
+                    request._rate_limit_info = info
+                    raw_request._rate_limit_info = info
+            return allowed
         except Exception as exc:
             logger.warning(
                 "Rate-limit cache unavailable for throttle '%s' (%s). Failing open.",

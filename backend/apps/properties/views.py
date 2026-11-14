@@ -59,6 +59,7 @@ from .services import (
     list_legal_records,
     update_legal_record,
     delete_legal_record,
+    get_properties_cache_version,
 )
 from .pagination import PropertyPagination, StandardResultsSetPagination
 from .permissions import IsAdminOrReadOnly, IsListingOwnerOrBuilderOrAdmin
@@ -773,12 +774,28 @@ class PropertyViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='filter-options')
     def filter_options(self, request, *args, **kwargs):
         try:
+            from django.core.cache import cache
+            cache_ver = get_properties_cache_version()
+            cache_key = f"verixa_filter_opts_v{cache_ver}_{Property.objects.count()}"
+            cached_options = cache.get(cache_key)
+            if cached_options is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Filter options retrieved successfully.",
+                    "data": cached_options
+                }, status=status.HTTP_200_OK)
+                resp['X-Cache-Status'] = 'HIT'
+                return resp
+
             options = get_filter_options()
-            return Response({
+            cache.set(cache_key, options, timeout=300)
+            resp = Response({
                 "success": True,
                 "message": "Filter options retrieved successfully.",
                 "data": options
             }, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            return resp
         except Exception as e:
             logger.exception("Error retrieving filter options")
             return Response({
@@ -790,19 +807,41 @@ class PropertyViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
 
         try:
-            queryset = list_properties(_get_query_params(request))
+            import hashlib
+            from django.core.cache import cache
+            qp = _get_query_params(request)
+            qp_str = "&".join(f"{k}={qp.getlist(k) if hasattr(qp, 'getlist') else qp.get(k)}" for k in sorted(qp.keys()))
+            cache_ver = get_properties_cache_version()
+            prop_count = Property.objects.count()
+            digest = hashlib.md5(qp_str.encode('utf-8')).hexdigest()
+            cache_key = f"verixa_props_list_v{cache_ver}_c{prop_count}_{digest}"
+
+            cached_payload = cache.get(cache_key)
+            if cached_payload is not None:
+                resp = Response(cached_payload, status=status.HTTP_200_OK)
+                resp['X-Cache-Status'] = 'HIT'
+                return resp
+
+            queryset = list_properties(qp)
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
                 serializer = PropertyListSerializer(page, many=True)
-                return paginator.get_paginated_response(serializer.data)
+                resp = paginator.get_paginated_response(serializer.data)
+                cache.set(cache_key, resp.data, timeout=180)
+                resp['X-Cache-Status'] = 'MISS'
+                return resp
 
             serializer = PropertyListSerializer(queryset, many=True)
-            return Response({
+            payload = {
                 "success": True,
                 "message": "Properties retrieved successfully.",
                 "data": serializer.data
-            }, status=status.HTTP_200_OK)
+            }
+            cache.set(cache_key, payload, timeout=180)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            return resp
         except Exception as e:
             logger.exception("Error listing properties")
             return Response({
@@ -1633,11 +1672,26 @@ class MarketTrendsAnalyticsAPIView(APIView):
             'timeframe': qp.get('timeframe'),
         }
         try:
+            import hashlib
+            from django.core.cache import cache
+            cache_ver = get_properties_cache_version()
+            filter_str = "&".join(f"{k}={v}" for k, v in sorted(filters.items()))
+            digest = hashlib.md5(filter_str.encode('utf-8')).hexdigest()
+            cache_key = f"verixa_mkt_trends_v{cache_ver}_{digest}"
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response(cached_data, status=status.HTTP_200_OK)
+                resp['X-Cache-Status'] = 'HIT'
+                return resp
+
             from .market_trends_engine import MarketTrendsEngine
             engine = MarketTrendsEngine(filters=filters)
             analytics_data = engine.generate_analytics()
             analytics_data['success'] = True
-            return Response(analytics_data, status=status.HTTP_200_OK)
+            cache.set(cache_key, analytics_data, timeout=300)
+            resp = Response(analytics_data, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            return resp
         except Exception as e:
             logger.exception("Error generating market trends analytics")
             return Response({

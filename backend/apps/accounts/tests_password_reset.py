@@ -14,6 +14,8 @@ from apps.accounts.models import User
 class PasswordResetAPITests(APITestCase):
 
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
         self.user = User.objects.create_user(
             username='resetuser',
             email='reset@example.com',

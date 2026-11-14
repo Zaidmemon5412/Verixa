@@ -525,6 +525,8 @@ class PropertyModuleAPITests(APITestCase):
     """
 
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
         self.locality = Locality.objects.create(
             name="Satellite",
             city="Ahmedabad",
