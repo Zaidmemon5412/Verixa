@@ -159,16 +159,28 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Top Back Navigation & Share */}
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={onBack} className="gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5 -ml-2 sm:ml-0 text-xs sm:text-sm">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Properties</span>
         </Button>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <Share2 className="w-4 h-4" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: project.name, url: window.location.href }).catch(() => {});
+              } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Property link copied to clipboard!');
+              }
+            }}
+            className="gap-1.5 rounded-xl h-8 sm:h-9 text-xs"
+          >
+            <Share2 className="w-3.5 h-3.5" />
             <span>Share</span>
           </Button>
         </div>
@@ -176,48 +188,71 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
       {/* Above-The-Fold Header Info & Price Banner */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-              <Shield className="w-3.5 h-3.5 mr-1" />
-              RERA Number: {project.rera}
+        <div className="space-y-2 min-w-0">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 max-w-full truncate text-[10px] sm:text-xs">
+              <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1 shrink-0" />
+              <span className="truncate">RERA: {project.rera}</span>
             </Badge>
-            <Badge variant="secondary">{project.status}</Badge>
+            <Badge variant="secondary" className="text-[10px] sm:text-xs">{project.status}</Badge>
             {legalInfo?.verification_status && (
               <Badge 
-                className={
+                className={`text-[10px] sm:text-xs ${
                   legalInfo.verification_status === 'VERIFIED'
                     ? 'bg-emerald-600 text-white'
                     : legalInfo.verification_status === 'PENDING'
                     ? 'bg-amber-500 text-white'
                     : 'bg-rose-600 text-white'
-                }
+                }`}
               >
                 Legal {legalInfo.verification_status}
               </Badge>
             )}
           </div>
-          <h1 className="text-3xl font-extrabold text-foreground">{project.name}</h1>
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium">
-            <MapPin className="w-4 h-4 text-primary shrink-0" />
-            <span>{project.address || project.location}</span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight leading-tight">{project.name}</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground flex items-start sm:items-center gap-1.5 font-medium">
+            <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5 sm:mt-0" />
+            <span className="line-clamp-2 sm:line-clamp-1">{project.address || project.location}</span>
           </p>
         </div>
 
-        <div className="text-left md:text-right bg-card p-4 rounded-2xl border shadow-sm">
-          <span className="text-xs text-muted-foreground block">Asking Price</span>
-          <span className="text-3xl font-extrabold text-primary">{project.price}</span>
-          <span className="text-xs text-muted-foreground block mt-0.5 font-medium">{project.pricePerSqft}</span>
+        <div className="flex md:block items-center justify-between bg-card p-3.5 sm:p-4 rounded-2xl border shadow-sm shrink-0">
+          <div>
+            <span className="text-[11px] sm:text-xs text-muted-foreground block">Asking Price</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-primary">{project.price}</span>
+          </div>
+          <span className="text-xs text-muted-foreground block md:mt-0.5 font-semibold bg-muted/60 md:bg-transparent px-2.5 py-1 md:p-0 rounded-lg">
+            {project.pricePerSqft}
+          </span>
         </div>
       </div>
 
+      {/* Mobile Quick Concierge CTAs (Visible on mobile/tablet right below price) */}
+      <div className="grid grid-cols-2 gap-2.5 lg:hidden">
+        <Button
+          onClick={handleRequestSiteVisit}
+          className="w-full h-11 rounded-xl gap-1.5 font-bold bg-primary text-primary-foreground shadow-sm text-xs"
+        >
+          <Calendar className="w-4 h-4 shrink-0" />
+          <span>Book Site Visit</span>
+        </Button>
+        <Button
+          onClick={handleRequestCallback}
+          variant="outline"
+          className="w-full h-11 rounded-xl gap-1.5 font-bold border-primary/40 text-foreground text-xs"
+        >
+          <Phone className="w-4 h-4 text-primary shrink-0" />
+          <span>Request Callback</span>
+        </Button>
+      </div>
+
       {/* HIGH-PERFORMANCE TWO-COLUMN LAYOUT (70% Left / 30% Sticky Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* LEFT MAIN CONTENT COLUMN (70%) */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-6 sm:space-y-8 min-w-0">
           {/* 1. Above-The-Fold: Optimized Hero Property Gallery */}
           <div className="space-y-3">
-            <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border shadow-lg bg-muted">
+            <div className="relative aspect-[4/3] sm:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border shadow-lg bg-muted">
               <img
                 src={currentImage}
                 alt={project.name}
@@ -225,36 +260,36 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
                 decoding="async"
                 className="w-full h-full object-cover transition-all duration-300"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
-                  <Shield className="w-3.5 h-3.5 fill-emerald-400/20" /> Verified Property Gallery
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 text-white space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center gap-1">
+                  <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-emerald-400/20" /> Verified Property Gallery
                 </span>
-                <h2 className="text-2xl font-bold">{project.name}{project.builder ? ` by ${project.builder}` : ''}</h2>
+                <h2 className="text-base sm:text-2xl font-bold line-clamp-1">{project.name}{project.builder ? ` by ${project.builder}` : ''}</h2>
               </div>
             </div>
 
             {/* Gallery Thumbnails */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-[11px] sm:text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
-                  <ImageIcon className="w-4 h-4 text-primary" />
-                  Property Photo Gallery ({galleryImages.length} Photos)
+                  <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                  <span>Photo Gallery ({galleryImages.length})</span>
                 </span>
-                <span>Click thumbnail to switch main view</span>
+                <span className="hidden sm:inline">Tap thumbnail to switch view</span>
               </div>
-              <div className="flex items-center gap-3 overflow-x-auto pb-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 snap-x">
                 {galleryImages.map((imgUrl, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(imgUrl)}
-                    className={`relative w-28 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 group ${
-                      currentImage === imgUrl ? 'border-primary ring-2 ring-primary/40 scale-105 shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
+                    className={`relative w-24 h-16 sm:w-28 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 snap-start group ${
+                      currentImage === imgUrl ? 'border-primary ring-2 ring-primary/40 shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
                     }`}
                   >
                     <img src={imgUrl} alt={`Photo ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                      Photo {idx + 1}
+                    <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                      #{idx + 1}
                     </span>
                   </button>
                 ))}
@@ -264,48 +299,48 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
           {/* 2. Above-The-Fold: Property Specifications Card */}
           <Card className="rounded-2xl border bg-card">
-            <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg font-bold">Property Information & Specifications</CardTitle>
+            <CardHeader className="border-b p-4 sm:p-6 pb-3 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg font-bold">Property Information & Specifications</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Configurations</span>
-                <span className="font-bold text-foreground">{project.config}</span>
+            <CardContent className="p-4 sm:p-6 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 text-xs sm:text-sm">
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Configurations</span>
+                <span className="font-bold text-foreground truncate block">{project.config}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Carpet Area</span>
-                <span className="font-bold text-foreground">{project.area}</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Carpet Area</span>
+                <span className="font-bold text-foreground truncate block">{project.area}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Furnishing Status</span>
-                <span className="font-bold text-foreground">{project.furnishingStatus}</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Furnishing</span>
+                <span className="font-bold text-foreground truncate block">{project.furnishingStatus}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Facing Direction</span>
-                <span className="font-bold text-foreground">{project.facing}</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Facing Direction</span>
+                <span className="font-bold text-foreground truncate block">{project.facing}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Bathrooms</span>
-                <span className="font-bold text-foreground">{project.bathrooms} Baths</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Bathrooms</span>
+                <span className="font-bold text-foreground truncate block">{project.bathrooms} Baths</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Floor Level</span>
-                <span className="font-bold text-foreground">Floor {project.floorNumber} of {project.totalFloors}</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Floor Level</span>
+                <span className="font-bold text-foreground truncate block">Floor {project.floorNumber} of {project.totalFloors}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Possession Status</span>
-                <span className="font-bold text-foreground">{project.possession}</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Possession</span>
+                <span className="font-bold text-foreground truncate block">{project.possession}</span>
               </div>
-              <div className="p-3 bg-muted/40 rounded-xl border">
-                <span className="text-xs text-muted-foreground block">Trust Rating</span>
-                <span className="font-bold text-emerald-600">{project.trustScore}% Verified</span>
+              <div className="p-2.5 sm:p-3 bg-muted/40 rounded-xl border min-w-0">
+                <span className="text-[11px] text-muted-foreground block">Trust Rating</span>
+                <span className="font-bold text-emerald-600 truncate block">{project.trustScore}% Verified</span>
               </div>
             </CardContent>
           </Card>
 
           {/* 3. Below-The-Fold: Progressive Lazy Loading for Verixa AI Property Auditor */}
           <Suspense fallback={<ComponentSkeleton height="h-44" title="Generating AI Property Audit Report..." />}>
-            <VerixaPropertyAuditor property={project} builder={builder} />
+            <VerixaPropertyAuditor property={project} builder={builder} initialTab={isLegalView ? 'legal' : 'advisor'} />
           </Suspense>
 
           {/* 4. Below-The-Fold: Progressive Lazy Loading for AI Fair Price Prediction */}
@@ -315,24 +350,24 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
           {/* 5. Project Overview */}
           <Card className="rounded-2xl border bg-card">
-            <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg font-bold">Project Overview & Description</CardTitle>
+            <CardHeader className="border-b p-4 sm:p-6 pb-3 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg font-bold">Project Overview & Description</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 text-sm text-muted-foreground leading-relaxed">
+            <CardContent className="p-4 sm:p-6 text-xs sm:text-sm text-muted-foreground leading-relaxed">
               <p>{project.overview}</p>
             </CardContent>
           </Card>
 
           {/* 6. Amenities */}
           <Card className="rounded-2xl border bg-card">
-            <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg font-bold">Project Amenities</CardTitle>
+            <CardHeader className="border-b p-4 sm:p-6 pb-3 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg font-bold">Project Amenities</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <CardContent className="p-4 sm:p-6 grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
               {project.amenities?.map((amenity, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-2.5 bg-muted/30 rounded-xl border text-xs font-semibold text-foreground">
+                <div key={idx} className="flex items-center gap-2 p-2.5 bg-muted/30 rounded-xl border text-xs font-semibold text-foreground min-w-0">
                   <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>{amenity}</span>
+                  <span className="truncate">{amenity}</span>
                 </div>
               ))}
             </CardContent>

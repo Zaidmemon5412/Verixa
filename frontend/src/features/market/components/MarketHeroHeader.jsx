@@ -52,7 +52,7 @@ export function MarketHeroHeader({
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text">
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text leading-tight">
             Market Trend & Investment Intelligence
           </h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-3xl">
@@ -113,7 +113,7 @@ export function MarketHeroHeader({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {/* City Filter */}
           <div>
             <label className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1 mb-1">

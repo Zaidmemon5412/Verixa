@@ -81,58 +81,61 @@ export function PropertyFilters({
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="bg-card border rounded-2xl p-4 md:p-5 shadow-sm space-y-5">
+    <div className="bg-card border rounded-2xl p-3.5 sm:p-5 shadow-sm space-y-4 sm:space-y-5">
       {/* 1. Primary Row: Search Bar, Property Type, Sorting & Drawer Toggle */}
-      <div className="flex flex-col lg:flex-row items-center gap-3">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5 sm:gap-3">
         {/* Intelligent Search Bar */}
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search by project name, builder, or city (e.g. Adani, Shela, Gota, Ahmedabad)..."
+            placeholder="Search project, builder, or area (e.g. Adani, Gota, Thaltej)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-11 rounded-xl bg-background"
+            className="pl-10 h-11 rounded-xl bg-background text-xs sm:text-sm"
           />
         </div>
 
-        {/* Property Type Filter */}
-        <div className="w-full sm:w-44">
-          <select
-            value={selectedType || 'All'}
-            onChange={(e) => setSelectedType && setSelectedType(e.target.value)}
-            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium"
-          >
-            <option value="All">All Property Types</option>
-            {propertyTypes.filter(t => t !== 'All').map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Property Type & Sorting Dropdowns (2-col grid on mobile, inline on tablet/desktop) */}
+        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3 w-full lg:w-auto">
+          {/* Property Type Filter */}
+          <div className="w-full sm:w-44">
+            <select
+              value={selectedType || 'All'}
+              onChange={(e) => setSelectedType && setSelectedType(e.target.value)}
+              className="w-full h-10 sm:h-11 rounded-xl border border-input bg-background px-2.5 sm:px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium truncate"
+            >
+              <option value="All">All Types</option>
+              {propertyTypes.filter(t => t !== 'All').map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* Sorting Dropdown */}
-        <div className="w-full sm:w-48">
-          <select
-            value={selectedOrdering || 'newest'}
-            onChange={(e) => setSelectedOrdering && setSelectedOrdering(e.target.value)}
-            className="w-full h-11 rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium text-foreground"
-          >
-            {orderingOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          {/* Sorting Dropdown */}
+          <div className="w-full sm:w-48">
+            <select
+              value={selectedOrdering || 'newest'}
+              onChange={(e) => setSelectedOrdering && setSelectedOrdering(e.target.value)}
+              className="w-full h-10 sm:h-11 rounded-xl border border-input bg-background px-2.5 sm:px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-ring font-medium text-foreground truncate"
+            >
+              {orderingOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-end">
+        <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 justify-end">
           <Button
             variant={showAdvanced ? 'default' : 'outline'}
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="h-11 rounded-xl gap-2 font-semibold flex-1 sm:flex-none"
+            className="h-10 sm:h-11 rounded-xl gap-2 font-semibold flex-1 lg:flex-none text-xs sm:text-sm"
           >
             <SlidersHorizontal className="w-4 h-4" />
             <span>More Filters</span>
@@ -148,37 +151,37 @@ export function PropertyFilters({
             <Button
               variant="ghost"
               onClick={onReset}
-              className="h-11 px-3 text-muted-foreground hover:text-foreground"
+              className="h-10 sm:h-11 px-3 text-xs sm:text-sm text-muted-foreground hover:text-foreground shrink-0"
               title="Reset All Filters"
             >
-              <RotateCcw className="w-4 h-4 mr-1.5" />
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
               Reset
             </Button>
           )}
         </div>
       </div>
 
-      {/* 2. Prominent BHK-Wise Filter Bar (1 BHK, 2 BHK, 3 BHK, 4 BHK) */}
-      <div className="pt-2 border-t space-y-2">
+      {/* 2. Prominent BHK-Wise Filter Bar (Swipeable on mobile, wrapped on desktop) */}
+      <div className="pt-2.5 border-t space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <Home className="w-3.5 h-3.5 text-primary" />
-            BHK Wise Filter
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Home className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span>BHK Configuration</span>
           </span>
           {selectedBhk.length > 0 && (
             <button
               onClick={handleBhkSelectAll}
               className="text-[11px] font-semibold text-primary hover:underline"
             >
-              Clear BHK Selection
+              Clear BHK
             </button>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 sm:flex-wrap">
           <button
             type="button"
             onClick={handleBhkSelectAll}
-            className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+            className={`h-9 px-3.5 sm:px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 shrink-0 ${
               selectedBhk.length === 0
                 ? 'bg-primary text-primary-foreground border-primary shadow-sm'
                 : 'bg-background hover:bg-muted text-foreground border-input'
@@ -194,7 +197,7 @@ export function PropertyFilters({
                 key={option}
                 type="button"
                 onClick={() => handleBhkToggle(option)}
-                className={`h-9 px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                className={`h-9 px-3.5 sm:px-4 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 shrink-0 ${
                   isSelected
                     ? 'bg-primary text-primary-foreground border-primary shadow-sm'
                     : 'bg-background hover:bg-muted text-foreground border-input'
@@ -208,27 +211,27 @@ export function PropertyFilters({
         </div>
       </div>
 
-      {/* 3. Prominent Area-Wise / Locality Filter Bar (Gota, Chandkheda, Sola, Thaltej, Satellite) */}
-      <div className="pt-2 border-t space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-primary" />
-            Area Wise Filter (Gota, Chandkheda, Sola, Thaltej, Satellite, Maninagar)
+      {/* 3. Prominent Area-Wise / Locality Filter Bar (Swipeable on mobile) */}
+      <div className="pt-2.5 border-t space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 truncate">
+            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="truncate">Micro-Market Area Filter</span>
           </span>
           {selectedLocality !== 'All' && (
             <button
               onClick={() => handleAreaSelect('All')}
-              className="text-[11px] font-semibold text-primary hover:underline"
+              className="text-[11px] font-semibold text-primary hover:underline shrink-0"
             >
-              Clear Area Filter
+              Clear Area
             </button>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 sm:flex-wrap">
           <button
             type="button"
             onClick={() => handleAreaSelect('All')}
-            className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+            className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 shrink-0 ${
               selectedLocality === 'All'
                 ? 'bg-primary text-primary-foreground border-primary shadow-sm'
                 : 'bg-background hover:bg-muted text-foreground border-input'
@@ -244,7 +247,7 @@ export function PropertyFilters({
                 key={areaName}
                 type="button"
                 onClick={() => handleAreaSelect(areaName)}
-                className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                className={`h-9 px-3.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 shrink-0 ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary shadow-sm'
                     : 'bg-background hover:bg-muted text-foreground border-input'
@@ -260,9 +263,9 @@ export function PropertyFilters({
 
       {/* 4. Advanced Expandable Filter Panel (Price, Sq Ft Size, Builder, Status) */}
       {showAdvanced && (
-        <div className="pt-4 border-t space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="pt-4 border-t space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
           {/* Grid Filters: Builder, Locality & Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {/* Builder Filter */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
@@ -321,7 +324,7 @@ export function PropertyFilters({
           </div>
 
           {/* Price Range & Carpet Area Size Inputs */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-1">
             {/* Price Range */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
@@ -330,18 +333,18 @@ export function PropertyFilters({
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
-                  placeholder="Min Price (e.g. 5000000)"
+                  placeholder="Min Price"
                   value={minPrice || ''}
                   onChange={(e) => setMinPrice && setMinPrice(e.target.value)}
-                  className="h-10 text-xs rounded-xl bg-background"
+                  className="h-10 text-xs rounded-xl bg-background min-w-0 flex-1"
                 />
-                <span className="text-muted-foreground text-xs font-semibold">to</span>
+                <span className="text-muted-foreground text-xs font-semibold shrink-0">to</span>
                 <Input
                   type="number"
-                  placeholder="Max Price (e.g. 20000000)"
+                  placeholder="Max Price"
                   value={maxPrice || ''}
                   onChange={(e) => setMaxPrice && setMaxPrice(e.target.value)}
-                  className="h-10 text-xs rounded-xl bg-background"
+                  className="h-10 text-xs rounded-xl bg-background min-w-0 flex-1"
                 />
               </div>
             </div>
@@ -354,18 +357,18 @@ export function PropertyFilters({
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
-                  placeholder="Min Sq Ft (e.g. 800)"
+                  placeholder="Min Sq Ft"
                   value={minArea || ''}
                   onChange={(e) => setMinArea && setMinArea(e.target.value)}
-                  className="h-10 text-xs rounded-xl bg-background"
+                  className="h-10 text-xs rounded-xl bg-background min-w-0 flex-1"
                 />
-                <span className="text-muted-foreground text-xs font-semibold">to</span>
+                <span className="text-muted-foreground text-xs font-semibold shrink-0">to</span>
                 <Input
                   type="number"
-                  placeholder="Max Sq Ft (e.g. 3500)"
+                  placeholder="Max Sq Ft"
                   value={maxArea || ''}
                   onChange={(e) => setMaxArea && setMaxArea(e.target.value)}
-                  className="h-10 text-xs rounded-xl bg-background"
+                  className="h-10 text-xs rounded-xl bg-background min-w-0 flex-1"
                 />
               </div>
             </div>

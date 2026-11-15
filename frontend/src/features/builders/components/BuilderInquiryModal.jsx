@@ -110,16 +110,16 @@ export function BuilderInquiryModal({ isOpen, onClose, builder, initialType = 'g
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-lg bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-lg bg-card border border-border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="relative p-6 pb-4 border-b bg-muted/40">
+        <div className="relative p-4 sm:p-6 pb-3.5 sm:pb-4 border-b bg-muted/40">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="absolute top-4 sm:top-5 right-4 sm:right-5 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -129,7 +129,7 @@ export function BuilderInquiryModal({ isOpen, onClose, builder, initialType = 'g
             <span>DEVELOPER INQUIRY SYSTEM</span>
           </div>
 
-          <h3 className="text-xl font-extrabold text-foreground tracking-tight">
+          <h3 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight pr-8">
             {type === 'site_visit' ? 'Schedule Site Visit' : 'Contact Developer'}
           </h3>
           
@@ -146,7 +146,7 @@ export function BuilderInquiryModal({ isOpen, onClose, builder, initialType = 'g
         </div>
 
         {/* Modal Body / Form */}
-        <div className="p-6 overflow-y-auto space-y-5">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 pb-safe">
           {error && (
             <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />

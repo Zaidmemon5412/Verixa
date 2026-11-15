@@ -133,14 +133,14 @@ export function PropertySearchSelector({
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0 flex items-center gap-3">
+                  <div className="text-right shrink-0 flex items-center gap-2 sm:gap-3">
                     <div>
                       <span className="text-xs font-extrabold text-primary block">{prop.price}</span>
                       <span className="text-[10px] text-muted-foreground font-semibold">{prop.config}</span>
                     </div>
-                    <Button size="sm" variant="outline" className="h-8 text-[11px] gap-1 rounded-lg shrink-0">
+                    <Button size="sm" variant="outline" className="h-8 px-2.5 sm:px-3 text-[11px] gap-1 rounded-lg shrink-0">
                       <Plus className="w-3 h-3 text-emerald-500" />
-                      <span>{activeSlotIndex !== null ? 'Replace' : 'Compare'}</span>
+                      <span className="hidden sm:inline">{activeSlotIndex !== null ? 'Replace' : 'Compare'}</span>
                     </Button>
                   </div>
                 </div>

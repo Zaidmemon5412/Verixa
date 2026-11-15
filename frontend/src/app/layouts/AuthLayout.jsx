@@ -43,7 +43,7 @@ export const AuthLayout = () => {
         </div>
 
         {/* Auth Form Card Container */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-border shadow-2xl backdrop-blur-xl bg-card/90 text-card-foreground">
+        <div className="glass-panel p-5 sm:p-8 rounded-2xl border border-border shadow-2xl backdrop-blur-xl bg-card/90 text-card-foreground">
           <Outlet />
         </div>
 

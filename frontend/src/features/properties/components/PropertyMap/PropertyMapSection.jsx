@@ -92,41 +92,41 @@ export function PropertyMapSection({ property }) {
       </div>
 
       {/* Verixa AI Intelligence Metric Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="p-3 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent rounded-2xl border border-indigo-500/20 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <Footprints className="w-5 h-5" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+        <div className="p-3 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent rounded-2xl border border-indigo-500/20 flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <Footprints className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider">
-              Walkability Score
+          <div className="min-w-0">
+            <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider truncate">
+              Walkability
             </span>
-            <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400">
-              {walkabilityScore}/100 <span className="text-xs text-emerald-600 font-semibold">(Very Walkable)</span>
+            <span className="text-sm sm:text-base font-extrabold text-indigo-600 dark:text-indigo-400 block truncate">
+              {walkabilityScore}/100 <span className="hidden sm:inline text-xs text-emerald-600 font-semibold">(Very Walkable)</span>
             </span>
           </div>
         </div>
 
-        <div className="p-3 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent rounded-2xl border border-emerald-500/20 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <Compass className="w-5 h-5" />
+        <div className="p-3 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent rounded-2xl border border-emerald-500/20 flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider">
-              Transit & Connectivity
+          <div className="min-w-0">
+            <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider truncate">
+              Connectivity
             </span>
-            <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">
-              {connectivityScore}/100 <span className="text-xs text-emerald-600 font-semibold">(Excellent)</span>
+            <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 block truncate">
+              {connectivityScore}/100 <span className="hidden sm:inline text-xs text-emerald-600 font-semibold">(Excellent)</span>
             </span>
           </div>
         </div>
 
         <div className="col-span-2 sm:col-span-1 p-3 bg-muted/40 rounded-2xl border flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <ShieldCheck className="w-5 h-5 text-amber-400" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
           </div>
           <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider">
+            <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase font-extrabold block tracking-wider">
               Verified Radius
             </span>
             <span className="text-xs font-bold text-foreground block">
@@ -144,7 +144,7 @@ export function PropertyMapSection({ property }) {
       />
 
       {/* Map Main Engine Container */}
-      <div className="relative w-full h-[460px] rounded-3xl overflow-hidden border border-border shadow-xl bg-muted/20">
+      <div className="relative w-full h-[340px] sm:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden border border-border shadow-xl bg-muted/20">
         <MapControls
           mapType={mapType}
           onToggleMapType={setMapType}

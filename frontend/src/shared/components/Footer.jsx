@@ -16,11 +16,11 @@ export function Footer({ onNavigate }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-muted/40 text-muted-foreground mt-20 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="border-t bg-muted/40 text-muted-foreground mt-12 sm:mt-20 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Col */}
-          <div className="space-y-4">
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2 group w-fit">
               <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-md transition-transform group-hover:scale-105">
                 <Building2 className="w-5 h-5" />
@@ -107,7 +107,7 @@ export function Footer({ onNavigate }) {
           </div>
 
           {/* Contact & Support */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <h4 className="text-sm font-semibold text-foreground mb-3">Contact & Support</h4>
             <ul className="space-y-2.5 text-xs">
               <li className="flex items-center gap-2">
@@ -136,9 +136,9 @@ export function Footer({ onNavigate }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-border/60 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs gap-4">
+        <div className="border-t border-border/60 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs gap-4 text-center sm:text-left">
           <p>© {currentYear} VERIXA Real Estate Decision Platform. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
             <Link to="/properties" className="hover:text-foreground hover:underline transition-colors">
               Properties
             </Link>
@@ -148,7 +148,7 @@ export function Footer({ onNavigate }) {
             <Link to="/builders" className="hover:text-foreground hover:underline transition-colors">
               Builders
             </Link>
-            <span className="text-muted-foreground/60">|</span>
+            <span className="text-muted-foreground/60 hidden sm:inline">|</span>
             <span className="hover:underline cursor-pointer">Privacy Policy</span>
             <span className="hover:underline cursor-pointer">Terms of Service</span>
           </div>

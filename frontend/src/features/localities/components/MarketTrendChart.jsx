@@ -90,8 +90,8 @@ export function MarketTrendChart({ locality }) {
             </p>
           </CardHeader>
 
-          <CardContent className="p-5 pt-2 flex-1 flex flex-col justify-between">
-            <div className="h-64 w-full">
+          <CardContent className="p-3.5 sm:p-5 pt-2 flex-1 flex flex-col justify-between">
+            <div className="h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={displayedTrends}
@@ -168,8 +168,8 @@ export function MarketTrendChart({ locality }) {
             </p>
           </CardHeader>
 
-          <CardContent className="p-5 pt-2 flex-1 flex flex-col justify-between">
-            <div className="h-64 w-full">
+          <CardContent className="p-3.5 sm:p-5 pt-2 flex-1 flex flex-col justify-between">
+            <div className="h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={displayedTrends}

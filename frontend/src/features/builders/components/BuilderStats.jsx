@@ -85,13 +85,16 @@ export function BuilderStats({ builder, projectsCount = 0 }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-        {stats.map((stat) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
+        {stats.map((stat, idx) => {
           const IconComponent = stat.icon;
+          const isLastOddOnMobile = idx === stats.length - 1 && stats.length % 2 === 1;
           return (
             <div
               key={stat.id}
-              className={`p-4 rounded-2xl border ${stat.borderColor} bg-white dark:bg-slate-900/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between`}
+              className={`p-3.5 sm:p-4 rounded-2xl border ${stat.borderColor} bg-white dark:bg-slate-900/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group flex flex-col justify-between ${
+                isLastOddOnMobile ? 'col-span-2 sm:col-span-1' : ''
+              }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">

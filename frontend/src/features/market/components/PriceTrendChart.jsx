@@ -99,13 +99,13 @@ export function PriceTrendChart({ trendData, isLoading, activeTimeframe, onTimef
         </div>
 
         {/* Global Timeframe Selector */}
-        <div className="flex items-center gap-1 bg-muted/40 p-1.5 rounded-xl border border-border/60 self-start md:self-auto">
-          <span className="text-xs font-semibold text-muted-foreground px-2">Timeframe:</span>
+        <div className="flex items-center gap-1 bg-muted/40 p-1.5 rounded-xl border border-border/60 w-full sm:w-auto overflow-x-auto no-scrollbar justify-between sm:justify-start">
+          <span className="text-xs font-semibold text-muted-foreground px-2 shrink-0 hidden sm:inline">Timeframe:</span>
           {['1M', '3M', '6M', '1Y', '3Y', '5Y'].map((tf) => (
             <button
               key={tf}
               onClick={() => onTimeframeChange(tf)}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all shrink-0 ${
                 activeTimeframe === tf
                   ? 'bg-primary text-primary-foreground shadow-xs'
                   : 'text-muted-foreground hover:text-foreground'

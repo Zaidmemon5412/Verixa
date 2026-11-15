@@ -65,9 +65,65 @@
     --ring: 224.3 76.3% 48%;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Hide scrollbars for horizontal chip/tab strips on mobile & desktop */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area padding for notched iOS / Android devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Prevent iOS Safari zoom-in on form inputs when tapping on mobile */
+@media screen and (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .Toastify__toast-container--bottom-right {
+    bottom: 4.75rem !important;
+    right: 0.75rem !important;
+    left: 0.75rem !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+
+  .Toastify__toast {
+    margin-bottom: 0.5rem !important;
+    border-radius: 0.875rem !important;
+    padding: 12px 14px !important;
   }
 }
 

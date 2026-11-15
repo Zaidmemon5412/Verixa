@@ -35,33 +35,33 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Account Profile Header */}
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2 border border-primary/20">
           <User className="w-3.5 h-3.5" />
           <span>VERIXA USER ACCOUNT & WISHLIST</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Account & Saved Properties</h1>
-        <p className="text-sm text-muted-foreground mt-1 font-medium">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">Account & Saved Properties</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
           Manage credentials, session settings, and view your saved real estate portfolio.
         </p>
       </div>
 
       {/* User Details Grid */}
-      <Card className="rounded-3xl border bg-card shadow-sm p-6 sm:p-8 space-y-6">
-        <div className="flex items-center space-x-4 border-b pb-6">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-extrabold text-2xl shadow-sm">
+      <Card className="rounded-2xl sm:rounded-3xl border bg-card shadow-sm p-4 sm:p-8 space-y-5 sm:space-y-6">
+        <div className="flex items-center space-x-3.5 sm:space-x-4 border-b pb-4 sm:pb-6">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-extrabold text-xl sm:text-2xl shadow-sm shrink-0">
             {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
           </div>
-          <div>
-            <h3 className="text-xl font-extrabold text-foreground">{user?.full_name || 'Active User'}</h3>
-            <p className="text-xs text-muted-foreground font-semibold">@{user?.username || 'user'}</p>
+          <div className="min-w-0">
+            <h3 className="text-lg sm:text-xl font-extrabold text-foreground truncate">{user?.full_name || 'Active User'}</h3>
+            <p className="text-xs text-muted-foreground font-semibold truncate">@{user?.username || 'user'}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
             <Mail className="w-5 h-5 text-primary shrink-0" />
             <div className="min-w-0">
               <span className="text-muted-foreground block text-[11px]">Email Address</span>
@@ -69,7 +69,7 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
             <Smartphone className="w-5 h-5 text-primary shrink-0" />
             <div className="min-w-0">
               <span className="text-muted-foreground block text-[11px]">Phone Number</span>
@@ -77,7 +77,7 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
             <Shield className="w-5 h-5 text-emerald-500 shrink-0" />
             <div className="min-w-0">
               <span className="text-muted-foreground block text-[11px]">Session Security</span>
@@ -85,7 +85,7 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border flex items-center space-x-3">
             <Key className="w-5 h-5 text-primary shrink-0" />
             <div className="min-w-0">
               <span className="text-muted-foreground block text-[11px]">Account Role</span>
@@ -96,14 +96,14 @@ export function ProfilePage() {
       </Card>
 
       {/* Saved Properties (Wishlist) Section */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+      <div className="space-y-5 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 shrink-0">
               <Heart className="w-5 h-5 fill-rose-500/20" />
             </span>
             <div>
-              <h2 className="text-xl font-extrabold text-foreground">Saved Properties ({savedProperties.length})</h2>
+              <h2 className="text-lg sm:text-xl font-extrabold text-foreground">Saved Properties ({savedProperties.length})</h2>
               <p className="text-xs text-muted-foreground">Properties saved to your personal real estate portfolio</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export function ProfilePage() {
             onClick={() => navigate('/properties')}
             variant="outline"
             size="sm"
-            className="text-xs rounded-xl gap-1.5"
+            className="text-xs rounded-xl gap-1.5 w-full sm:w-auto justify-center"
           >
             <span>Browse All Properties</span>
             <ArrowRight className="w-3.5 h-3.5" />

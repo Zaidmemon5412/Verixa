@@ -44,13 +44,13 @@ export function BuilderProjects({
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
           <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
             Page <strong className="text-slate-900 dark:text-white font-bold">{currentPage}</strong> of{' '}
             <strong className="text-slate-900 dark:text-white font-bold">{totalPages}</strong>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
             <button
               disabled={currentPage <= 1}
               onClick={() => onPageChange(currentPage - 1)}

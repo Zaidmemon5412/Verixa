@@ -45,21 +45,26 @@ export function PropertyTypeRentalSection({ propertyTypes, rentalData, isLoading
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-4 space-y-3">
+        <CardContent className="p-3.5 sm:p-4 space-y-3">
           {pTypes.map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between p-3 rounded-xl border border-border/40 bg-card hover:bg-accent/5 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-muted/50">
-                  {getIcon(item.type)}
+            <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl border border-border/40 bg-card hover:bg-accent/5 transition-colors">
+              <div className="flex items-center justify-between sm:justify-start gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-muted/50 shrink-0">
+                    {getIcon(item.type)}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-foreground">{item.type}</div>
+                    <div className="text-[11px] text-muted-foreground">{item.listingsCount} active listings</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground">{item.type}</div>
-                  <div className="text-[11px] text-muted-foreground">{item.listingsCount} active listings</div>
+                <div className="sm:hidden px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                  {item.demandScore} Score
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-xs">
-                <div className="text-right">
+              <div className="flex items-center justify-between sm:justify-end gap-4 text-xs pt-2 sm:pt-0 border-t sm:border-t-0 border-border/30">
+                <div className="text-left sm:text-right">
                   <div className="font-bold text-foreground">{item.avgPrice}</div>
                   <div className="text-[10px] text-muted-foreground">Avg Price</div>
                 </div>
@@ -67,7 +72,7 @@ export function PropertyTypeRentalSection({ propertyTypes, rentalData, isLoading
                   <div className="font-bold text-emerald-600 dark:text-emerald-400">{item.growthPct}</div>
                   <div className="text-[10px] text-muted-foreground">Growth</div>
                 </div>
-                <div className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                <div className="hidden sm:block px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-bold text-xs">
                   {item.demandScore} Score
                 </div>
               </div>

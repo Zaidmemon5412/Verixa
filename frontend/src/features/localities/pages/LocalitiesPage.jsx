@@ -35,14 +35,14 @@ export function LocalitiesPage({ onSelectLocality }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
       <div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
-          <TrendingUp className="w-3.5 h-3.5" />
-          <span>Neighborhood Appreciation & Infrastructure Index</span>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
+          <TrendingUp className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">Neighborhood Appreciation & Infrastructure Index</span>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Locality Growth Engine</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Locality Growth Engine</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           In-depth market growth ratings, average sqft pricing, school density, and hospital access
         </p>
       </div>

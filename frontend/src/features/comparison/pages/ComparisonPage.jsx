@@ -21,7 +21,7 @@ export function ComparisonPage({ initialSelectedIds = [], onSelectProject }) {
   } = usePropertyComparison(initialSelectedIds);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Top Header & Context Description */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -29,8 +29,8 @@ export function ComparisonPage({ initialSelectedIds = [], onSelectProject }) {
             <ArrowLeftRight className="w-3.5 h-3.5" />
             <span>VERIXA DYNAMIC COMPARISON MATRIX</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Property Comparison Engine</h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-2xl font-medium">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">Property Comparison Engine</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl font-medium">
             Compare live properties side-by-side on price, rates per sq.ft, carpet area, legal compliance, ratings, and amenity offerings.
           </p>
         </div>
@@ -56,14 +56,14 @@ export function ComparisonPage({ initialSelectedIds = [], onSelectProject }) {
       </div>
 
       {/* Global Search & Autocomplete Property Selector Bar */}
-      <Card className="rounded-3xl border bg-card p-6 shadow-sm">
+      <Card className="rounded-2xl sm:rounded-3xl border bg-card p-4 sm:p-6 shadow-sm">
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <label className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span>Add Property to Comparison</span>
             </label>
-            <span className="text-xs text-muted-foreground font-medium">Search by Property Name, Builder, or Locality</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground font-medium">Search by Property Name, Builder, or Locality</span>
           </div>
 
           <PropertySearchSelector

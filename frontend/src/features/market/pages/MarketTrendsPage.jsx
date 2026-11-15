@@ -62,7 +62,7 @@ export function MarketTrendsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* 1. Hero Header & Global Smart Filters */}
       <MarketHeroHeader 
         healthData={marketData?.marketHealth}

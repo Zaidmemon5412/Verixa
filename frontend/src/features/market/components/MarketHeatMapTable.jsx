@@ -86,7 +86,7 @@ export function MarketHeatMapTable({ localityData, isLoading }) {
       </CardHeader>
 
       <CardContent className="p-0 overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs">
+        <table className="w-full text-left border-collapse text-xs min-w-[640px]">
           <thead>
             <tr className="border-b border-border/40 bg-muted/30 text-muted-foreground font-semibold">
               <th className="py-3 px-4">Locality</th>

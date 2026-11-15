@@ -90,15 +90,15 @@ export function PropertyCard({
           </button>
 
           {/* Title & Price Overlay */}
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white z-10">
-            <div>
-              <h3 className="text-lg font-bold tracking-tight drop-shadow-sm line-clamp-1">
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2 text-white z-10">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-lg font-bold tracking-tight drop-shadow-sm line-clamp-1">
                 {project.name}
               </h3>
             </div>
             <div className="text-right shrink-0">
-              <span className="text-xs text-white/70 block">Asking price</span>
-              <span className="text-base font-extrabold text-amber-400">
+              <span className="text-[10px] sm:text-xs text-white/75 block leading-none mb-0.5">Asking price</span>
+              <span className="text-sm sm:text-base font-extrabold text-amber-400">
                 {project.price}
               </span>
             </div>
@@ -106,7 +106,7 @@ export function PropertyCard({
         </div>
 
         {/* Card Body Content */}
-        <CardContent className="p-4 space-y-3">
+        <CardContent className="p-3.5 sm:p-4 space-y-3">
           {/* Address / Location */}
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium" title={project.address || project.location}>
             <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -115,24 +115,24 @@ export function PropertyCard({
 
           {/* Key Specs */}
           <div className="grid grid-cols-2 gap-2 text-xs py-2 border-y border-border/60 text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <BedDouble className="w-4 h-4 text-primary" />
-              <span>{project.config}</span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <BedDouble className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate">{project.config}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span>{project.possession}</span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Calendar className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate">{project.possession}</span>
             </div>
           </div>
 
           {/* Scores Overview */}
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+          <div className="flex items-center justify-between pt-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded text-[11px] sm:text-xs font-semibold border border-amber-200 dark:border-amber-800">
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400 shrink-0" />
                 <span>{displayTrustScore}% Trust</span>
               </div>
-              <div className="text-xs text-emerald-600 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+              <div className="text-[11px] sm:text-xs text-emerald-600 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                 {displayInvestScore} Invest Score
               </div>
             </div>
@@ -141,13 +141,13 @@ export function PropertyCard({
       </div>
 
       {/* Card Footer Action Buttons (Details | Compare | Legal) */}
-      <div className="p-4 pt-0 grid grid-cols-3 gap-1.5">
+      <div className="p-3.5 sm:p-4 pt-0 grid grid-cols-3 gap-1.5">
         <Button
           onClick={(e) => {
             e.stopPropagation();
             onSelect && onSelect(targetId);
           }}
-          className="w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold"
+          className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2"
           variant="outline"
         >
           <span>Details</span>
@@ -158,15 +158,15 @@ export function PropertyCard({
             e.stopPropagation();
             onToggleCompare && onToggleCompare(targetId);
           }}
-          className={`w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold ${
+          className={`w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 ${
             isCompared 
               ? "bg-primary text-primary-foreground border-primary shadow-sm"
               : "bg-muted/40 text-foreground border-border hover:bg-muted"
           }`}
           variant="outline"
         >
-          <ArrowLeftRight className="w-3 h-3" />
-          <span>{isCompared ? "Compared" : "Compare"}</span>
+          <ArrowLeftRight className="w-3 h-3 shrink-0" />
+          <span className="truncate">{isCompared ? "Compared" : "Compare"}</span>
         </Button>
 
         <Button
@@ -178,10 +178,10 @@ export function PropertyCard({
               onSelect(targetId, 'legal');
             }
           }}
-          className="w-full flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+          className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
           variant="outline"
         >
-          <Shield className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <Shield className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>Legal</span>
         </Button>
       </div>

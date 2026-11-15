@@ -27,21 +27,21 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
   }, []);
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-12 sm:space-y-20 pb-10 sm:pb-20">
       {/* ─── SECTION 0: STICKY TOP ANNOUNCEMENT / OFFER BAR ──────────────────── */}
-      <div className="bg-gradient-to-r from-primary via-blue-600 to-indigo-700 text-white text-xs py-2.5 px-4 shadow-md">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-          <div className="flex items-center justify-center gap-2">
-            <span className="bg-amber-400 text-slate-950 font-extrabold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
+      <div className="bg-gradient-to-r from-primary via-blue-600 to-indigo-700 text-white text-[11px] sm:text-xs py-2 sm:py-2.5 px-3 sm:px-4 shadow-md">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
+            <span className="bg-amber-400 text-slate-950 font-extrabold px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-wider shrink-0">
               NEW RELEASE
             </span>
-            <span className="font-medium">
-              Free AI Legal Title Audit & Builder Delay Benchmark for your first 3 property searches!
+            <span className="font-medium leading-snug">
+              Free AI Legal Title Audit & Builder Delay Benchmark for your first 3 searches!
             </span>
           </div>
           <button
             onClick={() => onNavigate && onNavigate('projects')}
-            className="underline underline-offset-4 hover:text-amber-300 font-bold flex items-center gap-1 shrink-0 text-[11px]"
+            className="underline underline-offset-4 hover:text-amber-300 font-bold inline-flex items-center gap-1 shrink-0 text-[11px]"
           >
             <span>Claim Free Audit</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -50,34 +50,34 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
       </div>
 
       {/* ─── SECTION 1: HERO SECTION ─────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-1 sm:pt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Text & CTA Column */}
-          <div className="lg:col-span-7 space-y-6">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
               Buy Verified Properties with <span className="text-primary">100% Legal Confidence</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+            <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
               Verixa audits RERA filings, builder delivery track records, and legal title deeds so you never get trapped in delayed or disputed real estate.
             </p>
 
             {/* CTA Buttons & Ratings */}
-            <div className="space-y-4 pt-2">
+            <div className="space-y-4 pt-1 sm:pt-2">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Button
                   onClick={() => onNavigate && onNavigate('projects')}
                   size="lg"
-                  className="h-13 px-8 text-base font-bold rounded-2xl shadow-xl shadow-primary/20 gap-2"
+                  className="h-12 sm:h-13 px-6 sm:px-8 text-sm sm:text-base font-bold rounded-2xl shadow-xl shadow-primary/20 gap-2 w-full sm:w-auto justify-center"
                 >
                   <span>Explore Verified Properties</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
                 <Button
                   onClick={() => onNavigate && onNavigate('projects')}
                   variant="outline"
                   size="lg"
-                  className="h-13 px-6 text-base font-semibold rounded-2xl gap-2"
+                  className="h-12 sm:h-13 px-6 text-sm sm:text-base font-semibold rounded-2xl gap-2 w-full sm:w-auto justify-center"
                 >
                   <Building2 className="w-4 h-4 text-primary" />
                   <span>Browse Featured Homes</span>
@@ -85,16 +85,16 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
               </div>
 
               {/* Star Rating Social Proof */}
-              <div className="flex items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1">
                 <div className="flex items-center text-amber-400">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="w-4 h-4 fill-amber-400" />
+                    <Star key={s} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400" />
                   ))}
                 </div>
                 <span className="text-xs font-bold text-foreground">
                   5.0 ★★★★★ Rating
                 </span>
-                <span className="text-xs text-muted-foreground border-l pl-3">
+                <span className="text-xs text-muted-foreground sm:border-l sm:pl-3">
                   Trusted by 4,800+ Homebuyers in Gujarat
                 </span>
               </div>
@@ -112,31 +112,31 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
       </section>
 
       {/* ─── SECTION 2: SOCIAL PROOF LOGOS ("TRUSTED BY...") ─────────────────── */}
-      <section className="border-y bg-muted/30 py-10">
+      <section className="border-y bg-muted/30 py-7 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-4 text-center">
-          <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">
+          <p className="text-[11px] sm:text-xs uppercase tracking-widest font-bold text-muted-foreground">
             Trusted by Top Real Estate Developers, Banks & Legal Counsel
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 pt-2 opacity-80 grayscale hover:grayscale-0 transition-all">
-            <div className="flex items-center gap-2 font-black text-lg tracking-wider text-slate-700 dark:text-slate-300">
-              <Building2 className="w-6 h-6 text-primary" />
-              <span>ADANI REALTY</span>
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-10 pt-1 opacity-85">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 font-black text-xs sm:text-lg tracking-wider text-slate-700 dark:text-slate-300 bg-background/60 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-border/50">
+              <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-primary shrink-0" />
+              <span className="truncate">ADANI REALTY</span>
             </div>
-            <div className="flex items-center gap-2 font-black text-lg tracking-wider text-slate-700 dark:text-slate-300">
-              <Shield className="w-6 h-6 text-teal-500" />
-              <span>GODREJ PROPERTIES</span>
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 font-black text-xs sm:text-lg tracking-wider text-slate-700 dark:text-slate-300 bg-background/60 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-border/50">
+              <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-teal-500 shrink-0" />
+              <span className="truncate">GODREJ PROPERTIES</span>
             </div>
-            <div className="flex items-center gap-2 font-black text-lg tracking-wider text-slate-700 dark:text-slate-300">
-              <Award className="w-6 h-6 text-violet-500" />
-              <span>SOBHA DEVELOPERS</span>
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 font-black text-xs sm:text-lg tracking-wider text-slate-700 dark:text-slate-300 bg-background/60 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-border/50">
+              <Award className="w-4 h-4 sm:w-6 sm:h-6 text-violet-500 shrink-0" />
+              <span className="truncate">SOBHA DEVELOPERS</span>
             </div>
-            <div className="flex items-center gap-2 font-black text-lg tracking-wider text-slate-700 dark:text-slate-300">
-              <Building2 className="w-6 h-6 text-amber-500" />
-              <span>SHIVALIK GROUP</span>
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 font-black text-xs sm:text-lg tracking-wider text-slate-700 dark:text-slate-300 bg-background/60 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-border/50">
+              <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-amber-500 shrink-0" />
+              <span className="truncate">SHIVALIK GROUP</span>
             </div>
-            <div className="flex items-center gap-2 font-black text-lg tracking-wider text-slate-700 dark:text-slate-300">
-              <CheckCircle className="w-6 h-6 text-emerald-500" />
+            <div className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 sm:gap-2 font-black text-xs sm:text-lg tracking-wider text-slate-700 dark:text-slate-300 bg-background/60 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-border/50">
+              <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
               <span>CREDAI APPROVED</span>
             </div>
           </div>
@@ -364,16 +364,16 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
             Relatable Scenarios for Easy Adoption
           </Badge>
-          <h2 className="text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             The Old Risky Way vs The Verixa Smart Way
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* Old Risky Way */}
-          <Card className="rounded-3xl border-rose-200 dark:border-rose-950 bg-rose-50/50 dark:bg-rose-950/20 p-8 space-y-4">
-            <div className="flex items-center gap-2 text-rose-600 font-bold text-lg">
-              <XCircle className="w-6 h-6" />
+          <Card className="rounded-3xl border-rose-200 dark:border-rose-950 bg-rose-50/50 dark:bg-rose-950/20 p-5 sm:p-8 space-y-4">
+            <div className="flex items-center gap-2 text-rose-600 font-bold text-base sm:text-lg">
+              <XCircle className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
               <span>Without Verixa (Risky & Stressful)</span>
             </div>
             <ul className="space-y-3 text-xs text-muted-foreground">
@@ -397,9 +397,9 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           </Card>
 
           {/* Verixa Smart Way */}
-          <Card className="rounded-3xl border-emerald-200 dark:border-emerald-950 bg-emerald-50/50 dark:bg-emerald-950/20 p-8 space-y-4">
-            <div className="flex items-center gap-2 text-emerald-600 font-bold text-lg">
-              <CheckCircle className="w-6 h-6" />
+          <Card className="rounded-3xl border-emerald-200 dark:border-emerald-950 bg-emerald-50/50 dark:bg-emerald-950/20 p-5 sm:p-8 space-y-4">
+            <div className="flex items-center gap-2 text-emerald-600 font-bold text-base sm:text-lg">
+              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
               <span>With Verixa (Smart & Effortless)</span>
             </div>
             <ul className="space-y-3 text-xs text-foreground font-medium">
@@ -430,7 +430,7 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
             Highlight Small, Achievable Wins
           </Badge>
-          <h2 className="text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Real Buyer Success Case Studies
           </h2>
         </div>
@@ -470,26 +470,26 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
 
       {/* ─── SECTION 8: ENCOURAGING CLOSING ("RESTATE VALUE WITH SUBTLE ENCOURAGEMENT") ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="bg-gradient-to-br from-primary via-blue-700 to-indigo-900 text-white rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden space-y-6">
+        <div className="bg-gradient-to-br from-primary via-blue-700 to-indigo-900 text-white rounded-3xl p-6 sm:p-14 shadow-2xl relative overflow-hidden space-y-5 sm:space-y-6">
           <div className="max-w-2xl space-y-4 relative z-10">
             <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md">
               Ready to Buy Your Dream Property?
             </Badge>
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-5xl font-extrabold tracking-tight leading-tight">
               Start Exploring Verified Real Estate Today
             </h2>
-            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
+            <p className="text-xs sm:text-base text-blue-100 leading-relaxed">
               Join over 4,800+ smart homebuyers who use Verixa to verify legal titles, builder delivery scores, and price fairness before making a decision.
             </p>
 
-            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Button
                 onClick={() => onNavigate && onNavigate('projects')}
                 size="lg"
-                className="h-14 px-8 text-base font-bold bg-white text-slate-950 hover:bg-slate-100 rounded-2xl shadow-xl gap-2"
+                className="h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-bold bg-white text-slate-950 hover:bg-slate-100 rounded-2xl shadow-xl gap-2 w-full sm:w-auto justify-center"
               >
                 <span>Find Your Verified Property</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </div>
           </div>

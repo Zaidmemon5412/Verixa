@@ -189,41 +189,41 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>Curated Partnerships</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
             <span>✨ Featured New Launches</span>
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Discover premium projects from our verified builder partners.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
           {/* Navigation Prev / Next Buttons */}
           <div className="flex items-center gap-2">
             <Button
               onClick={handlePrev}
               variant="outline"
               size="icon"
-              className="h-10 w-10 rounded-full border-border/70 hover:bg-primary/10 hover:text-primary transition-all shadow-xs"
+              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border-border/70 hover:bg-primary/10 hover:text-primary transition-all shadow-xs"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <Button
               onClick={handleNext}
               variant="outline"
               size="icon"
-              className="h-10 w-10 rounded-full border-border/70 hover:bg-primary/10 hover:text-primary transition-all shadow-xs"
+              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border-border/70 hover:bg-primary/10 hover:text-primary transition-all shadow-xs"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           </div>
 
           <Button
             onClick={handleViewAllClick}
             variant="ghost"
-            className="text-primary hover:text-primary/80 font-bold gap-1 text-sm rounded-xl"
+            className="text-primary hover:text-primary/80 font-bold gap-1 text-xs sm:text-sm rounded-xl px-2.5 sm:px-4"
           >
             <span>View All</span>
             <ArrowRight className="w-4 h-4" />

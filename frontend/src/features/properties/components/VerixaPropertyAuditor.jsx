@@ -20,9 +20,9 @@ import {
  * Executive Decision & AI Deal Advisory Report.
  * Renders verified analytical findings and live Gemini LLM negotiations insights.
  */
-export function VerixaPropertyAuditor({ property, builder }) {
+export function VerixaPropertyAuditor({ property, builder, initialTab = 'advisor' }) {
   const { auditData, isLoading } = usePropertyAuditor(property, builder);
-  const [activeTab, setActiveTab] = useState('advisor'); // 'advisor' | 'price' | 'locality' | 'legal' | 'investment'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'advisor' | 'price' | 'locality' | 'legal' | 'investment'
   const [copiedPitch, setCopiedPitch] = useState(false);
 
   if (isLoading) {
@@ -97,25 +97,25 @@ export function VerixaPropertyAuditor({ property, builder }) {
   ];
 
   return (
-    <Card className="rounded-2xl border-2 border-border/80 bg-card shadow-md overflow-hidden text-foreground">
+    <Card id="legal-audit-section" className="rounded-2xl border-2 border-border/80 bg-card shadow-md overflow-hidden text-foreground scroll-mt-20">
       {/* VERIXA VERDICT HEADER CARD */}
-      <div className="bg-slate-900 text-white p-6 space-y-4 border-b border-slate-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-slate-900 text-white p-4 sm:p-6 space-y-4 border-b border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-slate-400 block">
                 VERIXA AI PROPERTY AUDITOR
               </span>
               <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30">
                 <Sparkles className="w-2.5 h-2.5" /> LLM Powered
               </span>
             </div>
-            <h2 className="text-xl font-extrabold tracking-tight text-white mt-0.5">
+            <h2 className="text-lg sm:text-xl font-extrabold tracking-tight text-white mt-0.5">
               VERIXA VERDICT
             </h2>
           </div>
-          <div>
-            <span className={getVerdictBadgeClass(finalData?.decision || 'Recommended with Negotiation')}>
+          <div className="self-start sm:self-auto">
+            <span className={`inline-block ${getVerdictBadgeClass(finalData?.decision || 'Recommended with Negotiation')}`}>
               Verdict: {finalData?.decision || 'Recommended with Negotiation'}
             </span>
           </div>
@@ -142,31 +142,31 @@ export function VerixaPropertyAuditor({ property, builder }) {
         </div>
       </div>
 
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-5 sm:space-y-6">
         {/* HORIZONTAL AUDIT CATEGORY SELECTOR CARDS */}
         <div className="space-y-2">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+          <span className="text-[11px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider block">
             Select Audit Module:
           </span>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 sm:grid sm:grid-cols-5">
             {categories.map((cat) => {
               const isActive = activeTab === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setActiveTab(cat.id)}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 min-h-[44px] ${
+                  className={`px-3.5 py-2.5 sm:p-3 rounded-xl border text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 min-h-[42px] shrink-0 ${
                     isActive
                       ? cat.isSpecial
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent shadow-sm scale-[1.02]'
-                        : 'bg-primary text-primary-foreground border-primary shadow-sm scale-[1.02]'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-transparent shadow-sm'
+                        : 'bg-primary text-primary-foreground border-primary shadow-sm'
                       : cat.isSpecial
                         ? 'bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100/60'
                         : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground border-transparent'
                   }`}
                 >
                   {cat.isSpecial && <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />}
-                  <span>{cat.label}</span>
+                  <span className=" whitespace-nowrap sm:whitespace-normal">{cat.label}</span>
                 </button>
               );
             })}
@@ -334,18 +334,18 @@ export function VerixaPropertyAuditor({ property, builder }) {
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 text-xs bg-muted/30 p-3 rounded-xl border">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs bg-muted/30 p-3 rounded-xl border">
+                <div className="flex sm:block items-center justify-between">
                   <span className="text-muted-foreground block text-[10px]">Listed Price</span>
                   <span className="font-bold text-foreground">{formatCurrency(priceData?.listed_price)}</span>
                 </div>
-                <div>
+                <div className="flex sm:block items-center justify-between">
                   <span className="text-muted-foreground block text-[10px]">AI Fair Price</span>
                   <span className="font-bold text-primary">
-                    {priceData?.fair_price ? formatCurrency(priceData.fair_price) : 'This information could not be verified from the available records.'}
+                    {priceData?.fair_price ? formatCurrency(priceData.fair_price) : 'Unverified'}
                   </span>
                 </div>
-                <div>
+                <div className="flex sm:block items-center justify-between">
                   <span className="text-muted-foreground block text-[10px]">Price Difference</span>
                   <span className="font-bold text-foreground">
                     {priceData?.difference_pct != null ? `${priceData.difference_pct > 0 ? '+' : ''}${priceData.difference_pct}%` : 'N/A'}

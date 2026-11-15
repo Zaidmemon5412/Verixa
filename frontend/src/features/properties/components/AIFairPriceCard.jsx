@@ -168,13 +168,13 @@ export function AIFairPriceCard({ propertyId, property }) {
           </div>
 
           {/* Verdict Status Badge & Compact Hover Tooltip */}
-          <div className={`group relative cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-bold tracking-wide shadow-xs shrink-0 transition-all hover:scale-105 active:scale-95 ${cfg.badgeBg} ${cfg.badgeBorder} ${cfg.badgeText}`}>
+          <div className={`group relative cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-bold tracking-wide shadow-xs shrink-0 self-start sm:self-auto transition-all hover:scale-105 active:scale-95 ${cfg.badgeBg} ${cfg.badgeBorder} ${cfg.badgeText}`}>
             {cfg.icon}
             <span className="uppercase">{verdict}</span>
             <HelpCircle className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity ml-0.5" />
 
             {/* Sleek Compact Hover Tooltip */}
-            <div className="pointer-events-none absolute right-0 top-full mt-2 w-72 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3.5 shadow-xl opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-30 border border-slate-700/80">
+            <div className="pointer-events-none absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-64 sm:w-72 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3.5 shadow-xl opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-30 border border-slate-700/80">
               <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 mb-1">
                 <Info className="w-3.5 h-3.5 text-indigo-400" />
                 <span>How Verdict & Prediction Work</span>
@@ -202,66 +202,66 @@ export function AIFairPriceCard({ propertyId, property }) {
       </div>
 
       {/* ── Main Content Area ──────────────────────────────── */}
-      <div className="p-5 md:p-6 space-y-6">
+      <div className="p-4 sm:p-5 md:p-6 space-y-5 sm:space-y-6">
 
-        {/* ── Primary Price Metrics Grid ──────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* ── Primary Price Metrics Grid (2x2 on mobile, 4-col on desktop) ─── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           
           {/* 1. Listed Price */}
-          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 transition-colors hover:border-slate-300 dark:hover:border-slate-700">
-            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-3.5 sm:p-4 transition-colors hover:border-slate-300 dark:hover:border-slate-700">
+            <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
               Listed Price
             </p>
-            <p className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <p className="text-lg sm:text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
               {listedPriceFormatted}
             </p>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium truncate">
               Seller asking price
             </p>
           </div>
 
           {/* 2. AI Fair Price (Primary Focus) */}
-          <div className="rounded-xl border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/40 dark:bg-indigo-950/20 p-4 transition-colors hover:border-indigo-300 dark:hover:border-indigo-800">
+          <div className="rounded-xl border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/40 dark:bg-indigo-950/20 p-3.5 sm:p-4 transition-colors hover:border-indigo-300 dark:hover:border-indigo-800">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+              <p className="text-[10px] sm:text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
                 AI Fair Price
               </p>
-              <BadgeCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <BadgeCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
             </div>
-            <p className="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 tracking-tight">
+            <p className="text-lg sm:text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 tracking-tight truncate">
               {aiPredictedPriceFormatted}
             </p>
-            <p className="text-[11px] text-indigo-700/70 dark:text-indigo-300/70 mt-1 font-medium">
-              Estimated market valuation
+            <p className="text-[10px] sm:text-[11px] text-indigo-700/70 dark:text-indigo-300/70 mt-1 font-medium truncate">
+              Market valuation
             </p>
           </div>
 
           {/* 3. Compact Stat: Difference Amount */}
-          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 flex flex-col justify-between">
-            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-3.5 sm:p-4 flex flex-col justify-between">
+            <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Price Difference
             </p>
             <div className="my-1">
-              <p className="text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">
+              <p className="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight truncate">
                 {sign}{priceDiffFormatted}
               </p>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-              Abs variance vs. fair price
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+              Variance vs fair price
             </p>
           </div>
 
           {/* 4. Compact Stat: Market Variance % */}
-          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 flex flex-col justify-between">
-            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          <div className="rounded-xl border border-slate-200/70 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-3.5 sm:p-4 flex flex-col justify-between">
+            <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Market Variance
             </p>
             <div className="my-1">
-              <p className="text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">
+              <p className="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-200 tracking-tight">
                 {sign}{Math.abs(diffPct).toFixed(1)}%
               </p>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium line-clamp-1">
               {cfg.statusText}
             </p>
           </div>

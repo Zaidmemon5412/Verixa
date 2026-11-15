@@ -70,12 +70,12 @@ export function ComparisonMatrixTable({
       )}
 
       {/* Comparison Table Container */}
-      <Card className="rounded-3xl border bg-card shadow-sm overflow-hidden">
+      <Card className="rounded-2xl sm:rounded-3xl border bg-card shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="border-b bg-muted/30">
-                <th className="p-4 w-[220px] min-w-[200px] font-extrabold text-muted-foreground uppercase text-[11px] tracking-wider align-bottom">
+                <th className="p-3 sm:p-4 w-[130px] min-w-[120px] sm:w-[220px] sm:min-w-[200px] sticky left-0 z-10 bg-card/95 backdrop-blur-sm font-extrabold text-muted-foreground uppercase text-[10px] sm:text-[11px] tracking-wider align-bottom">
                   Property Attributes
                 </th>
                 
@@ -86,7 +86,7 @@ export function ComparisonMatrixTable({
                   const isHighestScore = proj.id === bestValues.highestTrustId || proj.id === bestValues.highestInvestId;
 
                   return (
-                    <th key={proj.id} className="p-4 w-[280px] min-w-[260px] align-top relative border-l border-border/60">
+                    <th key={proj.id} className="p-3 sm:p-4 w-[220px] min-w-[200px] sm:w-[280px] sm:min-w-[260px] align-top relative border-l border-border/60">
                       <div className="space-y-3">
                         {/* Best Value Badge Header */}
                         <div className="flex flex-wrap gap-1 min-h-[22px]">
@@ -183,143 +183,143 @@ export function ComparisonMatrixTable({
             <tbody className="divide-y divide-border/60 text-xs">
               {/* Row 1: Asking Price */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Asking Price</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Asking Price</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className={`p-4 border-l border-border/60 font-extrabold text-sm ${
+                  <td key={p.id} className={`p-3 sm:p-4 border-l border-border/60 font-extrabold text-sm ${
                     p.id === bestValues.lowestPriceId ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20' : 'text-foreground'
                   }`}>
                     {p.price}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 2: Price per Sq.ft */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Price per Sq.ft</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Price per Sq.ft</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className={`p-4 border-l border-border/60 font-bold ${
+                  <td key={p.id} className={`p-3 sm:p-4 border-l border-border/60 font-bold ${
                     p.id === bestValues.lowestPsfId ? 'text-blue-600 dark:text-blue-400 bg-blue-50/40 dark:bg-blue-950/20' : 'text-foreground'
                   }`}>
                     {p.pricePerSqft || 'N/A'}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 3: AI Fair Price Estimate */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span>AI Fair Valuation</span>
                 </td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-semibold text-amber-600 dark:text-amber-400">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-semibold text-amber-600 dark:text-amber-400">
                     {p.priceNum ? `₹${(p.priceNum * 0.96 / 100000).toFixed(1)} L (Fair Value)` : 'Verified Market Fair Value'}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 4: BHK Configuration */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">BHK Layout</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">BHK Layout</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-bold text-foreground">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-bold text-foreground">
                     {p.config}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 5: Carpet Area */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Carpet Area</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Carpet Area</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className={`p-4 border-l border-border/60 font-semibold ${
+                  <td key={p.id} className={`p-3 sm:p-4 border-l border-border/60 font-semibold ${
                     p.id === bestValues.largestAreaId ? 'text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20 font-bold' : 'text-foreground'
                   }`}>
                     {p.carpetArea !== 'N/A' ? `${p.carpetArea} sq ft` : (p.area || 'N/A')}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 6: Built-up Area */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Built-up Area</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Built-up Area</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-medium text-foreground">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-medium text-foreground">
                     {p.builtupArea !== 'N/A' ? `${p.builtupArea} sq ft` : 'Included'}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 7: Developer */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Developer</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Developer</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-semibold text-foreground">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-semibold text-foreground">
                     {p.builder || 'Verified Builder'}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 8: Locality */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Locality</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Locality</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-semibold text-foreground">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-semibold text-foreground">
                     {p.locality || p.location}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 9: Trust Score */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Trust Rating</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Trust Rating</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-bold text-emerald-600 dark:text-emerald-400">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-bold text-emerald-600 dark:text-emerald-400">
                     {p.trustScore}% Verified
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 10: RERA Registration */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">RERA Status</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">RERA Status</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                     <Shield className="w-3.5 h-3.5 shrink-0" />
                     <span className="truncate">{p.rera}</span>
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 11: Possession Status */}
               <tr className="hover:bg-muted/20 transition-colors">
-                <td className="p-4 font-bold text-muted-foreground">Possession</td>
+                <td className="p-3 sm:p-4 font-bold text-muted-foreground sticky left-0 z-10 bg-card/95 backdrop-blur-sm">Possession</td>
                 {comparedProperties.map((p) => (
-                  <td key={p.id} className="p-4 border-l border-border/60 font-medium text-foreground">
+                  <td key={p.id} className="p-3 sm:p-4 border-l border-border/60 font-medium text-foreground">
                     {p.possession}
                   </td>
                 ))}
-                {showAddSlot && <td className="p-4 border-l border-border/60 bg-muted/10"></td>}
+                {showAddSlot && <td className="p-3 sm:p-4 border-l border-border/60 bg-muted/10"></td>}
               </tr>
 
               {/* Row 12: Amenities Comparison Checklist */}
               {uniqueAmenities.map((amenity) => (
                 <tr key={amenity} className="hover:bg-muted/20 transition-colors">
-                  <td className="p-3 pl-4 text-muted-foreground font-medium">{amenity}</td>
+                  <td className="p-2.5 sm:p-3 pl-3 sm:pl-4 text-muted-foreground font-medium sticky left-0 z-10 bg-card/95 backdrop-blur-sm">{amenity}</td>
                   {comparedProperties.map((p) => {
                     const hasAmenity = Array.isArray(p.amenities) && p.amenities.includes(amenity);
                     return (
-                      <td key={p.id} className="p-3 border-l border-border/60 text-center">
+                      <td key={p.id} className="p-2.5 sm:p-3 border-l border-border/60 text-center">
                         {hasAmenity ? (
                           <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                             <CheckCircle2 className="w-4 h-4" />
@@ -334,7 +334,7 @@ export function ComparisonMatrixTable({
                       </td>
                     );
                   })}
-                  {showAddSlot && <td className="p-3 border-l border-border/60 bg-muted/10"></td>}
+                  {showAddSlot && <td className="p-2.5 sm:p-3 border-l border-border/60 bg-muted/10"></td>}
                 </tr>
               ))}
             </tbody>

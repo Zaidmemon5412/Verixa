@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '../../properties/constants/propertyData';
 
@@ -6,6 +6,7 @@ export function PropertyHeroSlider() {
   // 4 property photos in order
   const images = PROJECTS.slice(0, 4).map(p => p.image);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartX = useRef(0);
 
   // Auto slide every 3.5 seconds
   useEffect(() => {
@@ -24,8 +25,22 @@ export function PropertyHeroSlider() {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (delta > 40) handleNext();
+    else if (delta < -40) handlePrev();
+  };
+
   return (
-    <div className="relative rounded-3xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl group select-none aspect-[4/3]">
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl group select-none aspect-[16/11] sm:aspect-[4/3]"
+    >
       {/* ─── PURE IMAGE SLIDESHOW ────────────────────────────────────────── */}
       {images.map((imgUrl, idx) => {
         const isActive = idx === currentIndex;
@@ -45,25 +60,25 @@ export function PropertyHeroSlider() {
         );
       })}
 
-      {/* Subtle Left / Right Arrows (appear on hover) */}
+      {/* Left / Right Arrows (always visible on mobile touch, hover on desktop) */}
       <button
         onClick={handlePrev}
         aria-label="Previous Image"
-        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+        className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300"
       >
-        <ChevronLeft className="w-5 h-5" />
+        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
       </button>
 
       <button
         onClick={handleNext}
         aria-label="Next Image"
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+        className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
       </button>
 
       {/* Sleek Dot Indicators at Bottom */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+      <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/10">
         {images.map((_, idx) => (
           <button
             key={idx}
