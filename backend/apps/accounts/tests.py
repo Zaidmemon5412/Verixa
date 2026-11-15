@@ -265,6 +265,8 @@ class APIViewsTestCase(APITestCase):
     Test suite for accounts API view endpoints: Register, Login, Logout, Profile, and Password Change.
     """
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
         self.register_url = '/api/accounts/register/'
         self.login_url = '/api/accounts/login/'
         self.logout_url = '/api/accounts/logout/'

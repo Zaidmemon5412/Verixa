@@ -70,8 +70,15 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Capture 401 Unauthorized status codes
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Capture 401 Unauthorized status codes (skip public auth endpoints like login/register)
+    const reqUrl = String(originalRequest?.url || '');
+    const isPublicAuthCall =
+      reqUrl.includes('/accounts/login') ||
+      reqUrl.includes('/accounts/register') ||
+      reqUrl.includes('/accounts/forgot-password') ||
+      reqUrl.includes('/accounts/reset-password');
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isPublicAuthCall) {
       if (isRefreshing) {
         // Enqueue request while refresh is actively in progress
         return new Promise((resolve, reject) => {

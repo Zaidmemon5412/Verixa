@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowRight, ShieldAlert } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import { ButtonLoader } from '../../../shared/components/Loader';
 import { getFriendlyErrorMessage } from '../../../shared/utils/errors';
@@ -21,6 +21,16 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+  const [remainingAttempts, setRemainingAttempts] = useState(null);
+
+  useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setLockoutSeconds((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   /**
    * Field validation check prior to API submission.
@@ -43,6 +53,7 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (lockoutSeconds > 0) return;
     if (!validate()) return;
 
     try {
@@ -53,6 +64,29 @@ export const Login = () => {
       navigate(destination, { replace: true });
     } catch (err) {
       console.error('Login error:', err);
+      const status = err.response?.status;
+      const remHeader = err.response?.headers?.['x-ratelimit-remaining'];
+      if (remHeader !== undefined && remHeader !== null) {
+        setRemainingAttempts(Number(remHeader));
+      }
+
+      if (status === 429) {
+        const retrySec = Number(
+          err.response?.data?.retry_after ||
+          err.response?.headers?.['retry-after'] ||
+          err.response?.headers?.['x-ratelimit-reset'] ||
+          60
+        );
+        setLockoutSeconds(retrySec);
+        setRemainingAttempts(0);
+        const rateMsg =
+          err.response?.data?.message ||
+          `Rate limit exceeded. Too many failed login attempts. Please try again in ${retrySec} seconds.`;
+        setValidationErrors({ auth: rateMsg });
+        toast.error(rateMsg);
+        return;
+      }
+
       let errorMsg = 'Invalid email or password.';
       if (err.response?.data?.detail) {
         errorMsg = err.response.data.detail;
@@ -60,6 +94,10 @@ export const Login = () => {
         errorMsg = err.response.data.message;
       } else {
         errorMsg = getFriendlyErrorMessage(err) || 'Invalid email or password.';
+      }
+
+      if (remHeader !== undefined && remHeader !== null) {
+        errorMsg = `${errorMsg} (${remHeader} attempt${Number(remHeader) === 1 ? '' : 's'} remaining)`;
       }
 
       setValidationErrors({
@@ -82,12 +120,25 @@ export const Login = () => {
         </p>
       </div>
 
-      {validationErrors.auth && (
+      {lockoutSeconds > 0 ? (
+        <div className="p-4 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-600 dark:text-amber-300 text-xs font-semibold flex items-start gap-3 animate-in fade-in">
+          <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-extrabold uppercase tracking-wider text-[11px]">
+              Brute-Force Rate Limit Active (HTTP 429)
+            </div>
+            <div>
+              Too many failed login attempts from your IP. Please wait{' '}
+              <span className="font-black underline">{lockoutSeconds}s</span> before trying again.
+            </div>
+          </div>
+        </div>
+      ) : validationErrors.auth ? (
         <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in">
           <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <span>{validationErrors.auth}</span>
         </div>
-      )}
+      ) : null}
 
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Email Field */}
@@ -188,11 +239,16 @@ export const Login = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || lockoutSeconds > 0}
           className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xl shadow-primary/20 transition-all flex items-center justify-center space-x-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           {loading ? (
             <ButtonLoader text="Signing In..." />
+          ) : lockoutSeconds > 0 ? (
+            <span className="flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4" />
+              <span>Locked — Retry in {lockoutSeconds}s</span>
+            </span>
           ) : (
             <span className="flex items-center gap-2">
               <span>Sign In to Portal</span>

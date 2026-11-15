@@ -129,16 +129,20 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, attrs: dict) -> dict:
+        import hashlib
         email = attrs.get('email')
         password = attrs.get('password')
 
         if not email or not password:
             raise serializers.ValidationError("Both email and password are required.")
 
-        # Authenticate via default backend (USERNAME_FIELD is 'email')
-        user = authenticate(username=email, password=password)
-
+        user = User.objects.filter(email__iexact=email.strip()).first()
         if not user:
+            # Lightweight constant-time digest to prevent user enumeration without 0.1-vCPU starvation
+            hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'verixa-auth-guard', 10000)
+            raise serializers.ValidationError("Invalid email or password.")
+
+        if not user.check_password(password):
             raise serializers.ValidationError("Invalid email or password.")
 
         if not user.is_active:

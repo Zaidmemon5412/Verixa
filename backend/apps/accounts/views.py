@@ -96,11 +96,11 @@ class LoginView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-            
-            # Authenticate via service function
-            user = login_user(email=email, password=password)
+            user = serializer.validated_data.get('user')
+            if not user:
+                email = serializer.validated_data['email']
+                password = serializer.validated_data['password']
+                user = login_user(email=email, password=password)
             
             # Generate Simple JWT tokens
             refresh = RefreshToken.for_user(user)

@@ -147,7 +147,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': env.str('THROTTLE_RATE_ANON', default='120/min'),
         'user': env.str('THROTTLE_RATE_USER', default='300/min'),
-        'auth': env.str('THROTTLE_RATE_AUTH', default='10/min'),
+        'auth': env.str('THROTTLE_RATE_AUTH', default='5/min'),
         'password_reset': env.str('THROTTLE_RATE_PASSWORD_RESET', default='5/hour'),
         'ai_advisor': env.str('THROTTLE_RATE_AI_ADVISOR', default='15/min'),
         'write_action': env.str('THROTTLE_RATE_WRITE_ACTION', default='20/min'),
