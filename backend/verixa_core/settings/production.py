@@ -16,9 +16,16 @@ if (
         "non-default cryptographic secret in the environment."
     )
 
-ALLOWED_HOSTS = env.list(  # noqa: F405
-    'DJANGO_ALLOWED_HOSTS',
-    default=['.onrender.com', 'localhost', '127.0.0.1'],
+_default_allowed_hosts = [
+    '.onrender.com',
+    '.vercel.app',
+    'verixa-phi.vercel.app',
+    'verixa-backend-hwqz.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+ALLOWED_HOSTS = list(
+    set(_default_allowed_hosts + env.list('DJANGO_ALLOWED_HOSTS', default=[]))  # noqa: F405
 )
 if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
     raise ImproperlyConfigured(
