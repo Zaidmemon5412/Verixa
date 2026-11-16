@@ -97,7 +97,65 @@ export function buildWebsiteSchema() {
         addressCountry: 'IN',
       },
     },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How does Verixa verify RERA registration and legal land titles in Ahmedabad?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Verixa cross-checks Gujarat RERA filings, NA (Non-Agricultural) land conversion status, Khata and survey records, and sub-registrar title documents through automated OCR and compliance verification checks before listing any project as verified.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: "How accurate is Verixa's XGBoost AI Fair Price Valuation?",
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Verixa trains gradient-boosted valuation models on 50,000+ historical micro-market transactions, carpet-area benchmarks, and builder reputation signals to detect overpriced listings and calculate an objective Fair Market Price band.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Which micro-markets in Ahmedabad offer the best rental yield and price appreciation?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Key high-momentum micro-markets tracked on Verixa include Thaltej, Satellite, Sola, Gota, Chandkheda, and Maninagar, each benchmarked on rental yield, metro connectivity, schools, hospitals, and 5-year appreciation trajectories.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How is the Verixa Builder Trust & Delivery Score calculated?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The Builder Trust Score evaluates RERA registration compliance, years of development experience, completed-to-ongoing project ratio, and historical on-time delivery accuracy across Ahmedabad developments.',
+          },
+        },
+      ],
+    },
   ];
+}
+
+/**
+ * Build a Schema.org ItemList object for directory and programmatic catalog pages.
+ */
+export function buildItemListSchema(items = [], listName = 'Verified Properties in Ahmedabad') {
+  if (!Array.isArray(items) || items.length === 0) return null;
+  const sliced = items.slice(0, 12);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: listName,
+    numberOfItems: sliced.length,
+    itemListElement: sliced.map((item, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: item.name,
+      url: item.path?.startsWith('http') ? item.path : `${SITE_URL}${item.path || '/'}`,
+    })),
+  };
 }
 
 /**

@@ -244,7 +244,7 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
           {visibleProjects.map((project, idx) => (
             <Card 
               key={`${project.id}-${idx}`}
-              onClick={() => handleProjectClick(project.id)}
+              onClick={() => handleProjectClick(project.slug || project.id)}
               className="group relative rounded-3xl border border-border/70 bg-card hover:border-primary/40 hover:shadow-2xl hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between"
             >
               <div>
@@ -252,8 +252,9 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img
                     src={project.image}
-                    alt={project.name}
+                    alt={`${project.name} by ${project.builderName} in ${project.location}`}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20" />
@@ -337,7 +338,10 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
               {/* Card Footer CTA Button */}
               <div className="p-5 pt-0">
                 <Button 
-                  onClick={() => handleProjectClick(project.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProjectClick(project.slug || project.id);
+                  }}
                   className="w-full h-11 rounded-2xl font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 gap-2 shadow-xs group-hover:shadow-md"
                 >
                   <span>Explore Project</span>

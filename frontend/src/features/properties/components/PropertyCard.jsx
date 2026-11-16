@@ -1,20 +1,20 @@
 import React from 'react';
-import { 
-  Building2, MapPin, Shield, BedDouble, Calendar, 
-  Heart, ArrowRight, Star, ExternalLink, ArrowLeftRight 
+import {
+  Building2, MapPin, Shield, BedDouble, Calendar,
+  Heart, ArrowRight, Star, ExternalLink, ArrowLeftRight
 } from 'lucide-react';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 
-export function PropertyCard({ 
-  project, 
-  onSelect, 
-  onSelectLegal, 
-  onToggleWishlist, 
+export function PropertyCard({
+  project,
+  onSelect,
+  onSelectLegal,
+  onToggleWishlist,
   isWishlisted,
   onToggleCompare,
-  isCompared 
+  isCompared
 }) {
   if (!project) return null;
 
@@ -40,7 +40,7 @@ export function PropertyCard({
     : (80 + ((posHash + 7) % 15)); // 80..94
 
   return (
-    <Card 
+    <Card
       onClick={() => onSelect && onSelect(navSlug)}
       className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
     >
@@ -81,11 +81,10 @@ export function PropertyCard({
               e.stopPropagation();
               onToggleWishlist && onToggleWishlist(targetId);
             }}
-            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${
-              isWishlisted
-                ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
-                : "bg-black/40 text-white hover:bg-white hover:text-rose-600"
-            }`}
+            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${isWishlisted
+              ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
+              : "bg-black/40 text-white hover:bg-white hover:text-rose-600"
+              }`}
             title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
           >
             <Heart className={`w-4 h-4 ${isWishlisted ? "fill-white text-white" : ""}`} />
@@ -160,11 +159,10 @@ export function PropertyCard({
             e.stopPropagation();
             onToggleCompare && onToggleCompare(targetId);
           }}
-          className={`w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 ${
-            isCompared 
-              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-              : "bg-muted/40 text-foreground border-border hover:bg-muted"
-          }`}
+          className={`w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 ${isCompared
+            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+            : "bg-muted/40 text-foreground border-border hover:bg-muted"
+            }`}
           variant="outline"
         >
           <ArrowLeftRight className="w-3 h-3 shrink-0" />

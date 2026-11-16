@@ -13,11 +13,11 @@ import { LocalityProjects } from '../components/LocalityProjects';
 import { ErrorState } from '../components/ErrorState';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildLocalitySchema } from '../../../shared/utils/seoUtils';
-import { 
-  LocalityHeroSkeleton, 
-  LocalityStatsSkeleton, 
-  LocalityScorecardSkeleton, 
-  LocalityChartSkeleton 
+import {
+  LocalityHeroSkeleton,
+  LocalityStatsSkeleton,
+  LocalityScorecardSkeleton,
+  LocalityChartSkeleton
 } from '../components/Skeletons';
 
 export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProject }) {

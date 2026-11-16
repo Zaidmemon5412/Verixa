@@ -85,7 +85,7 @@ class SitemapXMLView(APIView):
     throttle_classes = []
 
     BASE_URL = "https://verixa-phi.vercel.app"
-    CACHE_KEY = "verixa_sitemap_xml_v1"
+    CACHE_KEY = "verixa_sitemap_xml_v2"
     CACHE_TTL = 3600
 
     PRIMARY_LOCALITIES = [
@@ -95,6 +95,15 @@ class SitemapXMLView(APIView):
         "chandkheda",
         "sola",
         "maninagar",
+    ]
+
+    PROGRAMMATIC_LOCALITY_FILTERS = [
+        "Satellite",
+        "Thaltej",
+        "Gota",
+        "Chandkheda",
+        "Sola",
+        "Maninagar",
     ]
 
     def get(self, request, *args, **kwargs):
@@ -125,9 +134,12 @@ class SitemapXMLView(APIView):
         add_url("/market", changefreq="daily", priority="0.9")
         add_url("/comparison", changefreq="weekly", priority="0.8")
 
-        # 2. Primary micro-market locality hubs
+        # 2. Primary micro-market locality hubs & programmatic locality property searches
         for loc_slug in self.PRIMARY_LOCALITIES:
             add_url(f"/localities/{loc_slug}", changefreq="weekly", priority="0.85")
+
+        for loc_label in self.PROGRAMMATIC_LOCALITY_FILTERS:
+            add_url(f"/properties?locality={loc_label}", changefreq="daily", priority="0.85")
 
         db_ok = True
 

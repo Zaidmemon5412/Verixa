@@ -1,0 +1,12 @@
+{
+  "name": "Verixa – Intelligent Property Decision & Verification",
+  "short_name": "Verixa",
+  "description": "RERA verified properties, AI fair price valuation, builder delivery benchmarks, and legal title verification in Ahmedabad.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "categories": ["business", "finance", "lifestyle"]
+}

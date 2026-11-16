@@ -35,7 +35,7 @@ export function BuilderProjectCard({ project, onSelectProject }) {
 
   const handleCardClick = () => {
     if (onSelectProject) {
-      onSelectProject(project.id);
+      onSelectProject(project.slug || project.id);
     }
   };
 
@@ -67,8 +67,9 @@ export function BuilderProjectCard({ project, onSelectProject }) {
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         <img
           src={project.image}
-          alt={project.name}
+          alt={`${project.name} - ${project.bhkVariants} ${project.propertyType} in ${project.locality}, ${project.city}`}
           loading="lazy"
+          decoding="async"
           onLoad={() => setImgLoaded(true)}
           className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
             imgLoaded ? 'opacity-100' : 'opacity-0'

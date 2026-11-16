@@ -477,6 +477,57 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
         </div>
       </section>
 
+      {/* ─── SECTION 7.5: E-E-A-T FREQUENTLY ASKED QUESTIONS (FAQ) ─────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1">
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Buyer Intelligence Guide</span>
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Frequently Asked Questions About Buying Verified Property in Ahmedabad
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Clear answers on RERA legal checks, XGBoost fair valuation, rental yields, and builder trust scores.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {[
+            {
+              q: 'How does Verixa verify RERA registration and legal land titles in Ahmedabad?',
+              a: 'Verixa cross-checks Gujarat RERA filings, NA (Non-Agricultural) land conversion status, Khata and survey records, and sub-registrar title documents through automated OCR and compliance verification checks before listing any project as verified.',
+            },
+            {
+              q: "How accurate is Verixa's XGBoost AI Fair Price Valuation?",
+              a: 'Verixa trains gradient-boosted valuation models on 50,000+ historical micro-market transactions, carpet-area benchmarks, and builder reputation signals to detect overpriced listings and calculate an objective Fair Market Price band.',
+            },
+            {
+              q: 'Which micro-markets in Ahmedabad offer the best rental yield and price appreciation?',
+              a: 'Key high-momentum micro-markets tracked on Verixa include Thaltej, Satellite, Sola, Gota, Chandkheda, and Maninagar, each benchmarked on rental yield, metro connectivity, schools, hospitals, and 5-year appreciation trajectories.',
+            },
+            {
+              q: 'How is the Verixa Builder Trust & Delivery Score calculated?',
+              a: 'The Builder Trust Score evaluates RERA registration compliance, years of development experience, completed-to-ongoing project ratio, and historical on-time delivery accuracy across Ahmedabad developments.',
+            },
+          ].map((faq, idx) => (
+            <details
+              key={idx}
+              open={idx < 2}
+              className="group rounded-2xl border bg-card p-5 shadow-xs open:border-primary/40 transition-colors"
+            >
+              <summary className="list-none cursor-pointer flex items-start justify-between gap-3 font-bold text-sm sm:text-base text-foreground">
+                <span>{faq.q}</span>
+                <ChevronRight className="w-4 h-4 text-primary shrink-0 mt-1 transition-transform group-open:rotate-90" />
+              </summary>
+              <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                {faq.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
       {/* ─── SECTION 8: ENCOURAGING CLOSING ("RESTATE VALUE WITH SUBTLE ENCOURAGEMENT") ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="bg-gradient-to-br from-primary via-blue-700 to-indigo-900 text-white rounded-3xl p-6 sm:p-14 shadow-2xl relative overflow-hidden space-y-5 sm:space-y-6">

@@ -6,7 +6,7 @@ import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
 import { SEOHead } from '../../../shared/components/SEOHead';
-import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
+import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
 export function LocalitiesPage({ onSelectLocality }) {
   const [localities, setLocalities] = useState([]);
@@ -43,10 +43,21 @@ export function LocalitiesPage({ onSelectLocality }) {
         description="Compare property rates per sqft, rental yields, metro connectivity, schools, and hospital access across Satellite, Thaltej, Gota, Sola, Chandkheda & Maninagar in Ahmedabad."
         canonicalPath="/localities"
         keywords="Ahmedabad localities, Satellite Thaltej Gota Sola Chandkheda Maninagar property rates, rental yield Ahmedabad, Verixa"
-        schema={buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Localities', path: '/localities' },
-        ])}
+        schema={[
+          buildBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Localities', path: '/localities' },
+          ]),
+          localities.length > 0
+            ? buildItemListSchema(
+                localities.map((l) => ({
+                  name: `${l.name}, Ahmedabad`,
+                  path: `/localities/${l.slug || l.id}`,
+                })),
+                'Ahmedabad Real Estate Micro-Markets'
+              )
+            : null,
+        ].filter(Boolean)}
       />
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
@@ -80,7 +91,9 @@ export function LocalitiesPage({ onSelectLocality }) {
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                   <img 
                     src={loc.image} 
-                    alt={loc.name} 
+                    alt={`${loc.name}, Ahmedabad Real Estate – Avg Price ${loc.psf}/sqft`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

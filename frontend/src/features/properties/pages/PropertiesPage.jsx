@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Building2, Sparkles, Filter, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
 import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilters } from '../components/PropertyFilters';
@@ -9,9 +10,58 @@ import usePropertyComparison from '../../comparison/hooks/usePropertyComparison'
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
 import { SEOHead } from '../../../shared/components/SEOHead';
-import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
+import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
 const BATCH_SIZE = 60;
+const KNOWN_LOCALITIES = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite', 'Maninagar'];
+const KNOWN_TYPES = ['Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
+const STATUS_FROM_PARAM = {
+  ready: 'Ready to Move',
+  'ready-to-move': 'Ready to Move',
+  'ready to move': 'Ready to Move',
+  under_construction: 'Under Construction',
+  'under-construction': 'Under Construction',
+  'under construction': 'Under Construction',
+  new: 'New Launch',
+  'new-launch': 'New Launch',
+  'new launch': 'New Launch',
+};
+const STATUS_TO_PARAM = {
+  'Ready to Move': 'ready',
+  'Under Construction': 'under_construction',
+  'New Launch': 'new',
+};
+
+function parseSearchParams(params) {
+  const rawSearch = params.get('search') || '';
+  const rawLoc = params.get('locality') || '';
+  const matchedLoc =
+    KNOWN_LOCALITIES.find((l) => l.toLowerCase() === rawLoc.trim().toLowerCase()) || 'All';
+
+  const rawType = params.get('type') || '';
+  const matchedType =
+    KNOWN_TYPES.find((t) => t.toLowerCase() === rawType.trim().toLowerCase()) || 'All';
+
+  const rawStatus = params.get('status') || '';
+  const matchedStatus = STATUS_FROM_PARAM[rawStatus.trim().toLowerCase()] || 'All';
+
+  const rawBhk = params.get('bhk') || '';
+  const parsedBhk = rawBhk
+    ? rawBhk
+        .split(',')
+        .map((v) => String(v).replace(/[^0-9]/g, ''))
+        .filter((n) => ['1', '2', '3', '4'].includes(n))
+        .map((n) => `${n} BHK`)
+    : [];
+
+  return {
+    search: rawSearch,
+    locality: matchedLoc,
+    type: matchedType,
+    status: matchedStatus,
+    bhk: [...new Set(parsedBhk)],
+  };
+}
 
 export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlist }) {
   const { isWishlisted: checkIsWishlisted, toggleWishlist: defaultToggleWishlist } = useWishlist();
@@ -26,6 +76,9 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     }
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFromUrl = parseSearchParams(searchParams);
+
   const [projects, setProjects] = useState([]);
   const [localities, setLocalities] = useState([]);
   const [builders, setBuilders] = useState([]);
@@ -33,13 +86,13 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const [loadingMore, setLoadingMore] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(BATCH_SIZE);
 
-  // Filter States
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-  const [selectedLocality, setSelectedLocality] = useState('All');
-  const [selectedStatus, setSelectedStatus] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
-  const [selectedBhk, setSelectedBhk] = useState([]);
+  // Filter States (hydrated from URL query params for Programmatic SEO)
+  const [searchQuery, setSearchQuery] = useState(initialFromUrl.search);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(initialFromUrl.search);
+  const [selectedLocality, setSelectedLocality] = useState(initialFromUrl.locality);
+  const [selectedStatus, setSelectedStatus] = useState(initialFromUrl.status);
+  const [selectedType, setSelectedType] = useState(initialFromUrl.type);
+  const [selectedBhk, setSelectedBhk] = useState(initialFromUrl.bhk);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [minArea, setMinArea] = useState('');
@@ -48,6 +101,50 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const [selectedOrdering, setSelectedOrdering] = useState('newest');
 
   const bottomSentinelRef = useRef(null);
+  const lastSyncedQueryRef = useRef(searchParams.toString());
+
+  // Sync external URL query changes (e.g. clicking footer programmatic SEO links) into filter state
+  useEffect(() => {
+    const currentQuery = searchParams.toString();
+    if (currentQuery === lastSyncedQueryRef.current) return;
+    lastSyncedQueryRef.current = currentQuery;
+
+    const parsed = parseSearchParams(searchParams);
+    setSearchQuery(parsed.search);
+    setDebouncedSearchQuery(parsed.search);
+    setSelectedLocality(parsed.locality);
+    setSelectedType(parsed.type);
+    setSelectedStatus(parsed.status);
+    setSelectedBhk(parsed.bhk);
+  }, [searchParams]);
+
+  // Sync filter state back to URL query parameters for shareable & crawlable filter URLs
+  useEffect(() => {
+    const nextParams = new URLSearchParams();
+    if (debouncedSearchQuery.trim()) nextParams.set('search', debouncedSearchQuery.trim());
+    if (selectedLocality !== 'All') nextParams.set('locality', selectedLocality);
+    if (selectedType !== 'All') nextParams.set('type', selectedType.toLowerCase());
+    if (selectedStatus !== 'All') {
+      nextParams.set('status', STATUS_TO_PARAM[selectedStatus] || selectedStatus);
+    }
+    if (selectedBhk.length > 0) {
+      const nums = selectedBhk.map((b) => String(b).replace(/[^0-9]/g, '')).filter(Boolean);
+      if (nums.length > 0) nextParams.set('bhk', nums.join(','));
+    }
+
+    const nextStr = nextParams.toString();
+    if (nextStr !== lastSyncedQueryRef.current) {
+      lastSyncedQueryRef.current = nextStr;
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    debouncedSearchQuery,
+    selectedLocality,
+    selectedType,
+    selectedStatus,
+    selectedBhk,
+    setSearchParams,
+  ]);
 
   // Ultra-fast search query input debounce (150ms delay)
   useEffect(() => {
@@ -158,6 +255,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 
   const handleReset = () => {
     setSearchQuery('');
+    setDebouncedSearchQuery('');
     setSelectedLocality('All');
     setSelectedStatus('All');
     setSelectedType('All');
@@ -244,26 +342,71 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const visibleProjects = projects.slice(0, displayLimit);
   const hasMore = displayLimit < projects.length;
 
-  const bhkPrefix = selectedBhk.length > 0 ? `${selectedBhk.join(', ')} BHK ` : '';
-  const typePrefix = selectedType !== 'All' ? `${selectedType} ` : '';
+  const bhkPrefix = selectedBhk.length > 0 ? `${selectedBhk.join(', ')} ` : '';
+  const typePrefix = selectedType !== 'All' ? `${selectedType}s ` : '';
+  const statusPrefix = selectedStatus !== 'All' ? `${selectedStatus} ` : '';
   const localitySuffix = selectedLocality === 'All' ? 'Ahmedabad' : `${selectedLocality}, Ahmedabad`;
+  const hasRichSegment =
+    selectedBhk.length > 0 || selectedType !== 'All' || selectedStatus !== 'All';
+  const pageHeading = hasRichSegment
+    ? `${statusPrefix}${bhkPrefix}${typePrefix || 'Properties '}in ${selectedLocality === 'All' ? 'Ahmedabad' : selectedLocality}`
+    : currentAreaText.title;
+
   const seoTitle =
     hasActiveFilters
-      ? `${bhkPrefix}${typePrefix}Properties in ${localitySuffix} – RERA Verified`
+      ? `${statusPrefix}${bhkPrefix}${typePrefix || 'Properties '}in ${localitySuffix} – RERA Verified`
       : 'RERA Verified Properties in Ahmedabad – Flats, Villas & Plots';
   const seoDescription = currentAreaText.description;
+
+  let canonicalPath = '/properties';
+  if (
+    selectedLocality !== 'All' &&
+    selectedBhk.length === 0 &&
+    selectedType === 'All' &&
+    selectedStatus === 'All' &&
+    !debouncedSearchQuery
+  ) {
+    canonicalPath = `/properties?locality=${selectedLocality}`;
+  } else if (
+    selectedBhk.length === 1 &&
+    selectedLocality === 'All' &&
+    selectedType === 'All' &&
+    selectedStatus === 'All' &&
+    !debouncedSearchQuery
+  ) {
+    canonicalPath = `/properties?bhk=${String(selectedBhk[0]).replace(/[^0-9]/g, '')}`;
+  } else if (
+    selectedType !== 'All' &&
+    selectedLocality === 'All' &&
+    selectedBhk.length === 0 &&
+    selectedStatus === 'All' &&
+    !debouncedSearchQuery
+  ) {
+    canonicalPath = `/properties?type=${selectedType.toLowerCase()}`;
+  }
+
+  const catalogSchemas = [
+    buildBreadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Verified Properties', path: '/properties' },
+    ]),
+    buildItemListSchema(
+      visibleProjects.slice(0, 10).map((p) => ({
+        name: p.name,
+        path: `/properties/${p.slug || p.id}`,
+      })),
+      seoTitle
+    ),
+  ].filter(Boolean);
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-5 sm:space-y-6">
       <SEOHead
         title={seoTitle}
         description={seoDescription}
-        canonicalPath="/properties"
-        keywords={`properties in ${localitySuffix}, RERA verified projects Ahmedabad, ${selectedBhk.length ? selectedBhk.join(' BHK ') + ' BHK flats' : '2 BHK 3 BHK flats'}, Verixa`}
-        schema={buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Verified Properties', path: '/properties' },
-        ])}
+        canonicalPath={canonicalPath}
+        keywords={`properties in ${localitySuffix}, RERA verified projects Ahmedabad, ${selectedBhk.length ? selectedBhk.join(', ') + ' flats' : '2 BHK 3 BHK flats'}, Verixa`}
+        schema={catalogSchemas}
       />
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
@@ -272,7 +415,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span className="truncate">RERA & Title Audited • {selectedLocality === 'All' ? 'All 6 Micro-Markets' : selectedLocality}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">{currentAreaText.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">{pageHeading}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
             {currentAreaText.description}
           </p>

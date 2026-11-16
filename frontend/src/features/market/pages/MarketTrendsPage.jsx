@@ -14,7 +14,7 @@ import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
 export function MarketTrendsPage() {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Global Smart Filters State
   const [filters, setFilters] = useState({
     city: 'Ahmedabad',
@@ -76,7 +76,7 @@ export function MarketTrendsPage() {
         ])}
       />
       {/* 1. Hero Header & Global Smart Filters */}
-      <MarketHeroHeader 
+      <MarketHeroHeader
         healthData={marketData?.marketHealth}
         marketInsights={marketData?.marketInsights || marketData?.aiInsights}
         isLiveDb={marketData?.isLiveDb}
@@ -88,14 +88,14 @@ export function MarketTrendsPage() {
       />
 
       {/* 2. Key Market Metrics Cards */}
-      <MarketKpiCards 
-        isLoading={isLoading} 
+      <MarketKpiCards
+        isLoading={isLoading}
         totalListings={marketData?.totalDbRecords}
         kpiMetrics={marketData?.kpiMetrics}
       />
 
       {/* 3. Interactive Price Trend Trajectory Chart */}
-      <PriceTrendChart 
+      <PriceTrendChart
         trendData={marketData?.historicalTrends}
         isLoading={isLoading}
         activeTimeframe={filters.timeframe}
@@ -103,32 +103,32 @@ export function MarketTrendsPage() {
       />
 
       {/* 4. Demand vs Supply Analytics */}
-      <DemandSupplySection 
+      <DemandSupplySection
         demandSupplyData={marketData?.demandSupply}
         isLoading={isLoading}
       />
 
       {/* 5. Locality Performance Heat Map Table */}
-      <MarketHeatMapTable 
+      <MarketHeatMapTable
         localityData={marketData?.localityHeatmap}
         isLoading={isLoading}
       />
 
       {/* 6. Builder Intelligence & Market Share */}
-      <BuilderIntelligenceSection 
+      <BuilderIntelligenceSection
         buildersData={marketData?.builderIntelligence}
         isLoading={isLoading}
       />
 
       {/* 7. Property Asset Class & Rental Analytics */}
-      <PropertyTypeRentalSection 
+      <PropertyTypeRentalSection
         propertyTypes={marketData?.propertyTypes}
         rentalData={marketData?.rentalAnalytics}
         isLoading={isLoading}
       />
 
       {/* 8. Consumer Search Trends & Investment Opportunity Scoring */}
-      <SearchTrendsInvestmentSection 
+      <SearchTrendsInvestmentSection
         searchData={marketData?.searchTrends}
         investmentData={marketData?.investmentScore}
         isLoading={isLoading}

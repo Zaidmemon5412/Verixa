@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  User, Mail, Shield, Smartphone, Key, Heart, 
-  Building2, ArrowRight, Sparkles 
+import {
+  User, Mail, Shield, Smartphone, Key, Heart,
+  Building2, ArrowRight, Sparkles
 } from 'lucide-react';
 import useAuth from '../../auth/hooks/useAuth';
 import useWishlist from '../../properties/hooks/useWishlist';

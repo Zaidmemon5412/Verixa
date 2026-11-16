@@ -3,26 +3,26 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '../../properties/constants/propertyData';
 
 export function PropertyHeroSlider() {
-  // 4 property photos in order
-  const images = PROJECTS.slice(0, 4).map(p => p.image);
+  // 4 property slides in order
+  const slides = PROJECTS.slice(0, 4);
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef(0);
 
   // Auto slide every 3.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
     }, 3500);
 
     return () => clearInterval(timer);
-  }, [images.length]);
+  }, [slides.length]);
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const handleTouchStart = (e) => {
@@ -42,18 +42,21 @@ export function PropertyHeroSlider() {
       className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl group select-none aspect-[16/11] sm:aspect-[4/3]"
     >
       {/* ─── PURE IMAGE SLIDESHOW ────────────────────────────────────────── */}
-      {images.map((imgUrl, idx) => {
+      {slides.map((slide, idx) => {
         const isActive = idx === currentIndex;
         return (
           <div
-            key={idx}
+            key={slide.id || idx}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
               isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
           >
             <img
-              src={imgUrl}
-              alt={`Property Photo ${idx + 1}`}
+              src={slide.image}
+              alt={`${slide.name} - ${slide.config || 'Verified Residential Property'} in ${slide.locality || slide.location || 'Ahmedabad'}`}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              fetchPriority={idx === 0 ? 'high' : 'auto'}
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
@@ -79,7 +82,7 @@ export function PropertyHeroSlider() {
 
       {/* Sleek Dot Indicators at Bottom */}
       <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/10">
-        {images.map((_, idx) => (
+        {slides.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}

@@ -4,7 +4,7 @@ import { builderService } from '../services/builderService';
 import { BuilderCard } from '../components/BuilderCard';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { SEOHead } from '../../../shared/components/SEOHead';
-import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
+import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
 export function BuildersPage({ onSelectBuilder }) {
   const [builders, setBuilders] = useState([]);
@@ -32,10 +32,21 @@ export function BuildersPage({ onSelectBuilder }) {
         description="Compare Ahmedabad real estate developers by on-time delivery rate, RERA registration track record, completed projects, and Verixa algorithmic trust scores."
         canonicalPath="/builders"
         keywords="Ahmedabad real estate builders, RERA verified developers Gujarat, builder trust score, Verixa"
-        schema={buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Verified Builders', path: '/builders' },
-        ])}
+        schema={[
+          buildBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Verified Builders', path: '/builders' },
+          ]),
+          builders.length > 0
+            ? buildItemListSchema(
+                builders.map((b) => ({
+                  name: b.name,
+                  path: `/builders/${b.slug || b.id}`,
+                })),
+                'Top Real Estate Builders in Ahmedabad'
+              )
+            : null,
+        ].filter(Boolean)}
       />
       {/* Header */}
       <div>

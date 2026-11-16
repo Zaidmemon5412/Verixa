@@ -95,7 +95,7 @@ export function Footer({ onNavigate }) {
               ].map((loc) => (
                 <li key={loc.slug}>
                   <Link 
-                    to={`/locality/${loc.slug}`}
+                    to={`/localities/${loc.slug}`}
                     className="hover:text-primary transition-colors flex items-center gap-1.5 group"
                   >
                     <MapPin className="w-3 h-3 text-primary/70 group-hover:text-primary shrink-0" />
@@ -132,6 +132,37 @@ export function Footer({ onNavigate }) {
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               <span>Real-Time Intelligence Connected</span>
             </div>
+          </div>
+        </div>
+
+        {/* Popular Real Estate Searches Internal Link Hub (Programmatic SEO) */}
+        <div className="border-t border-border/50 mt-8 pt-6 space-y-3">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
+            Popular Real Estate Searches in Ahmedabad
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { label: 'Flats in Satellite', to: '/properties?locality=Satellite' },
+              { label: 'Luxury Homes in Thaltej', to: '/properties?locality=Thaltej' },
+              { label: '2 & 3 BHK in Gota', to: '/properties?locality=Gota' },
+              { label: 'Projects in Sola', to: '/properties?locality=Sola' },
+              { label: 'Flats in Chandkheda', to: '/properties?locality=Chandkheda' },
+              { label: 'Apartments in Maninagar', to: '/properties?locality=Maninagar' },
+              { label: '2 BHK Flats in Ahmedabad', to: '/properties?bhk=2' },
+              { label: '3 BHK Flats in Ahmedabad', to: '/properties?bhk=3' },
+              { label: '4 BHK Luxury Flats', to: '/properties?bhk=4' },
+              { label: 'Villas in Ahmedabad', to: '/properties?type=villa' },
+              { label: 'Ready to Move Homes', to: '/properties?status=ready' },
+              { label: 'Ahmedabad Price Trends', to: '/market' },
+            ].map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="px-2.5 py-1 rounded-lg bg-background/80 hover:bg-primary/10 border border-border/70 hover:border-primary/40 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
 
