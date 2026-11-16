@@ -6,6 +6,8 @@ import { ComparisonMatrixTable } from '../components/ComparisonMatrixTable';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Card } from '../../../shared/components/ui/card';
 import { Button } from '../../../shared/components/ui/button';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
 export function ComparisonPage({ initialSelectedIds = [], onSelectProject }) {
   const {
@@ -22,6 +24,16 @@ export function ComparisonPage({ initialSelectedIds = [], onSelectProject }) {
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      <SEOHead
+        title="Compare Verified Properties Side-by-Side – Price, Sqft Rate, RERA & AI Valuation"
+        description="Compare up to 4 Ahmedabad properties side-by-side across asking price, rate per sqft, AI fair price valuation, carpet area, RERA compliance, and amenities."
+        canonicalPath="/comparison"
+        keywords="compare properties Ahmedabad, property comparison matrix, RERA comparison, AI valuation comparison, Verixa"
+        schema={buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Compare Properties', path: '/comparison' },
+        ])}
+      />
       {/* Top Header & Context Description */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

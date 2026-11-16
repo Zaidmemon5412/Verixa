@@ -3,6 +3,8 @@ import { Award, Building2, ShieldCheck, Sparkles } from 'lucide-react';
 import { builderService } from '../services/builderService';
 import { BuilderCard } from '../components/BuilderCard';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
 export function BuildersPage({ onSelectBuilder }) {
   const [builders, setBuilders] = useState([]);
@@ -25,6 +27,16 @@ export function BuildersPage({ onSelectBuilder }) {
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
+      <SEOHead
+        title="Top RERA Verified Real Estate Developers & Builders in Ahmedabad"
+        description="Compare Ahmedabad real estate developers by on-time delivery rate, RERA registration track record, completed projects, and Verixa algorithmic trust scores."
+        canonicalPath="/builders"
+        keywords="Ahmedabad real estate builders, RERA verified developers Gujarat, builder trust score, Verixa"
+        schema={buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Verified Builders', path: '/builders' },
+        ])}
+      />
       {/* Header */}
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-primary/10 text-primary mb-2">

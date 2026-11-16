@@ -11,6 +11,8 @@ import { InfrastructureSection } from '../components/InfrastructureSection';
 import { MarketTrendChart } from '../components/MarketTrendChart';
 import { LocalityProjects } from '../components/LocalityProjects';
 import { ErrorState } from '../components/ErrorState';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema, buildLocalitySchema } from '../../../shared/utils/seoUtils';
 import { 
   LocalityHeroSkeleton, 
   LocalityStatsSkeleton, 
@@ -50,7 +52,7 @@ export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProjec
   }, [activeId]);
 
   const handleSelectTab = (selected) => {
-    const targetPath = `/locality/${selected.slug || selected.id}`;
+    const targetPath = `/localities/${selected.slug || selected.id}`;
     navigate(targetPath);
   };
 
@@ -74,8 +76,28 @@ export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProjec
     );
   }
 
+  const localityCanonicalSlug = locality?.slug || activeId;
+  const localityCanonicalPath = `/localities/${localityCanonicalSlug}`;
+
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
+      {locality && (
+        <SEOHead
+          title={`${locality.name}, Ahmedabad Real Estate – Avg Price ${locality.psf}/sqft, Yield & Projects`}
+          description={`In-depth real estate intelligence for ${locality.name}, Ahmedabad: average price ${locality.avgPrice} (${locality.psf}/sqft), ${locality.rentalYield} rental yield, ${locality.growthScore}/100 growth score, and verified RERA projects.`}
+          canonicalPath={localityCanonicalPath}
+          ogImage={locality.image}
+          keywords={`${locality.name} Ahmedabad real estate, ${locality.name} property rates per sqft, ${locality.name} rental yield, Verixa`}
+          schema={[
+            ...buildLocalitySchema(locality),
+            buildBreadcrumbSchema([
+              { name: 'Home', path: '/' },
+              { name: 'Localities', path: '/localities' },
+              { name: `${locality.name}, Ahmedabad`, path: localityCanonicalPath },
+            ]),
+          ]}
+        />
+      )}
       {/* 1. Locality Tabs Header */}
       <LocalityTabs
         localities={localities}

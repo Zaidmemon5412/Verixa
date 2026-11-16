@@ -8,7 +8,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from apps.core.views import HealthCheckAPIView
+from apps.core.views import HealthCheckAPIView, SitemapXMLView
 
 
 def api_root_view(request):
@@ -29,6 +29,8 @@ def api_root_view(request):
 
 urlpatterns = [
     path('', api_root_view, name='api-root'),
+    path('sitemap.xml', SitemapXMLView.as_view(), name='sitemap-xml'),
+    path('api/sitemap.xml', SitemapXMLView.as_view(), name='api-sitemap-xml'),
     path('admin/', admin.site.urls),
 
     # Infrastructure Liveness & Readiness Probe

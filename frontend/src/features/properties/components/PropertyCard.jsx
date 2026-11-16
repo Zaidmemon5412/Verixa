@@ -19,6 +19,8 @@ export function PropertyCard({
   if (!project) return null;
 
   const targetId = project.id || project.property_id || project.name || 'card';
+  const navSlug = project.slug || targetId;
+  const imageAlt = `${project.name} - ${project.config || 'Residential'} ${project.propertyType || 'Property'} in ${project.locality || 'Ahmedabad'}`;
 
   // Seeded hash for unique dynamic scoring if scores are uniform/static
   const seedString = `${targetId}-${project.name || ''}`;
@@ -39,7 +41,7 @@ export function PropertyCard({
 
   return (
     <Card 
-      onClick={() => onSelect && onSelect(targetId)}
+      onClick={() => onSelect && onSelect(navSlug)}
       className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
     >
       {/* Diagonal Light Sweep Shine Effect on Hover */}
@@ -52,7 +54,7 @@ export function PropertyCard({
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           <img
             src={project.image}
-            alt={project.name}
+            alt={imageAlt}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
@@ -145,7 +147,7 @@ export function PropertyCard({
         <Button
           onClick={(e) => {
             e.stopPropagation();
-            onSelect && onSelect(targetId);
+            onSelect && onSelect(navSlug);
           }}
           className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2"
           variant="outline"
@@ -173,9 +175,9 @@ export function PropertyCard({
           onClick={(e) => {
             e.stopPropagation();
             if (onSelectLegal) {
-              onSelectLegal(targetId);
+              onSelectLegal(navSlug);
             } else if (onSelect) {
-              onSelect(targetId, 'legal');
+              onSelect(navSlug, 'legal');
             }
           }}
           className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"

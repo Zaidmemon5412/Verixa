@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FileQuestion, ArrowLeft, Home } from 'lucide-react';
+import { SEOHead } from './SEOHead';
 
 /**
  * NotFound Component (404 Page).
@@ -8,6 +9,12 @@ import { FileQuestion, ArrowLeft, Home } from 'lucide-react';
 export const NotFound = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-slate-950 text-slate-100 select-none">
+      <SEOHead
+        title="404 Page Not Found – Verixa"
+        description="The requested page could not be found on Verixa."
+        canonicalPath="/404"
+        noindex={true}
+      />
       <div className="max-w-md w-full glass-panel p-8 rounded-2xl border border-white/5 text-center space-y-6">
         <div className="mx-auto w-16 h-16 rounded-full bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shadow-xl shadow-brand-500/10">
           <FileQuestion className="w-8 h-8" />

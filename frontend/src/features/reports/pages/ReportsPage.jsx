@@ -1,4 +1,5 @@
 import { FileText, Download, ShieldCheck } from 'lucide-react';
+import { SEOHead } from '../../../shared/components/SEOHead';
 
 /**
  * ReportsPage Shell Placeholder component.
@@ -7,6 +8,12 @@ import { FileText, Download, ShieldCheck } from 'lucide-react';
 export const ReportsPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6">
+      <SEOHead
+        title="Verified Reports Archive – Verixa"
+        description="Access your generated title deeds, zoning risk reports, and inspection certifications."
+        canonicalPath="/reports"
+        noindex={true}
+      />
       <div>
         <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Verified Reports Archive</h1>
         <p className="text-xs text-muted-foreground">Generated title deeds, zoning risk reports, and inspection certifications.</p>

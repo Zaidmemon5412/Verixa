@@ -8,6 +8,8 @@ import useWishlist from '../hooks/useWishlist';
 import usePropertyComparison from '../../comparison/hooks/usePropertyComparison';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
 const BATCH_SIZE = 60;
 
@@ -242,8 +244,27 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const visibleProjects = projects.slice(0, displayLimit);
   const hasMore = displayLimit < projects.length;
 
+  const bhkPrefix = selectedBhk.length > 0 ? `${selectedBhk.join(', ')} BHK ` : '';
+  const typePrefix = selectedType !== 'All' ? `${selectedType} ` : '';
+  const localitySuffix = selectedLocality === 'All' ? 'Ahmedabad' : `${selectedLocality}, Ahmedabad`;
+  const seoTitle =
+    hasActiveFilters
+      ? `${bhkPrefix}${typePrefix}Properties in ${localitySuffix} – RERA Verified`
+      : 'RERA Verified Properties in Ahmedabad – Flats, Villas & Plots';
+  const seoDescription = currentAreaText.description;
+
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-5 sm:space-y-6">
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonicalPath="/properties"
+        keywords={`properties in ${localitySuffix}, RERA verified projects Ahmedabad, ${selectedBhk.length ? selectedBhk.join(' BHK ') + ' BHK flats' : '2 BHK 3 BHK flats'}, Verixa`}
+        schema={buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Verified Properties', path: '/properties' },
+        ])}
+      />
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>

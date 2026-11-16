@@ -73,9 +73,14 @@ function BuildersPageWrapper() {
   const navigate = useNavigate();
   return (
     <BuildersPage
-      onSelectBuilder={(bId) => navigate(`/builder/${bId}`)}
+      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
     />
   );
+}
+
+function ParamRedirect({ toPrefix, suffix = '' }) {
+  const { id } = useParams();
+  return <Navigate to={`${toPrefix}/${id}${suffix}`} replace />;
 }
 
 function BuilderDetailsPageWrapper() {
@@ -170,19 +175,11 @@ export const AppRoutes = () => {
         />
         <Route
           path="/property/:id"
-          element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <PropertyDetailPageWrapper />
-            </AppSuspense>
-          }
+          element={<ParamRedirect toPrefix="/properties" />}
         />
         <Route
           path="/property/:id/legal"
-          element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <PropertyDetailPageWrapper />
-            </AppSuspense>
-          }
+          element={<ParamRedirect toPrefix="/properties" suffix="/legal" />}
         />
 
         <Route
@@ -203,11 +200,7 @@ export const AppRoutes = () => {
         />
         <Route
           path="/builder/:id"
-          element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <BuilderDetailsPageWrapper />
-            </AppSuspense>
-          }
+          element={<ParamRedirect toPrefix="/builders" />}
         />
         <Route
           path="/localities"
@@ -219,11 +212,7 @@ export const AppRoutes = () => {
         />
         <Route
           path="/locality/:id"
-          element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <LocalityDetailsPageWrapper />
-            </AppSuspense>
-          }
+          element={<ParamRedirect toPrefix="/localities" />}
         />
         <Route
           path="/localities/:id"
@@ -244,17 +233,17 @@ export const AppRoutes = () => {
         />
         <Route
           path="/market-trends"
-          element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <MarketTrendsPage />
-            </AppSuspense>
-          }
+          element={<Navigate to="/market" replace />}
         />
         <Route
           path="/market/trends"
+          element={<Navigate to="/market" replace />}
+        />
+        <Route
+          path="/comparison"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
-              <MarketTrendsPage />
+            <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
+              <ComparisonPageWrapper />
             </AppSuspense>
           }
         />
@@ -332,16 +321,6 @@ export const AppRoutes = () => {
             <ProtectedRoute>
               <AppSuspense fallback={<ListSkeleton rows={4} />}>
                 <ReportsPage />
-              </AppSuspense>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/comparison"
-          element={
-            <ProtectedRoute>
-              <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
-                <ComparisonPageWrapper />
               </AppSuspense>
             </ProtectedRoute>
           }

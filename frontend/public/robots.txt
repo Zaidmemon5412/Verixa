@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Allow: /properties
+Allow: /builders
+Allow: /localities
+Allow: /market
+Allow: /comparison
+
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /reports
+Disallow: /404
+Disallow: /api/
+
+Sitemap: https://verixa-phi.vercel.app/sitemap.xml

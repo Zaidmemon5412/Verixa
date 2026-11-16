@@ -13,6 +13,8 @@ import { FeaturedNewLaunchesSection } from '../components/FeaturedNewLaunchesSec
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { PROJECTS } from '../../properties/constants/propertyData';
 import { propertyService } from '../../properties/services/propertyService';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildWebsiteSchema } from '../../../shared/utils/seoUtils';
 
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
   const featuredProjects = PROJECTS.slice(0, 3);
@@ -28,6 +30,13 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
 
   return (
     <div className="space-y-12 sm:space-y-20 pb-10 sm:pb-20">
+      <SEOHead
+        title="Verixa – RERA Verified Properties, AI Fair Price & Legal Title Audit in Ahmedabad"
+        description="Buy verified properties in Ahmedabad with 100% legal confidence. Verixa audits RERA filings, builder delivery track records, and XGBoost fair price valuations across Thaltej, Satellite, Sola, Gota, Chandkheda & Maninagar."
+        canonicalPath="/"
+        keywords="Ahmedabad real estate, RERA verified flats Ahmedabad, legal title verification, AI fair price calculator, Verixa"
+        schema={buildWebsiteSchema()}
+      />
       {/* ─── SECTION 0: STICKY TOP ANNOUNCEMENT / OFFER BAR ──────────────────── */}
       <div className="bg-gradient-to-r from-primary via-blue-600 to-indigo-700 text-white text-[11px] sm:text-xs py-2 sm:py-2.5 px-3 sm:px-4 shadow-md">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2 text-center sm:text-left">

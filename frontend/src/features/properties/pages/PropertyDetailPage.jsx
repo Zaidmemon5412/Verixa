@@ -16,6 +16,8 @@ import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import { EMICalculatorCard } from '../components/EMICalculatorCard';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema, buildPropertySchema, slugify } from '../../../shared/utils/seoUtils';
 
 // Route-level Code-Splitting & Lazy Loading for Heavy Below-the-Fold Components
 const PropertyMapSection = lazy(() => import('../components/PropertyMap'));
@@ -137,6 +139,20 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   const legalInfo = project.legalInfo;
   const currentImage = selectedImage || project.image;
   const galleryImages = project.images && project.images.length > 0 ? project.images : [project.image];
+  const canonicalSlug = project.slug || project.id;
+  const localitySlug = slugify(project.locality || 'satellite');
+  const canonicalPath = `/properties/${canonicalSlug}${isLegalView ? '/legal' : ''}`;
+  const seoTitle = `${project.name} in ${project.locality || 'Ahmedabad'} – ${project.config} Price ${project.price}, RERA & Legal Audit`;
+  const seoDescription = `${project.name}${project.builder ? ` by ${project.builder}` : ''} in ${project.location || 'Ahmedabad'}. Asking price ${project.price} (${project.pricePerSqft}), ${project.config}, ${project.area} carpet area, RERA: ${project.rera}, Trust Score ${project.trustScore}%.`;
+  const propertySchemas = [
+    buildPropertySchema(project, builder),
+    buildBreadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Properties', path: '/properties' },
+      { name: project.locality || 'Ahmedabad', path: `/localities/${localitySlug}` },
+      { name: project.name, path: `/properties/${canonicalSlug}` },
+    ]),
+  ].filter(Boolean);
 
   const handleRequestSiteVisit = () => {
     if (!user) {
@@ -160,6 +176,15 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonicalPath={canonicalPath}
+        ogImage={currentImage}
+        ogType="article"
+        keywords={`${project.name}, ${project.locality || 'Ahmedabad'} properties, ${project.config}, ${project.builder || 'RERA verified'}, Verixa`}
+        schema={propertySchemas}
+      />
       {/* Top Back Navigation & Share */}
       <div className="flex items-center justify-between gap-2">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5 -ml-2 sm:ml-0 text-xs sm:text-sm">
@@ -255,8 +280,9 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             <div className="relative aspect-[4/3] sm:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border shadow-lg bg-muted">
               <img
                 src={currentImage}
-                alt={project.name}
+                alt={`${project.name} - ${project.config} in ${project.location}`}
                 loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 className="w-full h-full object-cover transition-all duration-300"
               />

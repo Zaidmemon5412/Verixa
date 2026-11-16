@@ -11,6 +11,8 @@ import BuilderProjects from '../components/BuilderProjects';
 import BuilderSkeleton from '../components/BuilderSkeleton';
 import BuilderInquiryModal from '../components/BuilderInquiryModal';
 import ErrorState from '../components/ErrorState';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema, buildBuilderSchema } from '../../../shared/utils/seoUtils';
 
 export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, onBack }) {
   const { user } = useAuth();
@@ -171,8 +173,29 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
     );
   }
 
+  const builderCanonicalSlug = builder.slug || builder.id;
+  const builderCanonicalPath = `/builders/${builderCanonicalSlug}`;
+  const builderSeoTitle = `${builder.name} – Projects in Ahmedabad, Trust Score ${builder.trustScore}% & RERA Track Record`;
+  const builderSeoDescription = `Explore ${totalCount || projects.length} residential and commercial projects by ${builder.name} in Ahmedabad. ${builder.yearsOfExperience} years experience, ${builder.deliveryRate}% on-time delivery, RERA: ${builder.reraRegistrationNo}.`;
+  const builderSchemas = [
+    buildBuilderSchema(builder),
+    buildBreadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Builders', path: '/builders' },
+      { name: builder.name, path: builderCanonicalPath },
+    ]),
+  ].filter(Boolean);
+
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 py-8 transition-colors">
+      <SEOHead
+        title={builderSeoTitle}
+        description={builderSeoDescription}
+        canonicalPath={builderCanonicalPath}
+        ogImage={builder.logoUrl || undefined}
+        keywords={`${builder.name}, ${builder.name} Ahmedabad projects, RERA ${builder.reraRegistrationNo}, builder trust score, Verixa`}
+        schema={builderSchemas}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Navigation Breadcrumb */}

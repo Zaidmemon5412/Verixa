@@ -1,4 +1,5 @@
 import apiClient from '../../../shared/services/apiClient';
+import { createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
 
 function formatPrice(priceVal) {
   const num = parseFloat(priceVal);
@@ -93,8 +94,11 @@ export function mapApiPropertyToUi(item) {
   const propName = item.project_name || item.property_name || 'Unnamed Property';
   const statusStr = item.project_status || item.status || 'Ready to Move';
 
+  const resolvedId = item.project_id || item.property_id || item.id;
+
   return {
-    id: item.project_id || item.property_id || item.id,
+    id: resolvedId,
+    slug: createPropertySlug({ id: resolvedId, name: propName, locality: cleanArea }),
     name: propName,
     builder: builderName,
     builderId: item.builder || item.builder_detail?.builder_id || null,
@@ -233,8 +237,11 @@ export const propertyService = {
       return null;
     }
 
+    const cleanId = extractIdFromSlug(id);
+    const lookupSlug = slugify(id);
+
     try {
-      const response = await apiClient.get(`/properties/${id}/`);
+      const response = await apiClient.get(`/properties/${cleanId}/`);
       const rawData = response?.data?.data || response?.data || response;
 
       if (rawData && (rawData.property_id || rawData.id)) {
@@ -245,7 +252,7 @@ export const propertyService = {
     }
 
     try {
-      const bpResponse = await apiClient.get(`/builders/projects/${id}/`);
+      const bpResponse = await apiClient.get(`/builders/projects/${cleanId}/`);
       const rawBpData = bpResponse?.data?.data || bpResponse?.data || bpResponse;
 
       if (rawBpData && (rawBpData.project_id || rawBpData.id)) {
@@ -259,7 +266,11 @@ export const propertyService = {
       const allDbProperties = await this.getProperties();
       if (Array.isArray(allDbProperties) && allDbProperties.length > 0) {
         const match = allDbProperties.find(
-          (p) => String(p.id).toLowerCase() === String(id).toLowerCase()
+          (p) =>
+            String(p.id).toLowerCase() === cleanId.toLowerCase() ||
+            String(p.slug || '').toLowerCase() === String(id).toLowerCase() ||
+            slugify(p.name) === slugify(cleanId) ||
+            slugify(p.name) === lookupSlug
         );
         if (match) return match;
       }

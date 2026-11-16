@@ -5,6 +5,8 @@ import { localityService } from '../services/localityService';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
+import { SEOHead } from '../../../shared/components/SEOHead';
+import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
 export function LocalitiesPage({ onSelectLocality }) {
   const [localities, setLocalities] = useState([]);
@@ -30,12 +32,22 @@ export function LocalitiesPage({ onSelectLocality }) {
     if (onSelectLocality) {
       onSelectLocality(loc.slug || loc.id);
     } else {
-      navigate(`/locality/${loc.slug || loc.id}`);
+      navigate(`/localities/${loc.slug || loc.id}`);
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
+      <SEOHead
+        title="Ahmedabad Micro-Market Intelligence – Price Trends, Rental Yield & Infrastructure"
+        description="Compare property rates per sqft, rental yields, metro connectivity, schools, and hospital access across Satellite, Thaltej, Gota, Sola, Chandkheda & Maninagar in Ahmedabad."
+        canonicalPath="/localities"
+        keywords="Ahmedabad localities, Satellite Thaltej Gota Sola Chandkheda Maninagar property rates, rental yield Ahmedabad, Verixa"
+        schema={buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Localities', path: '/localities' },
+        ])}
+      />
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
           <TrendingUp className="w-3.5 h-3.5 shrink-0" />

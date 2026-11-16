@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { Building2, ArrowLeft } from 'lucide-react';
+import { SEOHead } from '../../shared/components/SEOHead';
 
 /**
  * AuthLayout Component.
@@ -11,6 +12,11 @@ import { Building2, ArrowLeft } from 'lucide-react';
 export const AuthLayout = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background text-foreground transition-colors duration-200 relative overflow-hidden selection:bg-primary selection:text-primary-foreground">
+      <SEOHead
+        title="Account Access – Verixa"
+        description="Sign in or manage your Verixa real estate verification account."
+        noindex={true}
+      />
       {/* Background Ambient Glow Effects */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />

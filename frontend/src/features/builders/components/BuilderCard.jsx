@@ -22,7 +22,7 @@ export function BuilderCard({ builder, onSelect }) {
           {brandInfo.logo ? (
             <img
               src={brandInfo.logo}
-              alt={builder.name}
+              alt={`${builder.name} - RERA Verified Real Estate Developer in Ahmedabad`}
               className="w-14 h-14 rounded-2xl object-contain bg-white p-1.5 border border-sky-100 dark:border-slate-800 shadow-md shrink-0"
               onError={(e) => {
                 // Fallback to monogram if image fails to load
@@ -72,7 +72,7 @@ export function BuilderCard({ builder, onSelect }) {
 
       <div className="p-6 pt-0">
         <Button
-          onClick={() => onSelect && onSelect(builder.id)}
+          onClick={() => onSelect && onSelect(builder.slug || builder.id)}
           variant="outline"
           className="w-full rounded-xl gap-2 text-xs"
         >

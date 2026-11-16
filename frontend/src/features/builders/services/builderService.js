@@ -1,5 +1,6 @@
 import apiClient from '../../../shared/services/apiClient';
 import { getBuilderBrandInfo } from '../utils/builderLogos';
+import { createBuilderSlug, createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
 
 /**
  * Format raw price string or float into Indian Currency format (e.g. ₹45.0 L, ₹2.50 Cr)
@@ -60,9 +61,13 @@ export function mapApiBuilderProjectToUi(item) {
   const isCompleted = statusStr.toLowerCase().includes('completed') || statusStr.toLowerCase().includes('ready');
   const aiScore = isCompleted ? 94 : 88;
 
+  const resolvedId = item.property_id || item.project_id || item.id;
+  const resolvedName = item.project_name || item.property_name || 'Unnamed Project';
+
   return {
-    id: item.property_id || item.project_id || item.id,
-    name: item.project_name || item.property_name || 'Unnamed Project',
+    id: resolvedId,
+    slug: createPropertySlug({ id: resolvedId, name: resolvedName, locality: item.locality || 'ahmedabad' }),
+    name: resolvedName,
     builderId: item.builder || item.builder_detail?.builder_id,
     builderName: item.builder_name || item.company_name || 'Verified Developer',
     companyName: item.company_name || item.builder_name || 'Verixa Developer',
@@ -126,8 +131,11 @@ export function mapApiBuilderToUi(item) {
     computedTrustScore = Math.min(99, Math.max(55, score));
   }
 
+  const resolvedBuilderId = item.builder_id || item.id;
+
   return {
-    id: item.builder_id || item.id,
+    id: resolvedBuilderId,
+    slug: createBuilderSlug({ id: resolvedBuilderId, name: builderName }),
     name: builderName,
     companyName: item.company_name || builderName || 'Real Estate Developer',
     reraRegistrationNo: item.rera_registration_no || 'GUJ-BUILDER-VERIXA-2026',
@@ -177,8 +185,10 @@ export const builderService = {
   async getBuilderById(id) {
     if (!id || id === 'undefined' || id === 'null') return null;
 
+    const cleanId = extractIdFromSlug(id);
+
     try {
-      const response = await apiClient.get(`/builders/${id}/`);
+      const response = await apiClient.get(`/builders/${cleanId}/`);
       const rawData = response?.data?.data || response?.data || response;
       if (rawData && (rawData.builder_id || rawData.id)) {
         return mapApiBuilderToUi(rawData);
@@ -191,8 +201,10 @@ export const builderService = {
     try {
       const allBuilders = await this.getBuilders();
       const match = allBuilders.find(
-        (b) => String(b.id).toLowerCase() === String(id).toLowerCase() ||
-               String(b.name).toLowerCase().replace(/\s+/g, '-') === String(id).toLowerCase()
+        (b) =>
+          String(b.id).toLowerCase() === cleanId.toLowerCase() ||
+          String(b.slug || '').toLowerCase() === String(id).toLowerCase() ||
+          slugify(b.name) === slugify(cleanId)
       );
       if (match) return match;
     } catch (err) {
@@ -209,9 +221,11 @@ export const builderService = {
   async getBuilderProjects(builderId, filters = {}) {
     if (!builderId) return { results: [], count: 0, totalPages: 1 };
 
+    const cleanId = extractIdFromSlug(builderId);
+
     try {
       const params = new URLSearchParams();
-      params.append('builder', builderId);
+      params.append('builder', cleanId);
       params.append('page_size', '20');
 
       if (filters.search) params.append('search', filters.search);

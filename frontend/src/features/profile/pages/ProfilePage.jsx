@@ -11,6 +11,7 @@ import { PropertyCard } from '../../properties/components/PropertyCard';
 import { CardSkeleton } from '../../../shared/components/skeletons';
 import { Button } from '../../../shared/components/ui/button';
 import { Card, CardContent } from '../../../shared/components/ui/card';
+import { SEOHead } from '../../../shared/components/SEOHead';
 
 export function ProfilePage() {
   const { user } = useAuth();
@@ -36,6 +37,12 @@ export function ProfilePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      <SEOHead
+        title="Account & Saved Properties – Verixa"
+        description="Manage your Verixa user account and saved property wishlist."
+        canonicalPath="/profile"
+        noindex={true}
+      />
       {/* Account Profile Header */}
       <div>
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2 border border-primary/20">
