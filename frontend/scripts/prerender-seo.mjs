@@ -403,6 +403,62 @@ function buildRoutes() {
   return routes;
 }
 
+function buildAppShellSkeleton() {
+  return `
+    <style data-verixa-shell="true">
+      @keyframes verixaShimmer { 0%, 100% { opacity: .45; } 50% { opacity: .9; } }
+      .vx-shell { min-height: 100vh; background: #0b1120; color: #f8fafc; font-family: Inter, system-ui, -apple-system, sans-serif; }
+      .vx-nav { height: 60px; border-bottom: 1px solid rgba(148, 163, 184, 0.14); background: rgba(15, 23, 42, 0.9); display: flex; align-items: center; }
+      .vx-wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px; box-sizing: border-box; }
+      .vx-nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      .vx-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: #ffffff; text-decoration: none; }
+      .vx-logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35); font-size: 16px; font-weight: 900; color: #fff; }
+      .vx-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #60a5fa; background: rgba(37, 99, 235, 0.14); border: 1px solid rgba(59, 130, 246, 0.25); padding: 3px 7px; border-radius: 6px; }
+      .vx-pills { display: none; gap: 10px; }
+      .vx-pill { width: 72px; height: 14px; border-radius: 999px; background: rgba(148, 163, 184, 0.16); animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-main { padding: 32px 0; }
+      .vx-hero { border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.14); background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); padding: 28px; margin-bottom: 24px; }
+      .vx-bar-sm { width: 160px; max-width: 60%; height: 22px; border-radius: 999px; background: rgba(59, 130, 246, 0.22); margin-bottom: 16px; animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-bar-lg { width: 520px; max-width: 95%; height: 36px; border-radius: 12px; background: rgba(148, 163, 184, 0.22); margin-bottom: 12px; animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-bar-md { width: 380px; max-width: 82%; height: 16px; border-radius: 8px; background: rgba(148, 163, 184, 0.14); margin-bottom: 20px; animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+      .vx-card { border-radius: 20px; border: 1px solid rgba(148, 163, 184, 0.14); background: rgba(15, 23, 42, 0.85); padding: 16px; height: 240px; display: flex; flex-direction: column; justify-content: space-between; }
+      .vx-thumb { width: 100%; height: 135px; border-radius: 14px; background: rgba(148, 163, 184, 0.14); animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-line { width: 70%; height: 14px; border-radius: 6px; background: rgba(148, 163, 184, 0.18); animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-line-short { width: 45%; height: 12px; border-radius: 6px; background: rgba(148, 163, 184, 0.12); animation: verixaShimmer 1.5s ease-in-out infinite; }
+      @media (min-width: 768px) { .vx-pills { display: flex; } }
+    </style>
+    <div class="vx-shell" aria-busy="true">
+      <div class="vx-nav">
+        <div class="vx-wrap vx-nav-inner">
+          <div class="vx-brand">
+            <div class="vx-logo">V</div>
+            <span>VERIXA</span>
+            <span class="vx-badge">Decision Engine</span>
+          </div>
+          <div class="vx-pills">
+            <div class="vx-pill"></div>
+            <div class="vx-pill"></div>
+            <div class="vx-pill"></div>
+            <div class="vx-pill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="vx-wrap vx-main">
+        <div class="vx-hero">
+          <div class="vx-bar-sm"></div>
+          <div class="vx-bar-lg"></div>
+          <div class="vx-bar-md"></div>
+        </div>
+        <div class="vx-grid">
+          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-short"></div></div>
+          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-short"></div></div>
+          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-short"></div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
 function renderHtml(templateHtml, route) {
   const resolvedTitle = fullTitle(route.title);
   const canonicalUrl = `${SITE_URL}${route.routePath}`;
@@ -477,8 +533,10 @@ function renderHtml(templateHtml, route) {
     html = html.replace('</head>', `    ${jsonLdScripts}\n  </head>`);
   }
 
-  // Embed static semantic HTML snapshot inside <div id="root">...</div>
-  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, `<div id="root">${route.bodyHtml}</div>`);
+  // Embed polished zero-FOUC app shell skeleton + screen-reader/crawler accessible SEO HTML
+  const shellHtml = buildAppShellSkeleton();
+  const seoSnapshotHtml = `<div class="sr-only" aria-hidden="false" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">${route.bodyHtml}</div>`;
+  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, `<div id="root">${shellHtml}${seoSnapshotHtml}</div>`);
 
   return html;
 }
