@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Building2, ArrowLeftRight, TrendingUp, Heart, 
+import {
+  Building2, ArrowLeftRight, TrendingUp, Heart,
   User, Menu, X, Sun, Moon, LogOut, LogIn, UserPlus,
   Home, MapPin, Award, BookOpen
 } from 'lucide-react';
@@ -75,11 +75,10 @@ export function Navbar({ wishlistCount = 0 }) {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs lg:text-sm font-semibold transition-all ${
-                    isActive
-                      ? 'bg-primary/10 text-primary shadow-xs'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs lg:text-sm font-semibold transition-all ${isActive
+                    ? 'bg-primary/10 text-primary shadow-xs'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    }`}
                 >
                   {Icon && <Icon className="w-3.5 h-3.5 lg:w-4 lg:h-4" />}
                   {item.label}
@@ -194,11 +193,10 @@ export function Navbar({ wishlistCount = 0 }) {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-xs font-bold border transition-all ${
-                      isActive
-                        ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
-                        : 'bg-muted/40 text-foreground border-border/60 hover:bg-muted'
-                    }`}
+                    className={`flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-xs font-bold border transition-all ${isActive
+                      ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                      : 'bg-muted/40 text-foreground border-border/60 hover:bg-muted'
+                      }`}
                   >
                     {Icon && <Icon className="w-4 h-4 shrink-0" />}
                     <span className="truncate">{item.label}</span>
@@ -264,11 +262,10 @@ export function Navbar({ wishlistCount = 0 }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl transition-all relative ${
-                  isActive
-                    ? 'text-primary font-extrabold'
-                    : 'text-muted-foreground hover:text-foreground font-medium'
-                }`}
+                className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl transition-all relative ${isActive
+                  ? 'text-primary font-extrabold'
+                  : 'text-muted-foreground hover:text-foreground font-medium'
+                  }`}
               >
                 {isActive && (
                   <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary" />

@@ -11,7 +11,22 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import ProtectedRoute from '../../shared/components/ProtectedRoute';
 import PublicRoute from '../../features/auth/components/PublicRoute';
 import AppSuspense from '../../shared/components/AppSuspense';
-import { PageSkeleton, CardSkeleton, ListSkeleton, TableSkeleton } from '../../shared/components/skeletons';
+import {
+  PageSkeleton,
+  ListSkeleton,
+  LandingPageSkeleton,
+  PropertiesPageSkeleton,
+  PropertyDetailSkeleton,
+  BuildersPageSkeleton,
+  BuilderDetailSkeleton,
+  LocalitiesPageSkeleton,
+  LocalityDetailSkeleton,
+  MarketTrendsSkeleton,
+  ComparisonPageSkeleton,
+  GuidesPageSkeleton,
+  GuideDetailSkeleton,
+  ProfilePageSkeleton,
+} from '../../shared/components/skeletons';
 
 // Route-Based Lazy Loaded Features
 const Login = lazy(() => import('../../features/auth/pages/Login'));
@@ -146,7 +161,7 @@ export const AppRoutes = () => {
         <Route
           path="/"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<LandingPageSkeleton />}>
               <LandingPageWrapper />
             </AppSuspense>
           }
@@ -154,7 +169,7 @@ export const AppRoutes = () => {
         <Route
           path="/properties"
           element={
-            <AppSuspense fallback={<CardSkeleton count={6} />}>
+            <AppSuspense fallback={<PropertiesPageSkeleton />}>
               <PropertiesPageWrapper />
             </AppSuspense>
           }
@@ -162,7 +177,7 @@ export const AppRoutes = () => {
         <Route
           path="/properties/:id"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<PropertyDetailSkeleton />}>
               <PropertyDetailPageWrapper />
             </AppSuspense>
           }
@@ -170,7 +185,7 @@ export const AppRoutes = () => {
         <Route
           path="/properties/:id/legal"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<PropertyDetailSkeleton />}>
               <PropertyDetailPageWrapper />
             </AppSuspense>
           }
@@ -187,7 +202,7 @@ export const AppRoutes = () => {
         <Route
           path="/builders"
           element={
-            <AppSuspense fallback={<CardSkeleton count={4} />}>
+            <AppSuspense fallback={<BuildersPageSkeleton />}>
               <BuildersPageWrapper />
             </AppSuspense>
           }
@@ -195,7 +210,7 @@ export const AppRoutes = () => {
         <Route
           path="/builders/:id"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<BuilderDetailSkeleton />}>
               <BuilderDetailsPageWrapper />
             </AppSuspense>
           }
@@ -207,7 +222,7 @@ export const AppRoutes = () => {
         <Route
           path="/localities"
           element={
-            <AppSuspense fallback={<CardSkeleton count={4} />}>
+            <AppSuspense fallback={<LocalitiesPageSkeleton />}>
               <LocalitiesPage />
             </AppSuspense>
           }
@@ -219,7 +234,7 @@ export const AppRoutes = () => {
         <Route
           path="/localities/:id"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<LocalityDetailSkeleton />}>
               <LocalityDetailsPageWrapper />
             </AppSuspense>
           }
@@ -228,7 +243,7 @@ export const AppRoutes = () => {
         <Route
           path="/market"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<MarketTrendsSkeleton />}>
               <MarketTrendsPage />
             </AppSuspense>
           }
@@ -244,7 +259,7 @@ export const AppRoutes = () => {
         <Route
           path="/comparison"
           element={
-            <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
+            <AppSuspense fallback={<ComparisonPageSkeleton />}>
               <ComparisonPageWrapper />
             </AppSuspense>
           }
@@ -252,7 +267,7 @@ export const AppRoutes = () => {
         <Route
           path="/guides"
           element={
-            <AppSuspense fallback={<CardSkeleton count={4} />}>
+            <AppSuspense fallback={<GuidesPageSkeleton />}>
               <GuidesPage />
             </AppSuspense>
           }
@@ -260,7 +275,7 @@ export const AppRoutes = () => {
         <Route
           path="/guides/:slug"
           element={
-            <AppSuspense fallback={<PageSkeleton />}>
+            <AppSuspense fallback={<GuideDetailSkeleton />}>
               <GuideDetailPage />
             </AppSuspense>
           }
@@ -327,7 +342,7 @@ export const AppRoutes = () => {
           path="/profile"
           element={
             <ProtectedRoute>
-              <AppSuspense fallback={<PageSkeleton />}>
+              <AppSuspense fallback={<ProfilePageSkeleton />}>
                 <ProfilePage />
               </AppSuspense>
             </ProtectedRoute>

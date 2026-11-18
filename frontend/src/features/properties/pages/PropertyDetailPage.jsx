@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../../shared/compon
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
+import { PropertyDetailSkeleton } from '../../../shared/components/skeletons';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import { EMICalculatorCard } from '../components/EMICalculatorCard';
 import { SEOHead } from '../../../shared/components/SEOHead';
@@ -100,20 +101,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   }, [loading, project, isLegalView]);
 
   if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-6 animate-pulse">
-        <div className="flex items-center gap-2 text-sm text-primary font-bold">
-          <Building2 className="w-4 h-4 animate-bounce" />
-          <span>Fetching Core Property Specifications...</span>
-        </div>
-        <Skeleton className="h-8 w-1/4" />
-        <Skeleton className="h-96 w-full rounded-2xl" />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <Skeleton className="h-96 lg:col-span-8 rounded-2xl" />
-          <Skeleton className="h-96 lg:col-span-4 rounded-2xl" />
-        </div>
-      </div>
-    );
+    return <PropertyDetailSkeleton />;
   }
 
   if (!project) {
