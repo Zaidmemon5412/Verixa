@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Building2, Search, ArrowRight, Shield, Star,
   CheckCircle, XCircle, Sparkles, TrendingUp, Award,
   Check, AlertTriangle, FileText, Lock, Users, HelpCircle,
-  ChevronRight, ArrowUpRight
+  ChevronRight, ArrowUpRight, BookOpen, Clock
 } from 'lucide-react';
 import { Button } from '../../../shared/components/ui/button';
 import { Card, CardContent } from '../../../shared/components/ui/card';
@@ -15,6 +16,7 @@ import { PROJECTS } from '../../properties/constants/propertyData';
 import { propertyService } from '../../properties/services/propertyService';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildWebsiteSchema } from '../../../shared/utils/seoUtils';
+import { SEO_GUIDES } from '../../guides/constants/guidesData';
 
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
   const featuredProjects = PROJECTS.slice(0, 3);
@@ -474,6 +476,57 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
               Investor selected top-ranked yield project in GIFT City generating ₹68,000 monthly rental income.
             </p>
           </Card>
+        </div>
+      </section>
+
+      {/* ─── SECTION 7.25: AHMEDABAD BUYER & RERA VERIFICATION GUIDES ────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-1.5">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1">
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Knowledge Hub</span>
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Latest Ahmedabad Buyer &amp; RERA Verification Guides
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Research checklists for GujRERA audits, NA land verification, and micro-market ROI comparisons.
+            </p>
+          </div>
+          <Link
+            to="/guides"
+            className="text-xs sm:text-sm font-bold text-primary hover:underline inline-flex items-center gap-1 shrink-0"
+          >
+            <span>Explore All 6 Guides</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {SEO_GUIDES.slice(0, 3).map((guide) => (
+            <Link key={guide.slug} to={`/guides/${guide.slug}`} className="group flex">
+              <Card className="rounded-2xl border bg-card p-5 space-y-3 hover:border-primary/40 hover:shadow-lg transition-all w-full flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-semibold">
+                    <span className="text-primary font-bold">{guide.category}</span>
+                    <span className="text-muted-foreground inline-flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {guide.readTime}
+                    </span>
+                  </div>
+                  <h3 className="font-extrabold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    {guide.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                    {guide.summary}
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-primary pt-1">
+                  Read Verification Guide <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Card>
+            </Link>
+          ))}
         </div>
       </section>
 

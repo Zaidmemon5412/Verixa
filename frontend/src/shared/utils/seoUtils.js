@@ -159,6 +159,56 @@ export function buildItemListSchema(items = [], listName = 'Verified Properties 
 }
 
 /**
+ * Build Schema.org Article + FAQPage objects for a Verixa Guide article page.
+ */
+export function buildArticleSchema(guide) {
+  if (!guide) return [];
+  const canonicalUrl = `${SITE_URL}/guides/${guide.slug}`;
+
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guide.title,
+    description: guide.metaDescription || guide.summary,
+    image: [guide.heroImage || DEFAULT_OG_IMAGE],
+    datePublished: guide.publishedAt || '2026-11-15',
+    dateModified: guide.updatedAt || '2026-11-18',
+    author: {
+      '@type': 'Organization',
+      name: guide.author || 'Verixa Legal & Quantitative Research Desk',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl,
+    },
+  };
+
+  const schemas = [articleSchema];
+
+  if (Array.isArray(guide.faqs) && guide.faqs.length > 0) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: guide.faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    });
+  }
+
+  return schemas;
+}
+
+/**
  * Build a Schema.org BreadcrumbList from [{ name, path }].
  */
 export function buildBreadcrumbSchema(items = []) {

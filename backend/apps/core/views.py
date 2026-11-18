@@ -85,7 +85,7 @@ class SitemapXMLView(APIView):
     throttle_classes = []
 
     BASE_URL = "https://verixa-phi.vercel.app"
-    CACHE_KEY = "verixa_sitemap_xml_v2"
+    CACHE_KEY = "verixa_sitemap_xml_v3"
     CACHE_TTL = 3600
 
     PRIMARY_LOCALITIES = [
@@ -104,6 +104,15 @@ class SitemapXMLView(APIView):
         "Chandkheda",
         "Sola",
         "Maninagar",
+    ]
+
+    SEO_GUIDE_SLUGS = [
+        "gujarat-rera-verification-na-land-title-check-guide",
+        "thaltej-vs-satellite-vs-sola-vs-gota-ahmedabad-property-investment",
+        "ai-fair-price-property-valuation-xgboost-ahmedabad",
+        "ahmedabad-builder-trust-score-on-time-delivery-rankings",
+        "b-khata-vs-a-khata-title-dispute-checklist-homebuyers",
+        "gift-city-chandkheda-maninagar-rental-yield-forecast",
     ]
 
     def get(self, request, *args, **kwargs):
@@ -133,6 +142,10 @@ class SitemapXMLView(APIView):
         add_url("/localities", changefreq="weekly", priority="0.9")
         add_url("/market", changefreq="daily", priority="0.9")
         add_url("/comparison", changefreq="weekly", priority="0.8")
+        add_url("/guides", changefreq="weekly", priority="0.9")
+
+        for guide_slug in self.SEO_GUIDE_SLUGS:
+            add_url(f"/guides/{guide_slug}", changefreq="weekly", priority="0.88")
 
         # 2. Primary micro-market locality hubs & programmatic locality property searches
         for loc_slug in self.PRIMARY_LOCALITIES:

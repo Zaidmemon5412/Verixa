@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Building2, Shield, Globe, Mail, Phone, 
+import {
+  Building2, Shield, Globe, Mail, Phone,
   MapPin, ChevronRight, CheckCircle2
 } from 'lucide-react';
 
@@ -73,6 +73,12 @@ export function Footer({ onNavigate }) {
                 </Link>
               </li>
               <li>
+                <Link to="/guides" onClick={handleLinkClick('/guides', 'guides')} className="hover:text-primary transition-colors flex items-center gap-1 group">
+                  <ChevronRight className="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span>Buyer &amp; RERA Guides</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/reports" onClick={handleLinkClick('/reports', 'reports')} className="hover:text-primary transition-colors flex items-center gap-1 group">
                   <ChevronRight className="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   <span>AI Audit Reports</span>
@@ -94,7 +100,7 @@ export function Footer({ onNavigate }) {
                 { name: 'Maninagar', slug: 'maninagar' },
               ].map((loc) => (
                 <li key={loc.slug}>
-                  <Link 
+                  <Link
                     to={`/localities/${loc.slug}`}
                     className="hover:text-primary transition-colors flex items-center gap-1.5 group"
                   >
@@ -154,6 +160,9 @@ export function Footer({ onNavigate }) {
               { label: 'Villas in Ahmedabad', to: '/properties?type=villa' },
               { label: 'Ready to Move Homes', to: '/properties?status=ready' },
               { label: 'Ahmedabad Price Trends', to: '/market' },
+              { label: 'Gujarat RERA & NA Title Guide', to: '/guides/gujarat-rera-verification-na-land-title-check-guide' },
+              { label: 'Thaltej vs Sola vs Gota', to: '/guides/thaltej-vs-satellite-vs-sola-vs-gota-ahmedabad-property-investment' },
+              { label: '10 Property Legal Docs', to: '/guides/b-khata-vs-a-khata-title-dispute-checklist-homebuyers' },
             ].map((item) => (
               <Link
                 key={item.to}

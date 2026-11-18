@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, ArrowLeftRight, TrendingUp, Heart, 
   User, Menu, X, Sun, Moon, LogOut, LogIn, UserPlus,
-  Home, MapPin, Award
+  Home, MapPin, Award, BookOpen
 } from 'lucide-react';
 import { Button } from './ui/button';
 import useAuth from '../../features/auth/hooks/useAuth';
@@ -28,6 +28,7 @@ export function Navbar({ wishlistCount = 0 }) {
     { path: '/localities', label: 'Localities', icon: MapPin },
     { path: '/comparison', label: 'Compare', icon: ArrowLeftRight },
     { path: '/market', label: 'Market Trends', icon: TrendingUp },
+    { path: '/guides', label: 'Guides', icon: BookOpen },
   ];
 
   const bottomNavItems = [

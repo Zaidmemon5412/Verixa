@@ -59,6 +59,38 @@
   ],
   "rewrites": [
     {
+      "source": "/properties",
+      "destination": "/properties/index.html"
+    },
+    {
+      "source": "/builders",
+      "destination": "/builders/index.html"
+    },
+    {
+      "source": "/localities",
+      "destination": "/localities/index.html"
+    },
+    {
+      "source": "/localities/:slug(satellite|thaltej|gota|chandkheda|sola|maninagar)",
+      "destination": "/localities/:slug/index.html"
+    },
+    {
+      "source": "/market",
+      "destination": "/market/index.html"
+    },
+    {
+      "source": "/comparison",
+      "destination": "/comparison/index.html"
+    },
+    {
+      "source": "/guides",
+      "destination": "/guides/index.html"
+    },
+    {
+      "source": "/guides/:slug(gujarat-rera-verification-na-land-title-check-guide|thaltej-vs-satellite-vs-sola-vs-gota-ahmedabad-property-investment|ai-fair-price-property-valuation-xgboost-ahmedabad|ahmedabad-builder-trust-score-on-time-delivery-rankings|b-khata-vs-a-khata-title-dispute-checklist-homebuyers|gift-city-chandkheda-maninagar-rental-yield-forecast)",
+      "destination": "/guides/:slug/index.html"
+    },
+    {
       "source": "/((?!sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|assets/).*)",
       "destination": "/index.html"
     }

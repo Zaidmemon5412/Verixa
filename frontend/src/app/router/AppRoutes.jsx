@@ -29,6 +29,8 @@ const LocalityDetailsPage = lazy(() => import('../../features/localities/pages/L
 const ComparisonPage = lazy(() => import('../../features/comparison/pages/ComparisonPage'));
 
 const MarketTrendsPage = lazy(() => import('../../features/market/pages/MarketTrendsPage'));
+const GuidesPage = lazy(() => import('../../features/guides/pages/GuidesPage'));
+const GuideDetailPage = lazy(() => import('../../features/guides/pages/GuideDetailPage'));
 
 const Dashboard = lazy(() => import('../../features/dashboard/pages/Dashboard'));
 const ProfilePage = lazy(() => import('../../features/profile/pages/ProfilePage'));
@@ -244,6 +246,22 @@ export const AppRoutes = () => {
           element={
             <AppSuspense fallback={<TableSkeleton rows={4} cols={3} />}>
               <ComparisonPageWrapper />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/guides"
+          element={
+            <AppSuspense fallback={<CardSkeleton count={4} />}>
+              <GuidesPage />
+            </AppSuspense>
+          }
+        />
+        <Route
+          path="/guides/:slug"
+          element={
+            <AppSuspense fallback={<PageSkeleton />}>
+              <GuideDetailPage />
             </AppSuspense>
           }
         />
