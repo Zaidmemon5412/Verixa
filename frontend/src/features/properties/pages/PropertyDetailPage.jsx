@@ -41,32 +41,58 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [project, setProject] = useState(null);
+  const initialCached = projectId ? propertyService.getCachedProperty(projectId) : null;
+
+  const [project, setProject] = useState(initialCached);
   const [builder, setBuilder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(!initialCached);
+  const [selectedImage, setSelectedImage] = useState(initialCached?.image || null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [inquiryType, setInquiryType] = useState('site_visit');
 
-  // Fast Core Data Fetching (<1s initial load)
+  // Instant 0ms render from cached card/SWR + seamless background full-detail hydration
   useEffect(() => {
     let isCancelled = false;
 
     async function loadDetails() {
-      setLoading(true);
+      const cached = propertyService.getCachedProperty(projectId);
+      if (cached) {
+        setProject(cached);
+        setSelectedImage((prev) => prev || cached.image || null);
+        setLoading(false);
+        if (cached.builderId) {
+          builderService.getBuilderById(cached.builderId)
+            .then((bData) => {
+              if (!isCancelled && bData) setBuilder(bData);
+            })
+            .catch(() => {});
+        }
+      } else {
+        setLoading(true);
+        setSelectedImage(null);
+      }
+
+      // Skip extra network hit if full detail is already fresh in memory
+      if (cached && cached._isFullDetail) {
+        return;
+      }
+
       try {
-        // Fetch primary property data immediately
         const pData = await propertyService.getPropertyById(projectId);
         if (isCancelled) return;
-        
-        setProject(pData);
-        if (pData?.image) {
-          setSelectedImage(pData.image);
+
+        if (pData) {
+          setProject(pData);
+          setSelectedImage((prev) => {
+            if (!prev) return pData.image || null;
+            if (Array.isArray(pData.images) && pData.images.includes(prev)) return prev;
+            return pData.image || prev;
+          });
+        } else if (!cached) {
+          setProject(null);
         }
-        // Render core above-the-fold page immediately
         setLoading(false);
 
-        // Fetch builder metadata in parallel without blocking core property rendering
         if (pData?.builderId) {
           builderService.getBuilderById(pData.builderId)
             .then((bData) => {

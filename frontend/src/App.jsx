@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import AppRoutes from './app/router/AppRoutes';
 import ErrorBoundary from './shared/components/ErrorBoundary';
 import { ThemeProvider } from './shared/context/ThemeContext';
+import { propertyService } from './features/properties/services/propertyService';
 
 /**
  * Resets window scroll position to top on route navigation,
@@ -31,6 +32,11 @@ function ScrollToTop() {
  * Configures React Router, Global Error Boundary, Toast Notifications, and Theme Sync.
  */
 export default function App() {
+  // Wake backend and pre-warm Page 1 (24 compact properties) + filter options on first visit
+  useEffect(() => {
+    propertyService.prefetchInitialPage();
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider>

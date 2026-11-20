@@ -24,6 +24,7 @@ from .serializers import (
     PropertyImageSerializer,
     PropertyDocumentSerializer,
     PropertySerializer,
+    PropertyCompactListSerializer,
     PropertyListSerializer,
     PropertyDetailSerializer,
     PropertyCreateSerializer,
@@ -776,7 +777,7 @@ class PropertyViewSet(viewsets.ViewSet):
         try:
             from django.core.cache import cache
             cache_ver = get_properties_cache_version()
-            cache_key = f"verixa_filter_opts_v{cache_ver}_{Property.objects.count()}"
+            cache_key = f"verixa_filter_opts_v{cache_ver}"
             cached_options = cache.get(cache_key)
             if cached_options is not None:
                 resp = Response({
@@ -785,16 +786,18 @@ class PropertyViewSet(viewsets.ViewSet):
                     "data": cached_options
                 }, status=status.HTTP_200_OK)
                 resp['X-Cache-Status'] = 'HIT'
+                resp['Cache-Control'] = 'public, max-age=120, stale-while-revalidate=600'
                 return resp
 
             options = get_filter_options()
-            cache.set(cache_key, options, timeout=300)
+            cache.set(cache_key, options, timeout=600)
             resp = Response({
                 "success": True,
                 "message": "Filter options retrieved successfully.",
                 "data": options
             }, status=status.HTTP_200_OK)
             resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=120, stale-while-revalidate=600'
             return resp
         except Exception as e:
             logger.exception("Error retrieving filter options")
@@ -812,35 +815,40 @@ class PropertyViewSet(viewsets.ViewSet):
             qp = _get_query_params(request)
             qp_str = "&".join(f"{k}={qp.getlist(k) if hasattr(qp, 'getlist') else qp.get(k)}" for k in sorted(qp.keys()))
             cache_ver = get_properties_cache_version()
-            prop_count = Property.objects.count()
             digest = hashlib.md5(qp_str.encode('utf-8')).hexdigest()
-            cache_key = f"verixa_props_list_v{cache_ver}_c{prop_count}_{digest}"
+            cache_key = f"verixa_props_list_v{cache_ver}_{digest}"
 
             cached_payload = cache.get(cache_key)
             if cached_payload is not None:
                 resp = Response(cached_payload, status=status.HTTP_200_OK)
                 resp['X-Cache-Status'] = 'HIT'
+                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
                 return resp
+
+            is_compact = str(qp.get('compact', '')).lower() in ('1', 'true', 'yes')
+            serializer_cls = PropertyCompactListSerializer if is_compact else PropertyListSerializer
 
             queryset = list_properties(qp)
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
-                serializer = PropertyListSerializer(page, many=True)
+                serializer = serializer_cls(page, many=True)
                 resp = paginator.get_paginated_response(serializer.data)
-                cache.set(cache_key, resp.data, timeout=180)
+                cache.set(cache_key, resp.data, timeout=300)
                 resp['X-Cache-Status'] = 'MISS'
+                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
                 return resp
 
-            serializer = PropertyListSerializer(queryset, many=True)
+            serializer = serializer_cls(queryset, many=True)
             payload = {
                 "success": True,
                 "message": "Properties retrieved successfully.",
                 "data": serializer.data
             }
-            cache.set(cache_key, payload, timeout=180)
+            cache.set(cache_key, payload, timeout=300)
             resp = Response(payload, status=status.HTTP_200_OK)
             resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
             return resp
         except Exception as e:
             logger.exception("Error listing properties")
@@ -852,13 +860,35 @@ class PropertyViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
+            from django.core.cache import cache
+            qp = _get_query_params(request)
+            include_nearby = str(qp.get('include_nearby', '')).lower() in ('1', 'true', 'yes')
+            cache_ver = get_properties_cache_version()
+            cache_key = f"verixa_prop_detail_v{cache_ver}_{pk}_{int(include_nearby)}"
+
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Property retrieved successfully.",
+                    "data": cached_data
+                }, status=status.HTTP_200_OK)
+                resp['X-Cache-Status'] = 'HIT'
+                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
+                return resp
+
             property_obj = get_property(pk)
-            serializer = PropertyDetailSerializer(property_obj)
-            return Response({
+            serializer = PropertyDetailSerializer(property_obj, context={'include_nearby': include_nearby})
+            data = serializer.data
+            cache.set(cache_key, data, timeout=300)
+            resp = Response({
                 "success": True,
                 "message": "Property retrieved successfully.",
-                "data": serializer.data
+                "data": data
             }, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
+            return resp
         except (Property.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,

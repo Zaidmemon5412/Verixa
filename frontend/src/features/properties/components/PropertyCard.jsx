@@ -6,6 +6,7 @@ import {
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
+import { propertyService } from '../services/propertyService';
 
 export function PropertyCard({
   project,
@@ -14,7 +15,8 @@ export function PropertyCard({
   onToggleWishlist,
   isWishlisted,
   onToggleCompare,
-  isCompared
+  isCompared,
+  priority = false,
 }) {
   if (!project) return null;
 
@@ -42,6 +44,8 @@ export function PropertyCard({
   return (
     <Card
       onClick={() => onSelect && onSelect(navSlug)}
+      onMouseEnter={() => propertyService.prefetchPropertyDetail(navSlug)}
+      onTouchStart={() => propertyService.prefetchPropertyDetail(navSlug)}
       className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
     >
       {/* Diagonal Light Sweep Shine Effect on Hover */}
@@ -56,7 +60,9 @@ export function PropertyCard({
             src={project.image}
             alt={imageAlt}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 

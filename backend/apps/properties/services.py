@@ -539,16 +539,27 @@ def get_filter_options() -> dict:
 def list_properties(params: dict = None) -> QuerySet[Property]:
     """
     Retrieves list of properties filtered using PropertyFilter.
-    Scopes to the 6 primary target micro-markets.
+    Scopes to the 6 primary target micro-markets with minimal column fetching.
     """
-    from django.db.models import Q
+    from django.db.models import Q, Prefetch
     logger.info("Listing properties with filters")
     six_slugs = ['gota', 'chandkheda', 'sola', 'satellite', 'thaltej', 'maninagar']
     six_q = Q()
     for s in six_slugs:
         six_q |= Q(locality__name__icontains=s) | Q(address__icontains=s)
 
-    queryset = Property.objects.select_related('locality', 'builder').prefetch_related('images').filter(six_q, price__gt=0)
+    images_prefetch = Prefetch(
+        'images',
+        queryset=PropertyImage.objects.only(
+            'image_id', 'property_id', 'image_url', 'is_primary', 'display_order', 'image_type'
+        ).order_by('-is_primary', 'display_order'),
+    )
+    queryset = (
+        Property.objects.select_related('locality', 'builder')
+        .prefetch_related(images_prefetch)
+        .defer('description')
+        .filter(six_q, price__gt=0)
+    )
     if params:
         from .filters import PropertyFilter
         queryset = PropertyFilter.filter_queryset(queryset, params)

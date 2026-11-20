@@ -391,6 +391,46 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class PropertyCompactListSerializer(serializers.ModelSerializer):
+    """
+    Ultra-lightweight list serializer for fast catalog loading (?compact=1).
+    Returns only the primary image URL and core card fields (~80% smaller payload).
+    """
+    locality_name = serializers.CharField(source='locality.name', read_only=True)
+    builder_name = serializers.CharField(source='builder.builder_name', read_only=True, default=None)
+    primary_image = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Property
+        fields = [
+            'property_id', 'property_name', 'locality_name', 'builder', 'builder_name',
+            'rera_number', 'property_type', 'transaction_type', 'price', 'price_per_sqft',
+            'bhk', 'carpet_area', 'furnishing_status', 'facing', 'status',
+            'address', 'latitude', 'longitude', 'primary_image', 'created_at'
+        ]
+
+    def get_primary_image(self, obj):
+        all_imgs = list(obj.images.all())
+        primary_img = next((img for img in all_imgs if getattr(img, 'is_primary', False)), all_imgs[0] if all_imgs else None)
+        return primary_img.image_url if primary_img else None
+
+    def get_latitude(self, obj):
+        if obj.latitude is not None:
+            return float(obj.latitude)
+        if obj.locality and obj.locality.latitude is not None:
+            return float(obj.locality.latitude)
+        return 23.0225
+
+    def get_longitude(self, obj):
+        if obj.longitude is not None:
+            return float(obj.longitude)
+        if obj.locality and obj.locality.longitude is not None:
+            return float(obj.locality.longitude)
+        return 72.5714
+
+
 class PropertyListSerializer(serializers.ModelSerializer):
     """
     Lightweight list serializer for Property list endpoints including gallery images, address & coordinates.
@@ -536,7 +576,8 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
         }
 
     def get_amenities(self, obj):
-        pa_list = obj.property_amenities.select_related('amenity').all()
+        # Use prefetched property_amenities__amenity cache without firing an extra DB query
+        pa_list = obj.property_amenities.all()
         return [
             {
                 "amenity_id": str(pa.amenity.amenity_id),
@@ -544,9 +585,13 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
                 "category": getattr(pa.amenity, 'category', 'General')
             }
             for pa in pa_list
+            if pa.amenity_id
         ]
 
     def get_nearby_places_grouped(self, obj):
+        # PropertyMapSection fetches /nearby/ lazily below the fold; skip heavy query unless requested
+        if not self.context.get('include_nearby', False):
+            return {}
         grouped = obj.get_nearby_places_grouped()
         result = {}
         for place_type, places in grouped.items():

@@ -21,12 +21,11 @@ import { SEO_GUIDES } from '../../guides/constants/guidesData';
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
   const featuredProjects = PROJECTS.slice(0, 3);
 
-  // Background pre-warm property registry cache so clicking "Explore Verified Properties" loads in 0ms
+  // Background pre-warm Page 1 compact property registry + filter options so Properties loads in 0ms
   useEffect(() => {
     const timer = setTimeout(() => {
-      propertyService.getProperties({ ordering: 'newest' }).catch(() => {});
-      propertyService.getFilterOptions().catch(() => {});
-    }, 300);
+      propertyService.prefetchInitialPage();
+    }, 150);
     return () => clearTimeout(timer);
   }, []);
 

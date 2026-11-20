@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Building2, Sparkles, Filter, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
 import { PropertyCard } from '../components/PropertyCard';
@@ -12,7 +12,8 @@ import { Button } from '../../../shared/components/ui/button';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
-const BATCH_SIZE = 60;
+const PAGE_SIZE = 24;
+const COLD_START_GRACE_MS = 900;
 const KNOWN_LOCALITIES = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite', 'Maninagar'];
 const KNOWN_TYPES = ['Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
 const STATUS_FROM_PARAM = {
@@ -79,12 +80,28 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const [searchParams, setSearchParams] = useSearchParams();
   const initialFromUrl = parseSearchParams(searchParams);
 
-  const [projects, setProjects] = useState([]);
+  const initialCachedPage = propertyService.getCachedPropertiesPage(
+    {
+      search: initialFromUrl.search,
+      locality: initialFromUrl.locality,
+      status: initialFromUrl.status,
+      property_type: initialFromUrl.type,
+      bhk: initialFromUrl.bhk.length > 0 ? initialFromUrl.bhk : undefined,
+      builder: 'All',
+      ordering: 'newest',
+    },
+    { page: 1, pageSize: PAGE_SIZE }
+  );
+
+  const [projects, setProjects] = useState(initialCachedPage?.results || []);
+  const [totalCount, setTotalCount] = useState(initialCachedPage?.count || 0);
+  const [currentPage, setCurrentPage] = useState(initialCachedPage?.currentPage || 1);
+  const [hasMore, setHasMore] = useState(Boolean(initialCachedPage?.hasNext));
   const [localities, setLocalities] = useState([]);
   const [builders, setBuilders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialCachedPage);
+  const [isSyncingLive, setIsSyncingLive] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [displayLimit, setDisplayLimit] = useState(BATCH_SIZE);
 
   // Filter States (hydrated from URL query params for Programmatic SEO)
   const [searchQuery, setSearchQuery] = useState(initialFromUrl.search);
@@ -102,6 +119,35 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
 
   const bottomSentinelRef = useRef(null);
   const lastSyncedQueryRef = useRef(searchParams.toString());
+
+  const activeFilters = useMemo(
+    () => ({
+      search: debouncedSearchQuery,
+      locality: selectedLocality,
+      status: selectedStatus,
+      property_type: selectedType,
+      bhk: selectedBhk.length > 0 ? selectedBhk : undefined,
+      min_price: minPrice || undefined,
+      max_price: maxPrice || undefined,
+      min_area: minArea || undefined,
+      max_area: maxArea || undefined,
+      builder: selectedBuilder,
+      ordering: selectedOrdering,
+    }),
+    [
+      debouncedSearchQuery,
+      selectedLocality,
+      selectedStatus,
+      selectedType,
+      selectedBhk,
+      minPrice,
+      maxPrice,
+      minArea,
+      maxArea,
+      selectedBuilder,
+      selectedOrdering,
+    ]
+  );
 
   // Sync external URL query changes (e.g. clicking footer programmatic SEO links) into filter state
   useEffect(() => {
@@ -173,69 +219,134 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     loadMeta();
   }, []);
 
-  // Main Property List Data Fetching on Filter Changes
+  // Main Property List Data Fetching on Filter Changes (Progressive Page-1 + SWR + Cold-Start Grace Fallback)
   useEffect(() => {
     let isCancelled = false;
+    let coldStartTimer = null;
+    let prefetchPage2Timer = null;
+
+    const schedulePage2Prefetch = (hasNextPage) => {
+      if (!hasNextPage) return;
+      prefetchPage2Timer = setTimeout(() => {
+        if (!isCancelled) {
+          propertyService
+            .getPropertiesPage(activeFilters, { page: 2, pageSize: PAGE_SIZE })
+            .catch(() => {});
+        }
+      }, 250);
+    };
 
     async function loadData() {
-      setLoading(true);
-      setDisplayLimit(BATCH_SIZE);
-      try {
-        const propsData = await propertyService.getProperties({
-          search: debouncedSearchQuery,
-          locality: selectedLocality,
-          status: selectedStatus,
-          property_type: selectedType,
-          bhk: selectedBhk.length > 0 ? selectedBhk : undefined,
-          min_price: minPrice || undefined,
-          max_price: maxPrice || undefined,
-          min_area: minArea || undefined,
-          max_area: maxArea || undefined,
-          builder: selectedBuilder,
-          ordering: selectedOrdering
-        });
-        if (!isCancelled) {
-          setProjects(propsData || []);
+      const cached = propertyService.getCachedPropertiesPage(activeFilters, {
+        page: 1,
+        pageSize: PAGE_SIZE,
+      });
+
+      if (cached && Array.isArray(cached.results) && cached.results.length > 0) {
+        setProjects(cached.results);
+        setTotalCount(cached.count);
+        setCurrentPage(cached.currentPage || 1);
+        setHasMore(Boolean(cached.hasNext));
+        setIsSyncingLive(false);
+        setLoading(false);
+
+        if (!cached.fromStorage) {
+          schedulePage2Prefetch(cached.hasNext);
+          return;
         }
+      } else {
+        setLoading(true);
+        setIsSyncingLive(false);
+        // Cold-start grace preview: if backend takes >900ms (e.g. Render wake-up for a brand-new visitor),
+        // immediately show curated RERA-verified Ahmedabad listings while live DB finishes syncing.
+        coldStartTimer = setTimeout(() => {
+          if (isCancelled) return;
+          const fallbackList = propertyService.getFallbackProperties(activeFilters);
+          if (fallbackList.length > 0) {
+            setProjects(fallbackList);
+            setTotalCount(fallbackList.length);
+            setCurrentPage(1);
+            setHasMore(false);
+            setIsSyncingLive(true);
+            setLoading(false);
+          }
+        }, COLD_START_GRACE_MS);
+      }
+
+      try {
+        const pageData = await propertyService.getPropertiesPage(activeFilters, {
+          page: 1,
+          pageSize: PAGE_SIZE,
+          forceRefresh: Boolean(cached?.fromStorage),
+        });
+        if (coldStartTimer) clearTimeout(coldStartTimer);
+        if (isCancelled) return;
+
+        setProjects(pageData.results || []);
+        setTotalCount(pageData.count || 0);
+        setCurrentPage(pageData.currentPage || 1);
+        setHasMore(Boolean(pageData.hasNext));
+        setIsSyncingLive(false);
+        setLoading(false);
+
+        schedulePage2Prefetch(pageData.hasNext);
       } catch (err) {
+        if (coldStartTimer) clearTimeout(coldStartTimer);
         if (!isCancelled) {
           console.error('Failed to load property list:', err);
-        }
-      } finally {
-        if (!isCancelled) {
+          setIsSyncingLive(false);
           setLoading(false);
         }
       }
     }
+
     loadData();
 
     return () => {
       isCancelled = true;
+      if (coldStartTimer) clearTimeout(coldStartTimer);
+      if (prefetchPage2Timer) clearTimeout(prefetchPage2Timer);
     };
-  }, [
-    debouncedSearchQuery,
-    selectedLocality,
-    selectedStatus,
-    selectedType,
-    selectedBhk,
-    minPrice,
-    maxPrice,
-    minArea,
-    maxArea,
-    selectedBuilder,
-    selectedOrdering
-  ]);
+  }, [activeFilters]);
 
-  // Ultra-Fast Lazy Loading Observer (600px pre-fetching margin, 0ms delay)
+  const loadNextPage = useCallback(async () => {
+    if (loading || loadingMore || !hasMore || isSyncingLive) return;
+    const nextPage = currentPage + 1;
+    setLoadingMore(true);
+    try {
+      const pageData = await propertyService.getPropertiesPage(activeFilters, {
+        page: nextPage,
+        pageSize: PAGE_SIZE,
+      });
+      setProjects((prev) => {
+        const seen = new Set(prev.map((p) => String(p.id)));
+        const fresh = (pageData.results || []).filter((p) => !seen.has(String(p.id)));
+        return [...prev, ...fresh];
+      });
+      setCurrentPage(pageData.currentPage || nextPage);
+      setTotalCount(pageData.count || 0);
+      setHasMore(Boolean(pageData.hasNext));
+
+      if (pageData.hasNext) {
+        propertyService
+          .getPropertiesPage(activeFilters, { page: nextPage + 1, pageSize: PAGE_SIZE })
+          .catch(() => {});
+      }
+    } catch (err) {
+      console.error('Failed to load next property page:', err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [activeFilters, currentPage, hasMore, isSyncingLive, loading, loadingMore]);
+
+  // Ultra-Fast Progressive Infinite Scroll Observer (600px pre-fetching margin)
   useEffect(() => {
-    if (loading || displayLimit >= projects.length) return;
+    if (loading || !hasMore || isSyncingLive) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loadingMore) {
-          setLoadingMore(true);
-          setDisplayLimit((prev) => Math.min(prev + BATCH_SIZE, projects.length));
-          setLoadingMore(false);
+          loadNextPage();
         }
       },
       { threshold: 0.05, rootMargin: '600px' }
@@ -251,7 +362,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         observer.unobserve(currentSentinel);
       }
     };
-  }, [loading, displayLimit, projects.length, loadingMore]);
+  }, [loading, hasMore, isSyncingLive, loadingMore, loadNextPage]);
 
   const handleReset = () => {
     setSearchQuery('');
@@ -266,7 +377,6 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     setMaxArea('');
     setSelectedBuilder('All');
     setSelectedOrdering('newest');
-    setDisplayLimit(BATCH_SIZE);
   };
 
   const hasActiveFilters = Boolean(
@@ -339,8 +449,11 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     description: `Explore verified residential projects in ${selectedLocality} backed by ML decision analytics and legal title search.`
   };
 
-  const visibleProjects = projects.slice(0, displayLimit);
-  const hasMore = displayLimit < projects.length;
+  const visibleProjects = projects;
+  const displayTotalCount =
+    selectedLocality === 'All' && !hasActiveFilters && totalCount > 672
+      ? 672
+      : (totalCount || projects.length);
 
   const bhkPrefix = selectedBhk.length > 0 ? `${selectedBhk.join(', ')} ` : '';
   const typePrefix = selectedType !== 'All' ? `${selectedType}s ` : '';
@@ -456,8 +569,14 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 py-1.5 border-b pb-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-base font-extrabold text-foreground">
-              Showing {(selectedLocality === 'All' && !hasActiveFilters && projects.length > 672) ? 672 : projects.length} {projects.length === 1 ? 'Property' : 'Properties'} {selectedLocality !== 'All' ? `in ${selectedLocality}` : 'across All 6 Areas'}
+              Showing {displayTotalCount} {displayTotalCount === 1 ? 'Property' : 'Properties'} {selectedLocality !== 'All' ? `in ${selectedLocality}` : 'across All 6 Areas'}
             </span>
+            {isSyncingLive && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Syncing live registry (672+ properties)...</span>
+              </span>
+            )}
             {hasActiveFilters && (
               <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20 flex items-center gap-1">
                 <span>Matching:</span>
@@ -482,10 +601,24 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="border rounded-2xl p-4 space-y-3 bg-card shadow-sm">
-              <Skeleton className="h-48 w-full rounded-xl" />
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
+            <div key={i} className="border rounded-2xl overflow-hidden bg-card shadow-sm">
+              <Skeleton className="aspect-[16/10] w-full rounded-none" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-4 w-4/5" />
+                <div className="grid grid-cols-2 gap-2 py-2 border-y border-border/60">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+                <div className="flex gap-2">
+                  <Skeleton className="h-5 w-20 rounded" />
+                  <Skeleton className="h-5 w-24 rounded" />
+                </div>
+                <div className="grid grid-cols-3 gap-1.5 pt-1">
+                  <Skeleton className="h-9 w-full rounded-xl" />
+                  <Skeleton className="h-9 w-full rounded-xl" />
+                  <Skeleton className="h-9 w-full rounded-xl" />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -509,10 +642,11 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       ) : (
         <div className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-            {visibleProjects.map((project) => (
+            {visibleProjects.map((project, idx) => (
               <PropertyCard
                 key={project.id}
                 project={project}
+                priority={idx < 3}
                 onSelect={onSelectProject}
                 onToggleWishlist={onToggleWishlist || defaultToggleWishlist}
                 isWishlisted={checkIsWishlisted(project.id)}
@@ -527,7 +661,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
             <div ref={bottomSentinelRef} className="py-8 text-center space-y-3">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-card shadow-sm text-xs font-semibold text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                <span>Loading more properties... ({visibleProjects.length} / {projects.length})</span>
+                <span>Loading more properties... ({visibleProjects.length} / {displayTotalCount})</span>
               </div>
             </div>
           )}
