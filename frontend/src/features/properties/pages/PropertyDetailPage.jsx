@@ -133,6 +133,12 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   if (!project) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+        <SEOHead
+          title="Property Not Found – Verixa"
+          description="The requested property could not be found on Verixa."
+          canonicalPath="/404"
+          noindex={true}
+        />
         <div className="mx-auto w-20 h-20 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-xl">
           <Building2 className="w-10 h-10" />
         </div>

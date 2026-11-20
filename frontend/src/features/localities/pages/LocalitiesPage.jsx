@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, TrendingUp, Shield, School, Hospital, ShoppingBag, ArrowRight } from 'lucide-react';
 import { localityService } from '../services/localityService';
 import { Card, CardContent } from '../../../shared/components/ui/card';
@@ -98,7 +98,15 @@ export function LocalitiesPage({ onSelectLocality }) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">
-                    <h3 className="text-lg font-bold drop-shadow-sm">{loc.name}</h3>
+                    <h3 className="text-lg font-bold drop-shadow-sm">
+                      <Link
+                        to={`/localities/${loc.slug || loc.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="hover:underline"
+                      >
+                        {loc.name}
+                      </Link>
+                    </h3>
                     <p className="text-xs text-white/90">Avg Price: {loc.avgPrice} ({loc.psf}/sqft)</p>
                   </div>
                 </div>
@@ -134,10 +142,22 @@ export function LocalitiesPage({ onSelectLocality }) {
               </div>
 
               <div className="px-4 pb-4">
-                <Button variant="outline" className="w-full text-xs font-semibold rounded-xl gap-1.5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <Link
+                  to={`/localities/${loc.slug || loc.id}`}
+                  onClick={(e) => {
+                    if (onSelectLocality) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onSelectLocality(loc.slug || loc.id);
+                    } else {
+                      e.stopPropagation();
+                    }
+                  }}
+                  className="w-full h-10 inline-flex items-center justify-center rounded-xl text-xs font-semibold gap-1.5 border border-input bg-background group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                >
                   <span>Explore Locality Insights</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
+                </Link>
               </div>
             </Card>
           ))}

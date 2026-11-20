@@ -32,6 +32,15 @@
       ]
     },
     {
+      "source": "/(login|register|forgot-password|reset-password|dashboard|profile|reports|404)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {

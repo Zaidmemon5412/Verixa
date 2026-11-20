@@ -24,6 +24,15 @@ def _seo_slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(value).lower()).strip("-")
 
 
+def _extract_clean_area(text: str) -> str:
+    """Match frontend extractCleanArea micro-market extraction for canonical slug parity."""
+    lowered = (text or "").lower()
+    for slug in ("gota", "chandkheda", "sola", "thaltej", "satellite", "maninagar"):
+        if slug in lowered:
+            return slug
+    return "ahmedabad"
+
+
 class HealthCheckAPIView(APIView):
     """
     GET /api/health/
@@ -85,7 +94,7 @@ class SitemapXMLView(APIView):
     throttle_classes = []
 
     BASE_URL = "https://verixa-phi.vercel.app"
-    CACHE_KEY = "verixa_sitemap_xml_v3"
+    CACHE_KEY = "verixa_sitemap_xml_v4"
     CACHE_TTL = 3600
 
     PRIMARY_LOCALITIES = [
@@ -153,6 +162,11 @@ class SitemapXMLView(APIView):
 
         for loc_label in self.PROGRAMMATIC_LOCALITY_FILTERS:
             add_url(f"/properties?locality={loc_label}", changefreq="daily", priority="0.85")
+        add_url("/properties?bhk=2", changefreq="daily", priority="0.82")
+        add_url("/properties?bhk=3", changefreq="daily", priority="0.82")
+        add_url("/properties?bhk=4", changefreq="daily", priority="0.80")
+        add_url("/properties?type=villa", changefreq="daily", priority="0.80")
+        add_url("/properties?status=ready", changefreq="daily", priority="0.80")
 
         db_ok = True
 
@@ -175,13 +189,14 @@ class SitemapXMLView(APIView):
         seen_property_ids = set()
         try:
             props_qs = Property.objects.select_related("locality").only(
-                "property_id", "property_name", "locality__name", "updated_at"
+                "property_id", "property_name", "address", "locality__name", "updated_at"
             )
             for p in props_qs:
                 pid = str(p.property_id)
                 seen_property_ids.add(pid)
-                loc_name = p.locality.name if p.locality_id and p.locality else "ahmedabad"
-                p_slug = _seo_slugify(f"{p.property_name}-{loc_name}-ahmedabad") or "property"
+                raw_loc = f"{p.locality.name if p.locality_id and p.locality else ''} {p.address or ''} {p.property_name or ''}"
+                clean_loc = _extract_clean_area(raw_loc)
+                p_slug = _seo_slugify(f"{p.property_name}-{clean_loc}") or "property"
                 p_lastmod = p.updated_at.date().isoformat() if p.updated_at else today_iso
                 add_url(
                     f"/properties/{p_slug}--{pid}",
@@ -194,14 +209,14 @@ class SitemapXMLView(APIView):
 
         try:
             bp_qs = BuilderProject.objects.only(
-                "project_id", "project_name", "locality", "updated_at"
+                "project_id", "project_name", "locality", "location", "updated_at"
             )
             for bp in bp_qs:
                 bpid = str(bp.project_id)
                 if bpid in seen_property_ids:
                     continue
-                loc_name = bp.locality or "ahmedabad"
-                bp_slug = _seo_slugify(f"{bp.project_name}-{loc_name}-ahmedabad") or "property"
+                clean_loc = _extract_clean_area(f"{bp.locality or ''} {bp.location or ''} {bp.project_name or ''}")
+                bp_slug = _seo_slugify(f"{bp.project_name}-{clean_loc}") or "property"
                 bp_lastmod = bp.updated_at.date().isoformat() if bp.updated_at else today_iso
                 add_url(
                     f"/properties/{bp_slug}--{bpid}",

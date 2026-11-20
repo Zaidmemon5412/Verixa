@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Building2, 
   MapPin, 
@@ -220,14 +221,19 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
             </Button>
           </div>
 
-          <Button
-            onClick={handleViewAllClick}
-            variant="ghost"
-            className="text-primary hover:text-primary/80 font-bold gap-1 text-xs sm:text-sm rounded-xl px-2.5 sm:px-4"
+          <Link
+            to="/properties"
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault();
+                handleViewAllClick();
+              }
+            }}
+            className="inline-flex items-center justify-center text-primary hover:text-primary/80 hover:bg-accent font-bold gap-1 text-xs sm:text-sm rounded-xl px-2.5 sm:px-4 h-10 transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-4 h-4" />
-          </Button>
+          </Link>
         </div>
       </div>
 
@@ -293,14 +299,29 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
                 <CardContent className="p-5 space-y-4">
                   {/* Builder Name & RERA Badge */}
                   <div className="flex items-center justify-between gap-2 text-xs">
-                    <button
-                      onClick={(e) => handleBuilderClick(e, project.builderId)}
-                      className="font-extrabold text-primary hover:underline flex items-center gap-1.5 truncate text-left"
-                    >
-                      <Building2 className="w-3.5 h-3.5 shrink-0 text-primary" />
-                      <span className="truncate">{project.builderName}</span>
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500 fill-emerald-500/20" />
-                    </button>
+                    {project.builderId ? (
+                      <Link
+                        to={`/builders/${project.builderId}`}
+                        onClick={(e) => {
+                          if (onNavigate) {
+                            handleBuilderClick(e, project.builderId);
+                          } else {
+                            e.stopPropagation();
+                          }
+                        }}
+                        className="font-extrabold text-primary hover:underline flex items-center gap-1.5 truncate text-left"
+                      >
+                        <Building2 className="w-3.5 h-3.5 shrink-0 text-primary" />
+                        <span className="truncate">{project.builderName}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500 fill-emerald-500/20" />
+                      </Link>
+                    ) : (
+                      <span className="font-extrabold text-primary flex items-center gap-1.5 truncate text-left">
+                        <Building2 className="w-3.5 h-3.5 shrink-0 text-primary" />
+                        <span className="truncate">{project.builderName}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500 fill-emerald-500/20" />
+                      </span>
+                    )}
 
                     {project.isReraVerified && (
                       <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-bold gap-1 shrink-0">
@@ -313,7 +334,19 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
                   {/* Project Name & Location */}
                   <div className="space-y-1">
                     <h3 className="text-lg font-extrabold text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                      {project.name}
+                      <Link
+                        to={`/properties/${project.slug || project.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onSelectProject || onNavigate) {
+                            e.preventDefault();
+                            handleProjectClick(project.slug || project.id);
+                          }
+                        }}
+                        className="hover:underline"
+                      >
+                        {project.name}
+                      </Link>
                     </h3>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
@@ -337,16 +370,20 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
 
               {/* Card Footer CTA Button */}
               <div className="p-5 pt-0">
-                <Button 
+                <Link
+                  to={`/properties/${project.slug || project.id}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleProjectClick(project.slug || project.id);
+                    if (onSelectProject || onNavigate) {
+                      e.preventDefault();
+                      handleProjectClick(project.slug || project.id);
+                    }
                   }}
-                  className="w-full h-11 rounded-2xl font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 gap-2 shadow-xs group-hover:shadow-md"
+                  className="w-full h-11 inline-flex items-center justify-center rounded-2xl text-sm font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 gap-2 shadow-xs group-hover:shadow-md"
                 >
                   <span>Explore Project</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                </Link>
               </div>
             </Card>
           ))}

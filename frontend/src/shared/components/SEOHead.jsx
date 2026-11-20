@@ -61,6 +61,7 @@ export function SEOHead({
     // Standard meta tags
     setMetaTag('name', 'description', resolvedDescription);
     setMetaTag('name', 'robots', robotsContent);
+    setMetaTag('name', 'googlebot', robotsContent);
     if (keywords) {
       setMetaTag('name', 'keywords', keywords);
     } else {

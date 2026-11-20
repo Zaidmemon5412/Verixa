@@ -38,11 +38,11 @@ export const NotFound = () => {
           </Link>
 
           <Link
-            to="/dashboard"
+            to="/properties"
             className="w-full sm:w-auto py-2.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 border border-white/5 text-slate-300 font-semibold text-xs flex items-center justify-center space-x-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Go to Dashboard</span>
+            <span>Browse Properties</span>
           </Link>
         </div>
       </div>

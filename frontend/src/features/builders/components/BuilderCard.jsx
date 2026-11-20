@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Building2, Award, Clock, Shield, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Button } from '../../../shared/components/ui/button';
@@ -9,6 +10,8 @@ export function BuilderCard({ builder, onSelect }) {
   if (!builder) return null;
 
   const brandInfo = getBuilderBrandInfo(builder.name, builder.logoUrl);
+  const builderSlug = builder.slug || builder.id;
+  const builderHref = `/builders/${builderSlug}`;
   const yearsExperience = builder.yearsOfExperience || builder.yearsExp || 25;
   const completedProjects = builder.completedProjectsCount || builder.completedProjects || 28;
   const ongoingProjects = builder.ongoingProjectsCount || builder.ongoingProjects || 6;
@@ -43,7 +46,20 @@ export function BuilderCard({ builder, onSelect }) {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-foreground group-hover:text-sky-600 transition-colors">{builder.name}</h3>
+            <h3 className="text-lg font-bold text-foreground group-hover:text-sky-600 transition-colors">
+              <Link
+                to={builderHref}
+                onClick={(e) => {
+                  if (onSelect) {
+                    e.preventDefault();
+                    onSelect(builderSlug);
+                  }
+                }}
+                className="hover:text-sky-600 hover:underline transition-colors"
+              >
+                {builder.name}
+              </Link>
+            </h3>
             <p className="text-xs text-muted-foreground">{yearsExperience} Years Real Estate Experience</p>
           </div>
         </div>
@@ -71,14 +87,19 @@ export function BuilderCard({ builder, onSelect }) {
       </CardContent>
 
       <div className="p-6 pt-0">
-        <Button
-          onClick={() => onSelect && onSelect(builder.slug || builder.id)}
-          variant="outline"
-          className="w-full rounded-xl gap-2 text-xs"
+        <Link
+          to={builderHref}
+          onClick={(e) => {
+            if (onSelect) {
+              e.preventDefault();
+              onSelect(builderSlug);
+            }
+          }}
+          className="w-full h-10 inline-flex items-center justify-center rounded-xl gap-2 text-xs font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           <span>View Developer Portfolio</span>
           <ArrowRight className="w-4 h-4" />
-        </Button>
+        </Link>
       </div>
     </Card>
   );

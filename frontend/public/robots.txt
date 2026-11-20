@@ -5,6 +5,7 @@ Allow: /builders
 Allow: /localities
 Allow: /market
 Allow: /comparison
+Allow: /guides
 
 Disallow: /login
 Disallow: /register

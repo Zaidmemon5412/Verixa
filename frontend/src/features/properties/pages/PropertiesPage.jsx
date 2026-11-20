@@ -496,6 +496,14 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     !debouncedSearchQuery
   ) {
     canonicalPath = `/properties?type=${selectedType.toLowerCase()}`;
+  } else if (
+    selectedStatus !== 'All' &&
+    selectedLocality === 'All' &&
+    selectedBhk.length === 0 &&
+    selectedType === 'All' &&
+    !debouncedSearchQuery
+  ) {
+    canonicalPath = `/properties?status=${STATUS_TO_PARAM[selectedStatus] || selectedStatus}`;
   }
 
   const catalogSchemas = [

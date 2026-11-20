@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Building2, MapPin, Shield, BedDouble, Calendar,
   Heart, ArrowRight, Star, ExternalLink, ArrowLeftRight
@@ -22,6 +23,8 @@ export function PropertyCard({
 
   const targetId = project.id || project.property_id || project.name || 'card';
   const navSlug = project.slug || targetId;
+  const detailHref = `/properties/${navSlug}`;
+  const legalHref = `/properties/${navSlug}/legal`;
   const imageAlt = `${project.name} - ${project.config || 'Residential'} ${project.propertyType || 'Property'} in ${project.locality || 'Ahmedabad'}`;
 
   // Seeded hash for unique dynamic scoring if scores are uniform/static
@@ -100,7 +103,19 @@ export function PropertyCard({
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2 text-white z-10">
             <div className="min-w-0 flex-1">
               <h3 className="text-base sm:text-lg font-bold tracking-tight drop-shadow-sm line-clamp-1">
-                {project.name}
+                <Link
+                  to={detailHref}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onSelect) {
+                      e.preventDefault();
+                      onSelect(navSlug);
+                    }
+                  }}
+                  className="hover:underline focus:outline-none"
+                >
+                  {project.name}
+                </Link>
               </h3>
             </div>
             <div className="text-right shrink-0">
@@ -149,16 +164,19 @@ export function PropertyCard({
 
       {/* Card Footer Action Buttons (Details | Compare | Legal) */}
       <div className="p-3.5 sm:p-4 pt-0 grid grid-cols-3 gap-1.5">
-        <Button
+        <Link
+          to={detailHref}
           onClick={(e) => {
             e.stopPropagation();
-            onSelect && onSelect(navSlug);
+            if (onSelect) {
+              e.preventDefault();
+              onSelect(navSlug);
+            }
           }}
-          className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2"
-          variant="outline"
+          className="w-full h-9 inline-flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           <span>Details</span>
-        </Button>
+        </Link>
 
         <Button
           onClick={(e) => {
@@ -175,21 +193,23 @@ export function PropertyCard({
           <span className="truncate">{isCompared ? "Compared" : "Compare"}</span>
         </Button>
 
-        <Button
+        <Link
+          to={legalHref}
           onClick={(e) => {
             e.stopPropagation();
             if (onSelectLegal) {
+              e.preventDefault();
               onSelectLegal(navSlug);
             } else if (onSelect) {
+              e.preventDefault();
               onSelect(navSlug, 'legal');
             }
           }}
-          className="w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
-          variant="outline"
+          className="w-full h-9 inline-flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 border bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 transition-colors"
         >
           <Shield className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>Legal</span>
-        </Button>
+        </Link>
       </div>
     </Card>
   );

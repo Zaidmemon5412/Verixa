@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const FRONTEND_ROOT = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(FRONTEND_ROOT, 'dist');
 const SITE_URL = 'https://verixa-phi.vercel.app';
+const API_BASE_URL = 'https://verixa-backend-hwqz.onrender.com/api';
 const SITE_NAME = 'Verixa';
 const DEFAULT_OG_IMAGE =
   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=630&fit=crop&auto=format';
@@ -23,6 +24,50 @@ function escapeHtml(str) {
 
 function escapeAttr(str) {
   return escapeHtml(str);
+}
+
+function slugify(text) {
+  if (!text) return '';
+  return String(text)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function extractCleanArea(item) {
+  if (!item) return 'Satellite';
+  const text = `${item.locality_name || ''} ${item.locality_detail?.name || ''} ${item.location || ''} ${item.locality || ''} ${item.address || ''} ${item.property_name || ''}`.toLowerCase();
+  if (text.includes('gota')) return 'Gota';
+  if (text.includes('chandkheda')) return 'Chandkheda';
+  if (text.includes('sola')) return 'Sola';
+  if (text.includes('thaltej')) return 'Thaltej';
+  if (text.includes('satellite')) return 'Satellite';
+  if (text.includes('maninagar')) return 'Maninagar';
+  return 'Ahmedabad';
+}
+
+function createPropertySlug(item) {
+  const id = item?.property_id || item?.project_id || item?.id;
+  const name = item?.property_name || item?.project_name || item?.name || 'property';
+  const locality = extractCleanArea(item);
+  const namePart = slugify(`${name}-${locality}`);
+  return id ? `${namePart || 'property'}--${id}` : namePart || 'property';
+}
+
+function createBuilderSlug(builder) {
+  const id = builder?.builder_id || builder?.id;
+  const name = builder?.builder_name || builder?.name || 'developer';
+  const namePart = slugify(name);
+  return id ? `${namePart || 'developer'}--${id}` : namePart || 'developer';
+}
+
+function formatPriceShort(priceVal) {
+  const num = parseFloat(priceVal);
+  if (isNaN(num) || num === 0) return '₹35L – ₹1.2Cr';
+  if (num >= 10000000) return `₹${(num / 10000000).toFixed(2)} Cr`;
+  if (num >= 100000) return `₹${(num / 100000).toFixed(1)} L`;
+  return `₹${num.toLocaleString('en-IN')}`;
 }
 
 function fullTitle(title) {
@@ -82,15 +127,95 @@ function buildWebsiteSchema() {
   ];
 }
 
-function buildNavFooterHtml() {
-  return `
-    <nav aria-label="Primary Real Estate Directory Links" style="margin-top:24px;padding-top:16px;border-top:1px solid #334155;">
-      <p><a href="/">Home</a> | <a href="/properties">Verified Properties</a> | <a href="/builders">Builders</a> | <a href="/localities">Localities</a> | <a href="/comparison">Compare Properties</a> | <a href="/market">Market Trends</a> | <a href="/guides">Buyer &amp; RERA Guides</a></p>
-    </nav>`;
+async function fetchJsonWithTimeout(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-function buildRoutes() {
+async function fetchLiveCatalog() {
+  const [buildersPayload, propsPayload] = await Promise.all([
+    fetchJsonWithTimeout(`${API_BASE_URL}/builders/`, 8000),
+    fetchJsonWithTimeout(`${API_BASE_URL}/properties/?page_size=500&compact=1`, 8000),
+  ]);
+
+  const rawBuilders =
+    buildersPayload?.data || (Array.isArray(buildersPayload) ? buildersPayload : []);
+  const rawProps =
+    propsPayload?.data?.results ||
+    propsPayload?.results ||
+    (Array.isArray(propsPayload?.data) ? propsPayload.data : []);
+
+  const builders = (Array.isArray(rawBuilders) ? rawBuilders : [])
+    .filter((b) => b && (b.builder_id || b.id))
+    .map((b) => ({
+      id: b.builder_id || b.id,
+      slug: createBuilderSlug(b),
+      name: b.builder_name || b.name || 'Verified Developer',
+      yearsExp: b.years_of_experience || 10,
+      completedProjects: b.completed_projects ?? 15,
+      trustScore: b.trust_score || 90,
+      updatedAt: b.updated_at ? String(b.updated_at).slice(0, 10) : null,
+    }));
+
+  const properties = (Array.isArray(rawProps) ? rawProps : [])
+    .filter((p) => p && (p.property_id || p.project_id || p.id))
+    .map((p) => ({
+      id: p.property_id || p.project_id || p.id,
+      slug: createPropertySlug(p),
+      name: p.property_name || p.project_name || 'Verified Property',
+      locality: extractCleanArea(p),
+      price: formatPriceShort(p.price),
+      bhk: p.bhk ? `${p.bhk} BHK` : 'Residential',
+      status: p.status || 'Ready to Move',
+      builderName: p.builder_name || '',
+      updatedAt: p.created_at ? String(p.created_at).slice(0, 10) : null,
+    }));
+
+  return { builders, properties };
+}
+
+function buildNavFooterHtml() {
+  return `
+    <footer class="vx-footer-nav">
+      <div class="vx-links-row">
+        <a href="/">Home</a>
+        <a href="/properties">Verified Properties</a>
+        <a href="/builders">Builders Directory</a>
+        <a href="/localities">Ahmedabad Localities</a>
+        <a href="/comparison">Compare Properties</a>
+        <a href="/market">Market Trends</a>
+        <a href="/guides">Buyer &amp; RERA Guides</a>
+      </div>
+      <div class="vx-links-row" style="margin-top:10px;">
+        <a href="/properties?locality=Satellite">Flats in Satellite</a>
+        <a href="/properties?locality=Thaltej">Homes in Thaltej</a>
+        <a href="/properties?locality=Sola">Projects in Sola</a>
+        <a href="/properties?locality=Gota">Flats in Gota</a>
+        <a href="/properties?locality=Chandkheda">Flats in Chandkheda</a>
+        <a href="/properties?locality=Maninagar">Flats in Maninagar</a>
+        <a href="/properties?bhk=2">2 BHK Ahmedabad</a>
+        <a href="/properties?bhk=3">3 BHK Ahmedabad</a>
+        <a href="/properties?type=villa">Villas in Ahmedabad</a>
+        <a href="/properties?status=ready">Ready to Move</a>
+      </div>
+    </footer>`;
+}
+
+function buildRoutes({ builders = [], properties = [] } = {}) {
   const routes = [];
+  const featuredProps = properties.slice(0, 24);
 
   // 1. Homepage /
   routes.push({
@@ -104,29 +229,62 @@ function buildRoutes() {
     ogImage: DEFAULT_OG_IMAGE,
     schemas: buildWebsiteSchema(),
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <header>
-          <h1>Buy Verified Properties in Ahmedabad with 100% Legal Confidence</h1>
-          <p>Verixa audits Gujarat RERA filings, builder delivery track records, and XGBoost AI fair price valuations across Satellite, Thaltej, Sola, Gota, Chandkheda, and Maninagar.</p>
-          <p><a href="/properties">Explore Verified Properties</a> | <a href="/guides">Read Gujarat RERA &amp; Buyer Guides</a></p>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">100% RERA &amp; Title Audited • Ahmedabad Real Estate</span>
+          <h1 class="vx-h1">Buy Verified Properties in Ahmedabad with 100% Legal Confidence</h1>
+          <p class="vx-lead">Verixa audits Gujarat RERA filings, builder delivery track records, and XGBoost AI fair price valuations across Satellite, Thaltej, Sola, Gota, Chandkheda, and Maninagar.</p>
+          <div class="vx-cta-row">
+            <a class="vx-btn-primary" href="/properties">Explore Verified Properties</a>
+            <a class="vx-btn-outline" href="/guides">Read Gujarat RERA &amp; Buyer Guides</a>
+            <a class="vx-btn-outline" href="/localities">Compare Micro-Markets</a>
+          </div>
         </header>
-        <section>
-          <h2>Ahmedabad Micro-Market Intelligence</h2>
-          <ul>
+
+        <section class="vx-section">
+          <h2 class="vx-h2">Ahmedabad Micro-Market Intelligence</h2>
+          <div class="vx-card-grid vx-grid-3">
             ${LOCALITIES.map(
-              (l) =>
-                `<li><a href="/localities/${escapeAttr(l.slug)}">${escapeHtml(l.name)}, Ahmedabad</a> – Avg Price ${escapeHtml(l.avgPrice)} (${escapeHtml(l.psf)}/sqft), Rental Yield ${escapeHtml(l.rentalYield)}, Growth Score ${escapeHtml(l.growthScore)}/100</li>`
+              (l) => `
+              <article class="vx-card-item">
+                <h3><a class="vx-link" href="/localities/${escapeAttr(l.slug)}">${escapeHtml(l.name)}, Ahmedabad</a></h3>
+                <p class="vx-meta">Avg ${escapeHtml(l.avgPrice)} (${escapeHtml(l.psf)}/sqft) • Yield ${escapeHtml(l.rentalYield)} • Growth ${escapeHtml(l.growthScore)}/100</p>
+              </article>`
             ).join('')}
-          </ul>
+          </div>
         </section>
-        <section>
-          <h2>Latest Ahmedabad Buyer &amp; RERA Verification Guides</h2>
-          <ul>
+
+        ${
+          featuredProps.length > 0
+            ? `<section class="vx-section">
+                <h2 class="vx-h2">Verified RERA Properties in Ahmedabad</h2>
+                <div class="vx-card-grid vx-grid-3">
+                  ${featuredProps
+                    .slice(0, 9)
+                    .map(
+                      (p) => `
+                    <article class="vx-card-item">
+                      <h3><a class="vx-link" href="/properties/${escapeAttr(p.slug)}">${escapeHtml(p.name)}</a></h3>
+                      <p class="vx-meta">${escapeHtml(p.locality)}, Ahmedabad • ${escapeHtml(p.bhk)} • ${escapeHtml(p.price)}</p>
+                    </article>`
+                    )
+                    .join('')}
+                </div>
+              </section>`
+            : ''
+        }
+
+        <section class="vx-section">
+          <h2 class="vx-h2">Latest Ahmedabad Buyer &amp; RERA Verification Guides</h2>
+          <div class="vx-card-grid vx-grid-3">
             ${SEO_GUIDES.map(
-              (g) =>
-                `<li><a href="/guides/${escapeAttr(g.slug)}">${escapeHtml(g.title)}</a> – ${escapeHtml(g.summary)}</li>`
+              (g) => `
+              <article class="vx-card-item">
+                <h3><a class="vx-link" href="/guides/${escapeAttr(g.slug)}">${escapeHtml(g.title)}</a></h3>
+                <p class="vx-meta">${escapeHtml(g.summary)}</p>
+              </article>`
             ).join('')}
-          </ul>
+          </div>
         </section>
         ${buildNavFooterHtml()}
       </main>`,
@@ -149,23 +307,48 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Verified Properties in Ahmedabad</h1>
-        <p>Explore RERA and title-audited apartments, villas, penthouses, and residential developments across Ahmedabad micro-markets.</p>
-        <section>
-          <h2>Browse Properties by Ahmedabad Locality &amp; BHK</h2>
-          <ul>
-            <li><a href="/properties?locality=Thaltej">Properties in Thaltej</a></li>
-            <li><a href="/properties?locality=Satellite">Properties in Satellite</a></li>
-            <li><a href="/properties?locality=Sola">Properties in Sola</a></li>
-            <li><a href="/properties?locality=Gota">Properties in Gota</a></li>
-            <li><a href="/properties?locality=Chandkheda">Properties in Chandkheda</a></li>
-            <li><a href="/properties?locality=Maninagar">Properties in Maninagar</a></li>
-            <li><a href="/properties?bhk=2">2 BHK Flats in Ahmedabad</a></li>
-            <li><a href="/properties?bhk=3">3 BHK Flats in Ahmedabad</a></li>
-            <li><a href="/properties?type=villa">Villas in Ahmedabad</a></li>
-          </ul>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">RERA &amp; Title Audited • All 6 Micro-Markets</span>
+          <h1 class="vx-h1">Verified Properties in Ahmedabad</h1>
+          <p class="vx-lead">Explore RERA and title-audited apartments, villas, penthouses, and residential developments across Thaltej, Satellite, Sola, Gota, Chandkheda, and Maninagar.</p>
+        </header>
+
+        <section class="vx-section">
+          <h2 class="vx-h2">Browse Properties by Locality &amp; Configuration</h2>
+          <div class="vx-links-row">
+            <a href="/properties?locality=Thaltej">Properties in Thaltej</a>
+            <a href="/properties?locality=Satellite">Properties in Satellite</a>
+            <a href="/properties?locality=Sola">Properties in Sola</a>
+            <a href="/properties?locality=Gota">Properties in Gota</a>
+            <a href="/properties?locality=Chandkheda">Properties in Chandkheda</a>
+            <a href="/properties?locality=Maninagar">Properties in Maninagar</a>
+            <a href="/properties?bhk=2">2 BHK Flats in Ahmedabad</a>
+            <a href="/properties?bhk=3">3 BHK Flats in Ahmedabad</a>
+            <a href="/properties?bhk=4">4 BHK Luxury Flats</a>
+            <a href="/properties?type=villa">Villas in Ahmedabad</a>
+            <a href="/properties?status=ready">Ready to Move Flats</a>
+          </div>
         </section>
+
+        ${
+          featuredProps.length > 0
+            ? `<section class="vx-section">
+                <h2 class="vx-h2">Featured Verified Listings (${properties.length}+ Active Properties)</h2>
+                <div class="vx-card-grid vx-grid-3">
+                  ${featuredProps
+                    .map(
+                      (p) => `
+                    <article class="vx-card-item">
+                      <h3><a class="vx-link" href="/properties/${escapeAttr(p.slug)}">${escapeHtml(p.name)}</a></h3>
+                      <p class="vx-meta">${escapeHtml(p.locality)}, Ahmedabad • ${escapeHtml(p.bhk)} • ${escapeHtml(p.price)} • ${escapeHtml(p.status)}</p>
+                    </article>`
+                    )
+                    .join('')}
+                </div>
+              </section>`
+            : ''
+        }
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -186,9 +369,30 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Property Developers &amp; Builder Trust Directory in Ahmedabad</h1>
-        <p>Evaluate real estate builders across Ahmedabad by completion history, GujRERA promoter compliance, and on-time delivery benchmarks.</p>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">Delivery &amp; Financial Reliability Audit</span>
+          <h1 class="vx-h1">Property Developers &amp; Builder Trust Directory in Ahmedabad</h1>
+          <p class="vx-lead">Evaluate real estate builders across Ahmedabad by completion history, GujRERA promoter compliance, and on-time delivery benchmarks.</p>
+        </header>
+        ${
+          builders.length > 0
+            ? `<section class="vx-section">
+                <h2 class="vx-h2">Verified Real Estate Developers (${builders.length})</h2>
+                <div class="vx-card-grid vx-grid-2">
+                  ${builders
+                    .map(
+                      (b) => `
+                    <article class="vx-card-item">
+                      <h3><a class="vx-link" href="/builders/${escapeAttr(b.slug)}">${escapeHtml(b.name)}</a></h3>
+                      <p class="vx-meta">${escapeHtml(b.yearsExp)} Years Experience • ${escapeHtml(b.completedProjects)} Completed Projects • Trust Score ${escapeHtml(b.trustScore)}%</p>
+                    </article>`
+                    )
+                    .join('')}
+                </div>
+              </section>`
+            : ''
+        }
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -209,15 +413,23 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Ahmedabad Locality Growth Engine</h1>
-        <p>In-depth neighborhood growth ratings, average rate per sqft, rental yields, metro distance, and infrastructure benchmarks.</p>
-        <ul>
-          ${LOCALITIES.map(
-            (l) =>
-              `<li><a href="/localities/${escapeAttr(l.slug)}">${escapeHtml(l.name)}, Ahmedabad</a> – ${escapeHtml(l.avgPrice)} (${escapeHtml(l.psf)}/sqft) | Yield: ${escapeHtml(l.rentalYield)} | Score: ${escapeHtml(l.growthScore)}/100</li>`
-          ).join('')}
-        </ul>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">Neighborhood Appreciation &amp; Infrastructure Index</span>
+          <h1 class="vx-h1">Ahmedabad Locality Growth Engine</h1>
+          <p class="vx-lead">In-depth neighborhood growth ratings, average rate per sqft, rental yields, metro distance, and infrastructure benchmarks.</p>
+        </header>
+        <section class="vx-section">
+          <div class="vx-card-grid vx-grid-3">
+            ${LOCALITIES.map(
+              (l) => `
+              <article class="vx-card-item">
+                <h3><a class="vx-link" href="/localities/${escapeAttr(l.slug)}">${escapeHtml(l.name)}, Ahmedabad</a></h3>
+                <p class="vx-meta">${escapeHtml(l.avgPrice)} (${escapeHtml(l.psf)}/sqft) • Yield ${escapeHtml(l.rentalYield)} • Growth Score ${escapeHtml(l.growthScore)}/100</p>
+              </article>`
+            ).join('')}
+          </div>
+        </section>
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -225,6 +437,10 @@ function buildRoutes() {
   // 5-10. Individual Locality Pages /localities/<slug>
   for (const loc of LOCALITIES) {
     const locPath = `/localities/${loc.slug}`;
+    const locProps = properties
+      .filter((p) => p.locality.toLowerCase() === loc.name.toLowerCase())
+      .slice(0, 12);
+
     routes.push({
       routePath: locPath,
       title: `${loc.name}, Ahmedabad Real Estate – Avg Price ${loc.psf}/sqft, Yield & Projects`,
@@ -247,16 +463,42 @@ function buildRoutes() {
         ]),
       ],
       bodyHtml: `
-        <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-          <h1>${escapeHtml(loc.name)}, Ahmedabad Real Estate Market Intelligence</h1>
-          <p>${escapeHtml(loc.verdictSummary)}</p>
-          <ul>
-            <li>Average Property Price: ${escapeHtml(loc.avgPrice)} (${escapeHtml(loc.psf)}/sqft)</li>
-            <li>Rental Yield: ${escapeHtml(loc.rentalYield)}</li>
-            <li>Verixa Growth Score: ${escapeHtml(loc.growthScore)}/100</li>
-            <li>Infrastructure: ${escapeHtml(loc.infra.schools)} Schools, ${escapeHtml(loc.infra.hospitals)} Hospitals, Metro ${escapeHtml(loc.infra.metro)}</li>
-          </ul>
-          <p><a href="/properties?locality=${escapeAttr(loc.name)}">Browse Verified Properties in ${escapeHtml(loc.name)}</a></p>
+        <main class="vx-wrap vx-main">
+          <header class="vx-hero">
+            <span class="vx-pill-tag">${escapeHtml(loc.city || 'Ahmedabad')}, Gujarat • Growth Score ${escapeHtml(loc.growthScore)}/100</span>
+            <h1 class="vx-h1">${escapeHtml(loc.name)}, Ahmedabad Real Estate Market Intelligence</h1>
+            <p class="vx-lead">${escapeHtml(loc.verdictSummary)}</p>
+            <div class="vx-cta-row">
+              <a class="vx-btn-primary" href="/properties?locality=${escapeAttr(loc.name)}">Browse Verified Properties in ${escapeHtml(loc.name)}</a>
+            </div>
+          </header>
+          <section class="vx-section">
+            <h2 class="vx-h2">${escapeHtml(loc.name)} Price &amp; Livability Metrics</h2>
+            <ul class="vx-list">
+              <li>Average Property Price: ${escapeHtml(loc.avgPrice)} (${escapeHtml(loc.psf)}/sqft)</li>
+              <li>Estimated Rental Yield: ${escapeHtml(loc.rentalYield)}</li>
+              <li>Verixa Growth Score: ${escapeHtml(loc.growthScore)}/100</li>
+              <li>Infrastructure: ${escapeHtml(loc.infra.schools)} Schools, ${escapeHtml(loc.infra.hospitals)} Hospitals, Metro ${escapeHtml(loc.infra.metro)}</li>
+            </ul>
+          </section>
+          ${
+            locProps.length > 0
+              ? `<section class="vx-section">
+                  <h2 class="vx-h2">Verified Properties in ${escapeHtml(loc.name)}</h2>
+                  <div class="vx-card-grid vx-grid-3">
+                    ${locProps
+                      .map(
+                        (p) => `
+                      <article class="vx-card-item">
+                        <h3><a class="vx-link" href="/properties/${escapeAttr(p.slug)}">${escapeHtml(p.name)}</a></h3>
+                        <p class="vx-meta">${escapeHtml(p.bhk)} • ${escapeHtml(p.price)} • ${escapeHtml(p.status)}</p>
+                      </article>`
+                      )
+                      .join('')}
+                  </div>
+                </section>`
+              : ''
+          }
           ${buildNavFooterHtml()}
         </main>`,
     });
@@ -278,9 +520,24 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Ahmedabad Market Trend &amp; Investment Intelligence</h1>
-        <p>Live price per sqft trajectory, launch vs sales absorption velocity, locality heat maps, and rental yield recommendations.</p>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">Live Price Trajectory &amp; Heat Map</span>
+          <h1 class="vx-h1">Ahmedabad Market Trend &amp; Investment Intelligence</h1>
+          <p class="vx-lead">Live price per sqft trajectory, launch vs sales absorption velocity, locality heat maps, and rental yield recommendations across Ahmedabad.</p>
+        </header>
+        <section class="vx-section">
+          <h2 class="vx-h2">Micro-Market Benchmark Snapshot</h2>
+          <div class="vx-card-grid vx-grid-3">
+            ${LOCALITIES.map(
+              (l) => `
+              <article class="vx-card-item">
+                <h3><a class="vx-link" href="/localities/${escapeAttr(l.slug)}">${escapeHtml(l.name)}</a></h3>
+                <p class="vx-meta">${escapeHtml(l.psf)}/sqft • Rental Yield ${escapeHtml(l.rentalYield)} • Appreciation Trend: ${escapeHtml(l.growthScore)}/100</p>
+              </article>`
+            ).join('')}
+          </div>
+        </section>
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -301,9 +558,15 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Property Comparison Engine</h1>
-        <p>Compare verified properties side-by-side on asking price, price per sqft, carpet area, RERA registration, trust rating, and amenities.</p>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">Side-by-Side Buyer Decision Matrix</span>
+          <h1 class="vx-h1">Property Comparison Engine</h1>
+          <p class="vx-lead">Compare verified properties side-by-side on asking price, price per sqft, carpet area, RERA registration, trust rating, and amenities.</p>
+          <div class="vx-cta-row">
+            <a class="vx-btn-primary" href="/properties">Select Properties to Compare</a>
+          </div>
+        </header>
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -324,15 +587,23 @@ function buildRoutes() {
       ]),
     ],
     bodyHtml: `
-      <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-        <h1>Ahmedabad Real Estate Verification &amp; Investment Guides</h1>
-        <p>In-depth checklists and quantitative comparisons for verifying Gujarat RERA, NA land conversion, builder trust scores, and neighborhood ROI.</p>
-        <ul>
-          ${SEO_GUIDES.map(
-            (g) =>
-              `<li><article><h2><a href="/guides/${escapeAttr(g.slug)}">${escapeHtml(g.title)}</a></h2><p>${escapeHtml(g.summary)}</p></article></li>`
-          ).join('')}
-        </ul>
+      <main class="vx-wrap vx-main">
+        <header class="vx-hero">
+          <span class="vx-pill-tag">Verixa Real Estate Research Hub</span>
+          <h1 class="vx-h1">Ahmedabad Real Estate Verification &amp; Investment Guides</h1>
+          <p class="vx-lead">In-depth checklists and quantitative comparisons for verifying Gujarat RERA, NA land conversion, builder trust scores, and neighborhood ROI.</p>
+        </header>
+        <section class="vx-section">
+          <div class="vx-card-grid vx-grid-3">
+            ${SEO_GUIDES.map(
+              (g) => `
+              <article class="vx-card-item">
+                <h3><a class="vx-link" href="/guides/${escapeAttr(g.slug)}">${escapeHtml(g.title)}</a></h3>
+                <p class="vx-meta">${escapeHtml(g.summary)}</p>
+              </article>`
+            ).join('')}
+          </div>
+        </section>
         ${buildNavFooterHtml()}
       </main>`,
   });
@@ -366,24 +637,24 @@ function buildRoutes() {
         ]),
       ],
       bodyHtml: `
-        <main class="max-w-7xl mx-auto px-4 py-8 text-slate-100">
-          <article>
-            <header>
-              <p>${escapeHtml(guide.category)} • ${escapeHtml(guide.readTime)} • Updated ${escapeHtml(guide.updatedAt)}</p>
-              <h1>${escapeHtml(guide.title)}</h1>
-              <p>${escapeHtml(guide.summary)}</p>
+        <main class="vx-wrap vx-main">
+          <article class="vx-article">
+            <header class="vx-hero">
+              <span class="vx-pill-tag">${escapeHtml(guide.category)} • ${escapeHtml(guide.readTime)} • Updated ${escapeHtml(guide.updatedAt)}</span>
+              <h1 class="vx-h1">${escapeHtml(guide.title)}</h1>
+              <p class="vx-lead">${escapeHtml(guide.summary)}</p>
             </header>
-            ${(guide.keyTakeaways || []).length > 0 ? `<section><h2>Key Takeaways</h2><ul>${guide.keyTakeaways.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul></section>` : ''}
+            ${(guide.keyTakeaways || []).length > 0 ? `<section class="vx-section"><h2 class="vx-h2">Key Takeaways</h2><ul class="vx-list">${guide.keyTakeaways.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul></section>` : ''}
             ${(guide.sections || [])
               .map(
                 (sec) => `
-              <section>
-                <h2>${escapeHtml(sec.heading)}</h2>
-                ${(sec.paragraphs || []).map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
-                ${(sec.bullets || []).length > 0 ? `<ul>${sec.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join('')}</ul>` : ''}
+              <section class="vx-section">
+                <h2 class="vx-h2">${escapeHtml(sec.heading)}</h2>
+                ${(sec.paragraphs || []).map((p) => `<p class="vx-p">${escapeHtml(p)}</p>`).join('')}
+                ${(sec.bullets || []).length > 0 ? `<ul class="vx-list">${sec.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join('')}</ul>` : ''}
                 ${
                   sec.comparisonTable
-                    ? `<table><thead><tr>${sec.comparisonTable.headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${sec.comparisonTable.rows.map((row) => `<tr>${row.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+                    ? `<table class="vx-table"><thead><tr>${sec.comparisonTable.headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${sec.comparisonTable.rows.map((row) => `<tr>${row.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
                     : ''
                 }
               </section>`
@@ -391,7 +662,7 @@ function buildRoutes() {
               .join('')}
             ${
               (guide.faqs || []).length > 0
-                ? `<section><h2>Frequently Asked Questions</h2>${guide.faqs.map((f) => `<details open><summary>${escapeHtml(f.q)}</summary><p>${escapeHtml(f.a)}</p></details>`).join('')}</section>`
+                ? `<section class="vx-section"><h2 class="vx-h2">Frequently Asked Questions</h2>${guide.faqs.map((f) => `<details open class="vx-faq"><summary>${escapeHtml(f.q)}</summary><p class="vx-p">${escapeHtml(f.a)}</p></details>`).join('')}</section>`
                 : ''
             }
           </article>
@@ -403,255 +674,94 @@ function buildRoutes() {
   return routes;
 }
 
-function buildRouteSkeletonBody(routePath) {
-  if (routePath === '/') {
-    return `
-      <div class="vx-banner"></div>
-      <div class="vx-wrap vx-main">
-        <div class="vx-split-hero">
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <div class="vx-shimmer" style="height:48px;width:92%;border-radius:14px;"></div>
-            <div class="vx-shimmer" style="height:42px;width:72%;border-radius:14px;"></div>
-            <div class="vx-shimmer-soft" style="height:16px;width:85%;border-radius:8px;"></div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:6px;">
-              <div class="vx-shimmer" style="height:46px;width:210px;border-radius:14px;"></div>
-              <div class="vx-shimmer-soft" style="height:46px;width:190px;border-radius:14px;"></div>
-            </div>
-          </div>
-          <div class="vx-shimmer" style="width:100%;aspect-ratio:4/3;border-radius:24px;"></div>
-        </div>
-        <div class="vx-grid-3" style="margin-top:32px;">
-          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>
-          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>
-          <div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>
-        </div>
-      </div>`;
-  }
-
-  if (routePath === '/properties') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-box" style="margin-bottom:24px;">
-          <div class="vx-shimmer-soft" style="height:42px;width:100%;border-radius:12px;margin-bottom:12px;"></div>
-          <div style="display:flex;gap:8px;overflow:hidden;">
-            <div class="vx-shimmer-soft" style="height:30px;width:80px;border-radius:999px;"></div>
-            <div class="vx-shimmer-soft" style="height:30px;width:90px;border-radius:999px;"></div>
-            <div class="vx-shimmer-soft" style="height:30px;width:84px;border-radius:999px;"></div>
-            <div class="vx-shimmer-soft" style="height:30px;width:96px;border-radius:999px;"></div>
-          </div>
-        </div>
-        <div class="vx-grid-3">
-          ${Array.from({ length: 6 }).map(() => '<div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>').join('')}
-        </div>
-      </div>`;
-  }
-
-  if (routePath === '/builders') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-grid-2">
-          ${Array.from({ length: 4 }).map(() => '<div class="vx-card" style="height:210px;"><div style="display:flex;gap:14px;align-items:center;"><div class="vx-shimmer" style="width:52px;height:52px;border-radius:14px;flex-shrink:0;"></div><div style="flex:1;"><div class="vx-line" style="margin-bottom:8px;"></div><div class="vx-line-sm"></div></div></div><div class="vx-shimmer-soft" style="height:34px;border-radius:10px;"></div></div>').join('')}
-        </div>
-      </div>`;
-  }
-
-  if (routePath === '/localities') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-grid-3">
-          ${Array.from({ length: 6 }).map(() => '<div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>').join('')}
-        </div>
-      </div>`;
-  }
-
-  if (routePath.startsWith('/localities/')) {
-    return `
-      <div class="vx-wrap vx-main">
-        <div style="display:flex;gap:8px;margin-bottom:20px;overflow:hidden;">
-          ${Array.from({ length: 6 }).map(() => '<div class="vx-shimmer-soft" style="height:38px;width:105px;border-radius:12px;flex-shrink:0;"></div>').join('')}
-        </div>
-        <div class="vx-shimmer" style="height:230px;width:100%;border-radius:24px;margin-bottom:24px;"></div>
-        <div class="vx-split-3">
-          <div style="display:flex;flex-direction:column;gap:16px;">
-            <div class="vx-grid-4">
-              <div class="vx-kpi"></div><div class="vx-kpi"></div><div class="vx-kpi"></div><div class="vx-kpi"></div>
-            </div>
-            <div class="vx-shimmer-soft" style="height:240px;border-radius:20px;"></div>
-          </div>
-          <div class="vx-box" style="height:340px;"></div>
-        </div>
-      </div>`;
-  }
-
-  if (routePath === '/market') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-box" style="height:86px;margin-bottom:20px;"></div>
-        <div class="vx-grid-4" style="margin-bottom:24px;">
-          <div class="vx-kpi"></div><div class="vx-kpi"></div><div class="vx-kpi"></div><div class="vx-kpi"></div>
-        </div>
-        <div class="vx-grid-3">
-          <div class="vx-card" style="height:260px;"></div>
-          <div class="vx-card" style="height:260px;"></div>
-          <div class="vx-card" style="height:260px;"></div>
-        </div>
-      </div>`;
-  }
-
-  if (routePath === '/comparison') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-box" style="height:92px;margin-bottom:24px;"></div>
-        <div class="vx-box" style="height:360px;"></div>
-      </div>`;
-  }
-
-  if (routePath === '/guides') {
-    return `
-      <div class="vx-wrap vx-main">
-        <div class="vx-header-block">
-          <div class="vx-pill-sm"></div>
-          <div class="vx-title"></div>
-          <div class="vx-sub"></div>
-        </div>
-        <div class="vx-box" style="height:210px;margin-bottom:24px;"></div>
-        <div class="vx-grid-3">
-          ${Array.from({ length: 6 }).map(() => '<div class="vx-card"><div class="vx-thumb"></div><div class="vx-line"></div><div class="vx-line-sm"></div></div>').join('')}
-        </div>
-      </div>`;
-  }
-
-  // Individual /guides/:slug or fallback
-  return `
-    <div class="vx-wrap vx-main">
-      <div class="vx-header-block">
-        <div class="vx-pill-sm"></div>
-        <div class="vx-title" style="width:78%;"></div>
-        <div class="vx-sub"></div>
-      </div>
-      <div class="vx-shimmer" style="height:240px;width:100%;border-radius:24px;margin-bottom:24px;"></div>
-      <div class="vx-split-3">
-        <div class="vx-box" style="height:320px;"></div>
-        <div class="vx-box" style="height:260px;"></div>
-      </div>
-    </div>`;
-}
-
-function buildAppShellSkeleton(routePath = '/') {
+function buildAppShellHtml(route) {
   return `
     <style data-verixa-shell="true">
       :root {
         --vx-bg: #ffffff;
         --vx-fg: #0f172a;
+        --vx-muted-fg: #475569;
         --vx-card: #ffffff;
         --vx-muted: #f1f5f9;
-        --vx-shimmer: #e2e8f0;
         --vx-border: #e2e8f0;
-        --vx-nav: rgba(255, 255, 255, 0.92);
-        --vx-badge-bg: rgba(37, 99, 235, 0.1);
+        --vx-nav: rgba(255, 255, 255, 0.94);
+        --vx-badge-bg: rgba(37, 99, 235, 0.08);
         --vx-badge-fg: #2563eb;
       }
       html.dark {
         --vx-bg: #020817;
         --vx-fg: #f8fafc;
+        --vx-muted-fg: #94a3b8;
         --vx-card: #0f172a;
         --vx-muted: #1e293b;
-        --vx-shimmer: #1e293b;
-        --vx-border: rgba(148, 163, 184, 0.16);
-        --vx-nav: rgba(15, 23, 42, 0.92);
+        --vx-border: rgba(148, 163, 184, 0.18);
+        --vx-nav: rgba(15, 23, 42, 0.94);
         --vx-badge-bg: rgba(59, 130, 246, 0.16);
         --vx-badge-fg: #60a5fa;
       }
-      @keyframes verixaShimmer { 0%, 100% { opacity: .5; } 50% { opacity: .95; } }
-      .vx-shell { min-height: 100vh; background: var(--vx-bg); color: var(--vx-fg); font-family: Inter, system-ui, -apple-system, sans-serif; padding-bottom: 64px; }
-      .vx-nav { height: 56px; border-bottom: 1px solid var(--vx-border); background: var(--vx-nav); display: flex; align-items: center; }
-      .vx-wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 16px; box-sizing: border-box; }
+      .vx-shell { min-height: 100vh; background: var(--vx-bg); color: var(--vx-fg); font-family: Inter, system-ui, -apple-system, sans-serif; }
+      .vx-nav { height: 60px; border-bottom: 1px solid var(--vx-border); background: var(--vx-nav); display: flex; align-items: center; }
+      .vx-wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 18px; box-sizing: border-box; }
       .vx-nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-      .vx-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--vx-fg); }
-      .vx-logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); font-size: 16px; font-weight: 900; color: #ffffff; }
-      .vx-badge { display: none; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vx-badge-fg); background: var(--vx-badge-bg); border: 1px solid var(--vx-border); padding: 3px 7px; border-radius: 6px; }
-      .vx-pills { display: none; gap: 10px; }
-      .vx-pill { width: 72px; height: 14px; border-radius: 999px; background: var(--vx-shimmer); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-main { padding: 24px 16px; }
-      .vx-banner { height: 36px; background: linear-gradient(90deg, #2563eb, #4338ca); opacity: 0.85; }
-      .vx-header-block { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-      .vx-pill-sm { width: 180px; height: 22px; border-radius: 999px; background: var(--vx-badge-bg); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-title { width: 340px; max-width: 90%; height: 32px; border-radius: 12px; background: var(--vx-shimmer); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-sub { width: 520px; max-width: 98%; height: 15px; border-radius: 8px; background: var(--vx-muted); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-shimmer { background: var(--vx-shimmer); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-shimmer-soft { background: var(--vx-muted); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-box { border-radius: 20px; border: 1px solid var(--vx-border); background: var(--vx-card); padding: 16px; }
-      .vx-kpi { height: 96px; border-radius: 16px; border: 1px solid var(--vx-border); background: var(--vx-card); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-split-hero, .vx-split-3, .vx-grid-2, .vx-grid-3 { display: grid; grid-template-columns: 1fr; gap: 20px; }
-      .vx-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .vx-card { border-radius: 18px; border: 1px solid var(--vx-border); background: var(--vx-card); padding: 16px; height: 240px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
-      .vx-thumb { width: 100%; height: 135px; border-radius: 12px; background: var(--vx-muted); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-line { width: 70%; height: 14px; border-radius: 6px; background: var(--vx-shimmer); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-line-sm { width: 45%; height: 12px; border-radius: 6px; background: var(--vx-muted); animation: verixaShimmer 1.5s ease-in-out infinite; }
-      .vx-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 58px; border-top: 1px solid var(--vx-border); background: var(--vx-nav); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; justify-items: center; }
-      .vx-bdot { width: 32px; height: 26px; border-radius: 8px; background: var(--vx-muted); animation: verixaShimmer 1.5s ease-in-out infinite; }
+      .vx-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--vx-fg); text-decoration: none; }
+      .vx-logo { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #ffffff; }
+      .vx-nav-links { display: none; gap: 16px; align-items: center; }
+      .vx-nav-links a { font-size: 13px; font-weight: 600; color: var(--vx-muted-fg); text-decoration: none; }
+      .vx-nav-links a:hover { color: var(--vx-badge-fg); }
+      .vx-main { padding-top: 28px; padding-bottom: 48px; }
+      .vx-hero { padding: 20px 0 24px; border-bottom: 1px solid var(--vx-border); margin-bottom: 24px; }
+      .vx-pill-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--vx-badge-fg); background: var(--vx-badge-bg); border: 1px solid var(--vx-border); padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+      .vx-h1 { font-size: clamp(1.6rem, 3.2vw, 2.5rem); font-weight: 800; line-height: 1.18; margin: 0 0 12px; letter-spacing: -0.02em; }
+      .vx-h2 { font-size: 1.25rem; font-weight: 800; margin: 0 0 14px; }
+      .vx-lead { font-size: 0.98rem; line-height: 1.6; color: var(--vx-muted-fg); max-width: 780px; margin: 0; }
+      .vx-p { font-size: 0.92rem; line-height: 1.65; color: var(--vx-muted-fg); margin: 0 0 10px; }
+      .vx-cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+      .vx-btn-primary { display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 12px; background: #2563eb; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; }
+      .vx-btn-outline { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--vx-border); background: var(--vx-card); color: var(--vx-fg); font-size: 13px; font-weight: 600; text-decoration: none; }
+      .vx-section { margin: 28px 0; }
+      .vx-card-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+      .vx-card-item { border: 1px solid var(--vx-border); background: var(--vx-card); border-radius: 16px; padding: 16px; }
+      .vx-card-item h3 { margin: 0 0 6px; font-size: 1rem; font-weight: 700; }
+      .vx-link { color: var(--vx-fg); text-decoration: none; }
+      .vx-link:hover { color: var(--vx-badge-fg); text-decoration: underline; }
+      .vx-meta { font-size: 12px; line-height: 1.5; color: var(--vx-muted-fg); margin: 0; }
+      .vx-list { padding-left: 18px; margin: 0; color: var(--vx-muted-fg); font-size: 14px; line-height: 1.7; }
+      .vx-links-row { display: flex; flex-wrap: wrap; gap: 8px; }
+      .vx-links-row a { font-size: 12px; font-weight: 600; color: var(--vx-muted-fg); text-decoration: none; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--vx-border); background: var(--vx-card); }
+      .vx-links-row a:hover { color: var(--vx-badge-fg); border-color: var(--vx-badge-fg); }
+      .vx-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+      .vx-table th, .vx-table td { border: 1px solid var(--vx-border); padding: 8px 10px; text-align: left; }
+      .vx-faq { border: 1px solid var(--vx-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: var(--vx-card); }
+      .vx-faq summary { font-weight: 700; font-size: 14px; cursor: pointer; }
+      .vx-footer-nav { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--vx-border); }
       @media (min-width: 768px) {
-        .vx-nav { height: 64px; }
-        .vx-pills { display: flex; }
-        .vx-shell { padding-bottom: 0; }
-        .vx-bottom-nav { display: none; }
+        .vx-nav-links { display: flex; }
         .vx-grid-2 { grid-template-columns: repeat(2, 1fr); }
         .vx-grid-3 { grid-template-columns: repeat(2, 1fr); }
-        .vx-grid-4 { grid-template-columns: repeat(4, 1fr); gap: 16px; }
       }
       @media (min-width: 1024px) {
-        .vx-badge { display: inline-block; }
         .vx-grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .vx-split-hero { grid-template-columns: 7fr 5fr; align-items: center; gap: 36px; }
-        .vx-split-3 { grid-template-columns: 2fr 1fr; align-items: start; gap: 28px; }
       }
     </style>
-    <div class="vx-shell" aria-busy="true">
+    <div class="vx-shell">
       <div class="vx-nav">
         <div class="vx-wrap vx-nav-inner">
-          <div class="vx-brand">
+          <a href="/" class="vx-brand">
             <div class="vx-logo">V</div>
             <span>VERIXA</span>
-            <span class="vx-badge">Decision Engine</span>
-          </div>
-          <div class="vx-pills">
-            <div class="vx-pill"></div>
-            <div class="vx-pill"></div>
-            <div class="vx-pill"></div>
-            <div class="vx-pill"></div>
-            <div class="vx-pill"></div>
-          </div>
+          </a>
+          <nav class="vx-nav-links" aria-label="Primary Navigation">
+            <a href="/">Home</a>
+            <a href="/properties">Properties</a>
+            <a href="/builders">Builders</a>
+            <a href="/localities">Localities</a>
+            <a href="/comparison">Compare</a>
+            <a href="/market">Market Trends</a>
+            <a href="/guides">Guides</a>
+          </nav>
         </div>
       </div>
-      ${buildRouteSkeletonBody(routePath)}
-      <div class="vx-bottom-nav">
-        <div class="vx-bdot"></div><div class="vx-bdot"></div><div class="vx-bdot"></div><div class="vx-bdot"></div><div class="vx-bdot"></div>
-      </div>
+      ${route.bodyHtml}
     </div>`;
 }
 
@@ -662,10 +772,7 @@ function renderHtml(templateHtml, route) {
 
   let html = templateHtml;
 
-  // Replace title
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(resolvedTitle)}</title>`);
-
-  // Replace standard meta tags & canonical
   html = html.replace(
     /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,
     `<meta name="description" content="${escapeAttr(route.description)}" />`
@@ -679,7 +786,6 @@ function renderHtml(templateHtml, route) {
     `<link rel="canonical" href="${escapeAttr(canonicalUrl)}" />`
   );
 
-  // Replace Open Graph tags
   html = html.replace(
     /<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i,
     `<meta property="og:type" content="${escapeAttr(route.ogType || 'website')}" />`
@@ -701,7 +807,6 @@ function renderHtml(templateHtml, route) {
     `<meta property="og:image" content="${escapeAttr(ogImage)}" />`
   );
 
-  // Replace Twitter tags
   html = html.replace(
     /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i,
     `<meta name="twitter:title" content="${escapeAttr(resolvedTitle)}" />`
@@ -715,7 +820,6 @@ function renderHtml(templateHtml, route) {
     `<meta name="twitter:image" content="${escapeAttr(ogImage)}" />`
   );
 
-  // Remove any previously injected data-verixa-seo scripts & inject route JSON-LD scripts
   html = html.replace(/<script[^>]*data-verixa-seo="true"[^>]*>[\s\S]*?<\/script>/gi, '');
   const jsonLdScripts = (route.schemas || [])
     .filter(Boolean)
@@ -729,22 +833,101 @@ function renderHtml(templateHtml, route) {
     html = html.replace('</head>', `    ${jsonLdScripts}\n  </head>`);
   }
 
-  // Embed polished zero-FOUC theme-adaptive & route-matched app shell skeleton + SEO HTML
-  const shellHtml = buildAppShellSkeleton(route.routePath);
-  const seoSnapshotHtml = `<div class="sr-only" aria-hidden="false" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">${route.bodyHtml}</div>`;
-  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, `<div id="root">${shellHtml}${seoSnapshotHtml}</div>`);
+  const shellHtml = buildAppShellHtml(route);
+  html = html.replace(/<div id="root">[\s\S]*?<\/div>/i, `<div id="root">${shellHtml}</div>`);
 
   return html;
 }
 
-function main() {
+function generateSitemapXml({ builders = [], properties = [] } = {}) {
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const seen = new Set();
+  const entries = [];
+
+  const addUrl = (urlPath, { lastmod = todayIso, changefreq = 'weekly', priority = '0.80' } = {}) => {
+    const cleanPath = urlPath.startsWith('/') ? urlPath : `/${urlPath}`;
+    if (seen.has(cleanPath)) return;
+    seen.add(cleanPath);
+    const fullUrl = escapeHtml(`${SITE_URL}${cleanPath}`);
+    entries.push(
+      `  <url>\n` +
+        `    <loc>${fullUrl}</loc>\n` +
+        `    <lastmod>${escapeHtml(lastmod || todayIso)}</lastmod>\n` +
+        `    <changefreq>${changefreq}</changefreq>\n` +
+        `    <priority>${priority}</priority>\n` +
+        `  </url>`
+    );
+  };
+
+  // Core platform pages
+  addUrl('/', { changefreq: 'daily', priority: '1.0' });
+  addUrl('/properties', { changefreq: 'daily', priority: '0.95' });
+  addUrl('/builders', { changefreq: 'weekly', priority: '0.90' });
+  addUrl('/localities', { changefreq: 'weekly', priority: '0.90' });
+  addUrl('/market', { changefreq: 'daily', priority: '0.90' });
+  addUrl('/comparison', { changefreq: 'weekly', priority: '0.85' });
+  addUrl('/guides', { changefreq: 'weekly', priority: '0.90' });
+
+  // Guide articles
+  for (const guide of SEO_GUIDES) {
+    addUrl(`/guides/${guide.slug}`, {
+      lastmod: guide.updatedAt || todayIso,
+      changefreq: 'weekly',
+      priority: '0.88',
+    });
+  }
+
+  // Localities
+  for (const loc of LOCALITIES) {
+    addUrl(`/localities/${loc.slug}`, { changefreq: 'weekly', priority: '0.88' });
+  }
+
+  // Programmatic filter landing URLs
+  for (const loc of ['Satellite', 'Thaltej', 'Gota', 'Sola', 'Chandkheda', 'Maninagar']) {
+    addUrl(`/properties?locality=${loc}`, { changefreq: 'daily', priority: '0.85' });
+  }
+  addUrl('/properties?bhk=2', { changefreq: 'daily', priority: '0.82' });
+  addUrl('/properties?bhk=3', { changefreq: 'daily', priority: '0.82' });
+  addUrl('/properties?bhk=4', { changefreq: 'daily', priority: '0.80' });
+  addUrl('/properties?type=villa', { changefreq: 'daily', priority: '0.80' });
+  addUrl('/properties?status=ready', { changefreq: 'daily', priority: '0.80' });
+
+  // Live builders & properties when backend API is reachable at build time
+  for (const builder of builders) {
+    addUrl(`/builders/${builder.slug}`, {
+      lastmod: builder.updatedAt || todayIso,
+      changefreq: 'weekly',
+      priority: '0.82',
+    });
+  }
+
+  for (const prop of properties) {
+    addUrl(`/properties/${prop.slug}`, {
+      lastmod: prop.updatedAt || todayIso,
+      changefreq: 'weekly',
+      priority: '0.80',
+    });
+  }
+
+  return {
+    xml:
+      '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      entries.join('\n') +
+      '\n</urlset>\n',
+    urlCount: entries.length,
+  };
+}
+
+async function main() {
   const templatePath = path.join(DIST_DIR, 'index.html');
   if (!fs.existsSync(templatePath)) {
     throw new Error(`dist/index.html not found at ${templatePath}`);
   }
 
   const baseTemplate = fs.readFileSync(templatePath, 'utf8');
-  const routes = buildRoutes();
+  const catalog = await fetchLiveCatalog();
+  const routes = buildRoutes(catalog);
 
   for (const route of routes) {
     const outHtml = renderHtml(baseTemplate, route);
@@ -757,7 +940,13 @@ function main() {
     fs.writeFileSync(outPath, outHtml, 'utf8');
   }
 
+  const { xml, urlCount } = generateSitemapXml(catalog);
+  fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8');
+
   console.log(`[prerender-seo] Pre-rendered ${routes.length} static SEO routes into dist/`);
+  console.log(
+    `[prerender-seo] Generated dist/sitemap.xml with ${urlCount} URLs (builders: ${catalog.builders.length}, properties: ${catalog.properties.length})`
+  );
 }
 
 main();

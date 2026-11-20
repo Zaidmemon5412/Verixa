@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Building2, 
   MapPin, 
@@ -20,6 +21,9 @@ export function BuilderProjectCard({ project, onSelectProject }) {
   const [isComparing, setIsComparing] = useState(false);
 
   if (!project) return null;
+
+  const projectSlug = project.slug || project.id;
+  const projectHref = `/properties/${projectSlug}`;
 
   const handleCompareClick = (e) => {
     e.stopPropagation();
@@ -125,7 +129,19 @@ export function BuilderProjectCard({ project, onSelectProject }) {
           </div>
 
           <h3 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors line-clamp-1">
-            {project.name}
+            <Link
+              to={projectHref}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onSelectProject) {
+                  e.preventDefault();
+                  onSelectProject(projectSlug);
+                }
+              }}
+              className="hover:underline"
+            >
+              {project.name}
+            </Link>
           </h3>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
@@ -214,13 +230,20 @@ export function BuilderProjectCard({ project, onSelectProject }) {
             </button>
 
             {/* View Details Button */}
-            <button
-              onClick={handleCardClick}
+            <Link
+              to={projectHref}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onSelectProject) {
+                  e.preventDefault();
+                  onSelectProject(projectSlug);
+                }
+              }}
               className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white shadow-md shadow-sky-600/20 transition-all hover:gap-1.5"
             >
               <span>View Details</span>
               <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+            </Link>
           </div>
         </div>
 

@@ -49,13 +49,19 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
               Free AI Legal Title Audit & Builder Delay Benchmark for your first 3 searches!
             </span>
           </div>
-          <button
-            onClick={() => onNavigate && onNavigate('projects')}
+          <Link
+            to="/properties"
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault();
+                onNavigate('projects');
+              }
+            }}
             className="underline underline-offset-4 hover:text-amber-300 font-bold inline-flex items-center gap-1 shrink-0 text-[11px]"
           >
             <span>Claim Free Audit</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -75,23 +81,32 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
             {/* CTA Buttons & Ratings */}
             <div className="space-y-4 pt-1 sm:pt-2">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <Button
-                  onClick={() => onNavigate && onNavigate('projects')}
-                  size="lg"
-                  className="h-12 sm:h-13 px-6 sm:px-8 text-sm sm:text-base font-bold rounded-2xl shadow-xl shadow-primary/20 gap-2 w-full sm:w-auto justify-center"
+                <Link
+                  to="/properties"
+                  onClick={(e) => {
+                    if (onNavigate) {
+                      e.preventDefault();
+                      onNavigate('projects');
+                    }
+                  }}
+                  className="inline-flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90 h-12 sm:h-13 px-6 sm:px-8 text-sm sm:text-base font-bold rounded-2xl shadow-xl shadow-primary/20 gap-2 w-full sm:w-auto transition-colors"
                 >
                   <span>Explore Verified Properties</span>
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </Button>
-                <Button
-                  onClick={() => onNavigate && onNavigate('projects')}
-                  variant="outline"
-                  size="lg"
-                  className="h-12 sm:h-13 px-6 text-sm sm:text-base font-semibold rounded-2xl gap-2 w-full sm:w-auto justify-center"
+                </Link>
+                <Link
+                  to="/properties"
+                  onClick={(e) => {
+                    if (onNavigate) {
+                      e.preventDefault();
+                      onNavigate('projects');
+                    }
+                  }}
+                  className="inline-flex items-center justify-center border border-input bg-background hover:bg-accent hover:text-accent-foreground h-12 sm:h-13 px-6 text-sm sm:text-base font-semibold rounded-2xl gap-2 w-full sm:w-auto transition-colors"
                 >
                   <Building2 className="w-4 h-4 text-primary" />
                   <span>Browse Featured Homes</span>
-                </Button>
+                </Link>
               </div>
 
               {/* Star Rating Social Proof */}
@@ -298,14 +313,19 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
         </div>
 
         <div className="text-center pt-4">
-          <Button
-            onClick={() => onNavigate && onNavigate('projects')}
-            size="lg"
-            className="rounded-2xl px-8 font-bold gap-2"
+          <Link
+            to="/properties"
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault();
+                onNavigate('projects');
+              }
+            }}
+            className="inline-flex items-center justify-center h-11 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl px-8 text-sm font-bold gap-2 transition-colors"
           >
             <span>Start Exploring Verified Features</span>
             <ArrowRight className="w-4 h-4" />
-          </Button>
+          </Link>
         </div>
       </section>
 
@@ -595,14 +615,19 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
             </p>
 
             <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Button
-                onClick={() => onNavigate && onNavigate('projects')}
-                size="lg"
-                className="h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-bold bg-white text-slate-950 hover:bg-slate-100 rounded-2xl shadow-xl gap-2 w-full sm:w-auto justify-center"
+              <Link
+                to="/properties"
+                onClick={(e) => {
+                  if (onNavigate) {
+                    e.preventDefault();
+                    onNavigate('projects');
+                  }
+                }}
+                className="inline-flex items-center justify-center h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-bold bg-white text-slate-950 hover:bg-slate-100 rounded-2xl shadow-xl gap-2 w-full sm:w-auto transition-colors"
               >
                 <span>Find Your Verified Property</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
+              </Link>
             </div>
           </div>
         </div>

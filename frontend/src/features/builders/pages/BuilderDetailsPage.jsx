@@ -165,11 +165,19 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
 
   if (error || !builder) {
     return (
-      <ErrorState
-        message={error || 'Developer profile not found.'}
-        onBack={handleBackNavigation}
-        onRetry={loadBuilderProfile}
-      />
+      <>
+        <SEOHead
+          title="Developer Not Found – Verixa"
+          description="The requested developer profile could not be found on Verixa."
+          canonicalPath="/404"
+          noindex={true}
+        />
+        <ErrorState
+          message={error || 'Developer profile not found.'}
+          onBack={handleBackNavigation}
+          onRetry={loadBuilderProfile}
+        />
+      </>
     );
   }
 
