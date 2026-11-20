@@ -14,7 +14,7 @@ import NearbyList from './NearbyList';
 export function PropertyMapSection({ property }) {
   const [radiusKm, setRadiusKm] = useState(2);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [mapType, setMapType] = useState('streets');
+  const [mapType, setMapType] = useState('hybrid');
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);

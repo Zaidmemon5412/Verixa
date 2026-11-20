@@ -5,55 +5,31 @@ import NearbyMarkers from './NearbyMarkers';
 import { resolveAhmedabadCoordinates } from '../../services/nearbyService';
 
 /**
- * Clean, 100% keyless multi-provider tile stack with automatic failover on tileerror.
- * Street view automatically matches Light (CartoDB Voyager) and Dark (CartoDB Dark Matter) themes.
+ * Clean, 100% keyless Hybrid & Satellite tile stack with automatic failover on tileerror.
  */
-function getTileProviders(isDark) {
-  return {
-    streets: [
-      isDark
-        ? {
-            url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          }
-        : {
-            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          },
-      {
-        url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-        attribution: 'Map data &copy; Google Maps',
-      },
-      {
-        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution: '&copy; OpenStreetMap contributors',
-      },
-    ],
-    hybrid: [
-      {
-        url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-        attribution: 'Imagery & Roads &copy; Google Maps',
-      },
-      {
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attribution: 'Tiles &copy; Esri World Imagery',
-      },
-    ],
-    satellite: [
-      {
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attribution:
-          'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
-      },
-      {
-        url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-        attribution: 'Satellite Imagery &copy; Google',
-      },
-    ],
-  };
-}
+const TILE_PROVIDERS = {
+  hybrid: [
+    {
+      url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+      attribution: 'Imagery & Roads &copy; Google Maps',
+    },
+    {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      attribution: 'Tiles &copy; Esri World Imagery',
+    },
+  ],
+  satellite: [
+    {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      attribution:
+        'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+    },
+    {
+      url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+      attribution: 'Satellite Imagery &copy; Google',
+    },
+  ],
+};
 
 function MapViewController({ center, zoom, selectedPlace, isFullscreen }) {
   const map = useMap();
@@ -88,31 +64,17 @@ export function PropertyMap({
   property,
   nearbyPlaces = [],
   radiusKm = 2,
-  mapType = 'streets',
+  mapType = 'hybrid',
   activeCategory = 'all',
   selectedPlace = null,
   onSelectPlace,
   isFullscreen = false,
 }) {
   const [fallbackIdx, setFallbackIdx] = useState(0);
-  const [isDark, setIsDark] = useState(() =>
-    typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
-  );
-
-  // Sync map tiles live when user toggles Dark / Light mode
-  useEffect(() => {
-    if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return;
-    const root = document.documentElement;
-    const observer = new MutationObserver(() => {
-      setIsDark(root.classList.contains('dark'));
-    });
-    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     setFallbackIdx(0);
-  }, [mapType, isDark]);
+  }, [mapType]);
 
   const resolvedCoords = useMemo(
     () =>
@@ -130,8 +92,7 @@ export function PropertyMap({
     [resolvedCoords.latitude, resolvedCoords.longitude]
   );
 
-  const providersByMode = useMemo(() => getTileProviders(isDark), [isDark]);
-  const modeProviders = providersByMode[mapType] || providersByMode.streets;
+  const modeProviders = TILE_PROVIDERS[mapType] || TILE_PROVIDERS.hybrid;
   const activeTile = modeProviders[Math.min(fallbackIdx, modeProviders.length - 1)];
 
   const radiusInMeters = radiusKm * 1000;
@@ -146,7 +107,7 @@ export function PropertyMap({
         className="w-full h-full z-0 rounded-2xl"
       >
         <TileLayer
-          key={`${mapType}-${isDark ? 'dark' : 'light'}-${fallbackIdx}-${activeTile.url}`}
+          key={`${mapType}-${fallbackIdx}-${activeTile.url}`}
           attribution={activeTile.attribution}
           url={activeTile.url}
           maxZoom={19}
@@ -163,9 +124,9 @@ export function PropertyMap({
           radius={radiusInMeters}
           pathOptions={{
             fillColor: '#6366f1',
-            fillOpacity: isDark && mapType === 'streets' ? 0.1 : 0.06,
-            color: '#6366f1',
-            weight: 1.5,
+            fillOpacity: 0.08,
+            color: '#818cf8',
+            weight: 1.75,
             dashArray: '4, 4',
           }}
         />

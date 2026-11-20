@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, Layers, Globe, LocateFixed, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
+import { Layers, Globe, LocateFixed, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
 
 export function MapControls({
   mapType,
@@ -14,26 +14,13 @@ export function MapControls({
       <div className="flex items-center gap-1 border-r border-slate-200 dark:border-slate-800 pr-1">
         <button
           type="button"
-          onClick={() => onToggleMapType('streets')}
-          className={`flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
-            mapType === 'streets'
-              ? 'bg-indigo-600 text-white shadow'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-          title="Street Map View"
-        >
-          <Map className="w-3.5 h-3.5" />
-          <span>Map</span>
-        </button>
-        <button
-          type="button"
           onClick={() => onToggleMapType('hybrid')}
           className={`flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
             mapType === 'hybrid'
               ? 'bg-indigo-600 text-white shadow'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
-          title="Google Hybrid View (Satellite + Labels)"
+          title="Google Hybrid View (Satellite + Roads & Labels)"
         >
           <Globe className="w-3.5 h-3.5" />
           <span>Hybrid</span>
@@ -49,7 +36,7 @@ export function MapControls({
           title="Satellite View (Esri World)"
         >
           <Layers className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Satellite</span>
+          <span>Satellite</span>
         </button>
       </div>
 
