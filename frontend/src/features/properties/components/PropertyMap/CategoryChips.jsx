@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MACRO_GROUPS = [
   { key: 'all', label: 'All', icon: '📍', categories: ['all'] },
@@ -23,6 +23,19 @@ const INDIVIDUAL_CATEGORIES = [
 
 export function CategoryChips({ activeCategory, counts = {}, onSelectCategory }) {
   const [activeGroup, setActiveGroup] = useState('all');
+
+  // Keep macro group tab synchronized when activeCategory is selected externally (e.g. NearbySummary card)
+  useEffect(() => {
+    if (activeCategory === 'all') {
+      setActiveGroup('all');
+      return;
+    }
+    const currentGroupObj = MACRO_GROUPS.find((g) => g.key === activeGroup);
+    if (activeGroup !== 'all' && currentGroupObj && !currentGroupObj.categories.includes(activeCategory)) {
+      const matchingGroup = MACRO_GROUPS.find((g) => g.key !== 'all' && g.categories.includes(activeCategory));
+      setActiveGroup(matchingGroup ? matchingGroup.key : 'all');
+    }
+  }, [activeCategory, activeGroup]);
 
   const handleGroupSelect = (group) => {
     setActiveGroup(group.key);

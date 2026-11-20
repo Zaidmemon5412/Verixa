@@ -157,39 +157,6 @@ export const PROJECTS = [
   },
 ];
 
-
-export const NEARBY_PLACES = {
-  schools: [
-    { name: "Delhi Public School", dist: "0.4 km", rating: 4.8, type: "CBSE" },
-    { name: "Navrachana International", dist: "0.9 km", rating: 4.6, type: "IB" },
-    { name: "Udgam School", dist: "1.2 km", rating: 4.5, type: "CBSE" },
-    { name: "St. Xavier's High School", dist: "1.8 km", rating: 4.4, type: "ICSE" },
-  ],
-  hospitals: [
-    { name: "CIMS Hospital", dist: "0.6 km", rating: 4.7, type: "Multi Specialty" },
-    { name: "Apollo Hospitals", dist: "1.1 km", rating: 4.6, type: "Super Specialty" },
-    { name: "Sterling Hospital", dist: "1.5 km", rating: 4.3, type: "Multi Specialty" },
-  ],
-  metro: [
-    { name: "GNFC Township Metro", dist: "0.8 km", rating: 4.5, type: "Blue Line" },
-    { name: "Shela BRTS", dist: "0.3 km", rating: 4.0, type: "BRTS" },
-  ],
-  shopping: [
-    { name: "Ahmedabad One Mall", dist: "0.5 km", rating: 4.4, type: "Premium Mall" },
-    { name: "Alpha One Mall", dist: "1.4 km", rating: 4.2, type: "Mall" },
-    { name: "Acropolis Mall", dist: "2.1 km", rating: 4.1, type: "Mall" },
-  ],
-  parks: [
-    { name: "Vastrapur Lake", dist: "1.2 km", rating: 4.6, type: "Lake & Park" },
-    { name: "Sindhu Bhavan Garden", dist: "0.7 km", rating: 4.2, type: "Garden" },
-  ],
-  restaurants: [
-    { name: "Honest Restaurant", dist: "0.3 km", rating: 4.5, type: "Gujarati" },
-    { name: "Agashiye Terrace", dist: "0.7 km", rating: 4.7, type: "Fine Dining" },
-    { name: "Rajwadu Village", dist: "1.5 km", rating: 4.4, type: "Theme Restaurant" },
-  ],
-};
-
 export const PRICE_HISTORY_DATA = [
   { month: "Jan 24", price: 5800 },
   { month: "Mar 24", price: 6100 },

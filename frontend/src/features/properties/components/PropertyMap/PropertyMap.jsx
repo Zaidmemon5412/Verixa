@@ -5,40 +5,23 @@ import NearbyMarkers from './NearbyMarkers';
 import { resolveAhmedabadCoordinates } from '../../services/nearbyService';
 
 /**
- * Multi-provider spatial tile configuration with automatic keyless failover.
- * Works out-of-the-box with zero API key errors, while optionally supporting
- * VITE_MAP_API_KEY (MapTiler / LocationIQ) when a valid key is provided.
+ * Clean, 100% keyless multi-provider tile stack with automatic failover on tileerror.
+ * Street view automatically matches Light (CartoDB Voyager) and Dark (CartoDB Dark Matter) themes.
  */
-function getTileProviders() {
-  const rawKey = (
-    import.meta.env.VITE_MAP_API_KEY ||
-    import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
-    ''
-  ).trim();
-
-  // Only treat a key as a MapTiler key if explicitly configured and non-placeholder
-  const hasMapTilerKey =
-    rawKey.length >= 16 &&
-    !rawKey.startsWith('AIza') &&
-    !rawKey.startsWith('AQ.') &&
-    !rawKey.toLowerCase().includes('your_') &&
-    import.meta.env.VITE_MAP_PROVIDER === 'maptiler';
-
+function getTileProviders(isDark) {
   return {
     streets: [
-      ...(hasMapTilerKey
-        ? [
-            {
-              url: `https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${rawKey}`,
-              attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
-            },
-          ]
-        : []),
-      {
-        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      },
+      isDark
+        ? {
+            url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          }
+        : {
+            url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          },
       {
         url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
         attribution: 'Map data &copy; Google Maps',
@@ -72,16 +55,13 @@ function getTileProviders() {
   };
 }
 
-/**
- * Controller component to handle map re-centering, selected-marker flyTo, and container resize
- */
 function MapViewController({ center, zoom, selectedPlace, isFullscreen }) {
   const map = useMap();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       map.invalidateSize();
-    }, 120);
+    }, 150);
     return () => clearTimeout(timer);
   }, [map, isFullscreen]);
 
@@ -115,10 +95,24 @@ export function PropertyMap({
   isFullscreen = false,
 }) {
   const [fallbackIdx, setFallbackIdx] = useState(0);
+  const [isDark, setIsDark] = useState(() =>
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  );
+
+  // Sync map tiles live when user toggles Dark / Light mode
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return;
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      setIsDark(root.classList.contains('dark'));
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setFallbackIdx(0);
-  }, [mapType]);
+  }, [mapType, isDark]);
 
   const resolvedCoords = useMemo(
     () =>
@@ -136,7 +130,7 @@ export function PropertyMap({
     [resolvedCoords.latitude, resolvedCoords.longitude]
   );
 
-  const providersByMode = useMemo(() => getTileProviders(), []);
+  const providersByMode = useMemo(() => getTileProviders(isDark), [isDark]);
   const modeProviders = providersByMode[mapType] || providersByMode.streets;
   const activeTile = modeProviders[Math.min(fallbackIdx, modeProviders.length - 1)];
 
@@ -152,7 +146,7 @@ export function PropertyMap({
         className="w-full h-full z-0 rounded-2xl"
       >
         <TileLayer
-          key={`${mapType}-${fallbackIdx}-${activeTile.url}`}
+          key={`${mapType}-${isDark ? 'dark' : 'light'}-${fallbackIdx}-${activeTile.url}`}
           attribution={activeTile.attribution}
           url={activeTile.url}
           maxZoom={19}
@@ -169,8 +163,8 @@ export function PropertyMap({
           radius={radiusInMeters}
           pathOptions={{
             fillColor: '#6366f1',
-            fillOpacity: 0.06,
-            color: '#4f46e5',
+            fillOpacity: isDark && mapType === 'streets' ? 0.1 : 0.06,
+            color: '#6366f1',
             weight: 1.5,
             dashArray: '4, 4',
           }}

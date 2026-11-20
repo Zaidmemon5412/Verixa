@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Building2, MapPin, ShieldCheck, ExternalLink, Navigation } from 'lucide-react';
@@ -77,7 +77,10 @@ export function NearbyMarkers({
   nearbyPlaces = [],
   activeCategory = 'all',
   selectedPlace = null,
+  onSelectPlace,
 }) {
+  const markerRefs = useRef({});
+
   const propertyCenter = useMemo(
     () => [
       parseFloat(property?.latitude) || 23.0276,
@@ -85,6 +88,18 @@ export function NearbyMarkers({
     ],
     [property?.latitude, property?.longitude]
   );
+
+  // Automatically open marker popup when a user selects a place from the directory list
+  useEffect(() => {
+    if (!selectedPlace?.id) return;
+    const marker = markerRefs.current[String(selectedPlace.id)];
+    if (marker && typeof marker.openPopup === 'function') {
+      const timer = setTimeout(() => {
+        marker.openPopup();
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPlace]);
 
   const propertyIcon = useMemo(() => createPropertyIcon(), []);
   const isAnyCategoryActive = activeCategory !== 'all';
@@ -96,32 +111,32 @@ export function NearbyMarkers({
       <Marker position={propertyCenter} icon={propertyIcon} zIndexOffset={1000}>
         <Popup className="verixa-custom-popup">
           <div className="p-3.5 max-w-[240px] font-sans space-y-2">
-            <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
               <Building2 className="w-3.5 h-3.5" />
               <span>Subject Property</span>
             </div>
-            <h4 className="font-extrabold text-slate-900 text-sm leading-tight">
+            <h4 className="font-extrabold text-slate-900 dark:text-slate-100 text-sm leading-tight">
               {property?.name || 'Property Location'}
             </h4>
-            <div className="flex items-center justify-between text-xs border-t pt-2 mt-1">
-              <span className="font-extrabold text-indigo-600 text-sm">
+            <div className="flex items-center justify-between text-xs border-t border-slate-200 dark:border-slate-700/70 pt-2 mt-1">
+              <span className="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm">
                 {property?.price || 'Price on Request'}
               </span>
-              <span className="text-slate-500 font-medium">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">
                 {property?.locality || 'Ahmedabad'}
               </span>
             </div>
             {property?.address && (
-              <p className="text-[11px] text-slate-600 flex items-start gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200/60 mt-1">
-                <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-slate-600 dark:text-slate-300 flex items-start gap-1 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 mt-1">
+                <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
                 <span className="leading-tight">{property.address}</span>
               </p>
             )}
             {property?.builder && (
-              <div className="text-[11px] text-slate-600 flex items-center gap-1 bg-slate-100 p-1.5 rounded-lg border border-slate-200/60 mt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <div className="text-[11px] text-slate-600 dark:text-slate-300 flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 mt-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>
-                  Developer: <strong className="text-slate-900">{property.builder}</strong>
+                  Developer: <strong className="text-slate-900 dark:text-slate-100">{property.builder}</strong>
                 </span>
               </div>
             )}
@@ -143,7 +158,8 @@ export function NearbyMarkers({
         const placePos = [parseFloat(place.latitude), parseFloat(place.longitude)];
         if (isNaN(placePos[0]) || isNaN(placePos[1])) return null;
 
-        const isSelected = selectedPlace && String(selectedPlace.id) === String(place.id);
+        const placeKey = String(place.id);
+        const isSelected = selectedPlace && String(selectedPlace.id) === placeKey;
         const isHighlighted =
           isSelected || (activeCategory !== 'all' && place.category === activeCategory);
         const icon = createNearbyIcon(
@@ -155,22 +171,36 @@ export function NearbyMarkers({
 
         return (
           <Marker
-            key={place.id}
+            key={placeKey}
+            ref={(el) => {
+              if (el) {
+                markerRefs.current[placeKey] = el;
+              } else {
+                delete markerRefs.current[placeKey];
+              }
+            }}
             position={placePos}
             icon={icon}
             zIndexOffset={isSelected ? 950 : isHighlighted ? 800 : 100}
+            eventHandlers={{
+              click: () => {
+                if (onSelectPlace) onSelectPlace(place);
+              },
+            }}
           >
             <Popup className="verixa-custom-popup">
               <div className="p-2.5 max-w-[220px] font-sans space-y-1.5">
-                <div className="flex items-center justify-between gap-1 text-[11px] font-semibold text-slate-500">
+                <div className="flex items-center justify-between gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   <span className="capitalize">{place.categoryLabel || place.category}</span>
-                  <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md font-extrabold">
+                  <span className="bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md font-extrabold">
                     {place.distanceFormatted}
                   </span>
                 </div>
-                <h5 className="font-bold text-slate-900 text-xs leading-snug">{place.name}</h5>
+                <h5 className="font-bold text-slate-900 dark:text-slate-100 text-xs leading-snug">
+                  {place.name}
+                </h5>
                 {place.address && (
-                  <p className="text-[11px] text-slate-600 flex items-start gap-1">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 flex items-start gap-1">
                     <MapPin className="w-3 h-3 text-slate-400 shrink-0 mt-0.5" />
                     <span>{place.address}</span>
                   </p>
@@ -179,7 +209,7 @@ export function NearbyMarkers({
                   href={directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="pt-1 inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:underline"
+                  className="pt-1 inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
                 >
                   <Navigation className="w-3 h-3" />
                   <span>Directions from Property</span>
