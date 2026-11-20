@@ -1,6 +1,7 @@
 import apiClient from '../../../shared/services/apiClient';
 import { createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
 import { PROJECTS } from '../constants/propertyData';
+import { resolveAhmedabadCoordinates } from './nearbyService';
 
 const MEMORY_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const FILTER_OPTIONS_TTL_MS = 10 * 60 * 1000; // 10 minutes
@@ -162,6 +163,14 @@ export function mapApiPropertyToUi(item, { isFullDetail = false } = {}) {
   const statusStr = item.project_status || item.status || 'Ready to Move';
 
   const resolvedId = item.project_id || item.property_id || item.id;
+  const rawLat = item.latitude != null ? item.latitude : item.locality_detail?.latitude;
+  const rawLng = item.longitude != null ? item.longitude : item.locality_detail?.longitude;
+  const resolvedCoords = resolveAhmedabadCoordinates(
+    rawLat,
+    rawLng,
+    `${cleanArea} ${resolvedAddress} ${propName}`,
+    resolvedId
+  );
 
   return {
     id: resolvedId,
@@ -184,8 +193,8 @@ export function mapApiPropertyToUi(item, { isFullDetail = false } = {}) {
     state: item.locality_detail?.state || 'Gujarat',
     localityDetail: item.locality_detail || null,
     address: resolvedAddress,
-    latitude: item.latitude != null ? parseFloat(item.latitude) : (item.locality_detail?.latitude != null ? parseFloat(item.locality_detail.latitude) : null),
-    longitude: item.longitude != null ? parseFloat(item.longitude) : (item.locality_detail?.longitude != null ? parseFloat(item.locality_detail.longitude) : null),
+    latitude: resolvedCoords.latitude,
+    longitude: resolvedCoords.longitude,
 
     image: finalPrimaryImage,
     images: finalGalleryImages,

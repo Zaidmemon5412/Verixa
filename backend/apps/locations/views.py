@@ -471,12 +471,22 @@ class GlobalNearbyPlacesAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
+        from django.core.cache import cache
+
         locality_param = request.query_params.get('locality')
         category = request.query_params.get('category')
         radius = request.query_params.get('radius')
         limit = request.query_params.get('limit')
         lat = request.query_params.get('lat')
         lon = request.query_params.get('lon')
+
+        cache_key = f"verixa_global_nearby_v2_{locality_param}_{category}_{radius}_{limit}_{lat}_{lon}"
+        cached_payload = cache.get(cache_key)
+        if cached_payload is not None:
+            resp = Response(cached_payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'HIT'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
 
         try:
             nearby_places_list = get_global_nearby_places_with_distances(
@@ -488,12 +498,17 @@ class GlobalNearbyPlacesAPIView(APIView):
                 limit=limit
             )
 
-            return Response({
+            payload = {
                 "success": True,
                 "message": "Nearby places retrieved successfully.",
                 "total_count": len(nearby_places_list),
                 "nearby_places": nearby_places_list
-            }, status=status.HTTP_200_OK)
+            }
+            cache.set(cache_key, payload, timeout=600)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
         except Exception as e:
             logger.exception("Error querying global nearby places")
             return Response({

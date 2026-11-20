@@ -6,13 +6,21 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODELS = ["gemini-3.8-flash", "gemini-flash-latest", "gemini-2.5-flash-lite"]
+GEMINI_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b"]
+
+
+def _is_valid_gemini_api_key(api_key: str) -> bool:
+    if not api_key or not isinstance(api_key, str):
+        return False
+    cleaned = api_key.strip()
+    # Standard Google AI Studio Gemini API keys start with 'AIza' and are ~39 chars
+    return cleaned.startswith("AIza") and len(cleaned) >= 30
 
 
 def generate_ai_property_advisory(context: dict) -> dict:
     """
     Generates an executive, actionable AI Property Advisory for real estate buyers.
-    Integrates with Google Gemini if GEMINI_API_KEY is configured.
+    Integrates with Google Gemini if a valid GEMINI_API_KEY is configured.
     Falls back to high-fidelity contextual synthesis if offline or unconfigured.
     """
     api_key = os.environ.get('GEMINI_API_KEY', '')
@@ -23,9 +31,9 @@ def generate_ai_property_advisory(context: dict) -> dict:
         except Exception:
             api_key = ''
 
-    if api_key:
+    if _is_valid_gemini_api_key(api_key):
         try:
-            return _call_gemini_api(context, api_key)
+            return _call_gemini_api(context, api_key.strip())
         except Exception as e:
             logger.warning(f"[AI Advisor] Gemini API call failed ({e}), using fallback synthesis.")
 

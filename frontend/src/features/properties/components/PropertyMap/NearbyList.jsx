@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../../shared/components/ui/card';
 import { Input } from '../../../../shared/components/ui/input';
-import { MapPin, Search, Navigation, Building } from 'lucide-react';
+import { MapPin, Search, Navigation, Building, ExternalLink } from 'lucide-react';
 import { CATEGORY_CONFIG } from '../../services/nearbyService';
 
-export function NearbyList({ nearbyPlaces = [], activeCategory = 'all' }) {
+export function NearbyList({
+  nearbyPlaces = [],
+  activeCategory = 'all',
+  propertyCoords = null,
+  selectedPlace = null,
+  onSelectPlace,
+}) {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Filter & sort nearest first
   const sortedPlaces = [...nearbyPlaces]
-    .filter(place => {
+    .filter((place) => {
       if (activeCategory !== 'all' && place.category !== activeCategory) {
         return false;
       }
@@ -65,11 +71,19 @@ export function NearbyList({ nearbyPlaces = [], activeCategory = 'all' }) {
           <div className="divide-y divide-border max-h-[400px] overflow-y-auto scrollbar-thin">
             {sortedPlaces.map((place) => {
               const catConfig = CATEGORY_CONFIG[place.category] || { icon: '📍', label: 'Place' };
+              const isSelected = selectedPlace && String(selectedPlace.id) === String(place.id);
+              const directionsUrl =
+                propertyCoords && place.latitude && place.longitude
+                  ? `https://www.google.com/maps/dir/?api=1&origin=${propertyCoords.latitude},${propertyCoords.longitude}&destination=${place.latitude},${place.longitude}`
+                  : null;
 
               return (
                 <div
                   key={place.id}
-                  className="p-3.5 hover:bg-muted/40 transition-colors flex items-center justify-between gap-4 group"
+                  onClick={() => onSelectPlace && onSelectPlace(place)}
+                  className={`p-3.5 hover:bg-muted/40 transition-colors flex items-center justify-between gap-4 group cursor-pointer ${
+                    isSelected ? 'bg-indigo-500/10 border-l-4 border-l-indigo-600' : ''
+                  }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-9 h-9 rounded-xl bg-muted/60 dark:bg-slate-800 border flex items-center justify-center text-base shrink-0 group-hover:scale-105 transition-transform">
@@ -92,7 +106,19 @@ export function NearbyList({ nearbyPlaces = [], activeCategory = 'all' }) {
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
+                    {directionsUrl && (
+                      <a
+                        href={directionsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        title="Get Google Maps Directions"
+                        className="p-1.5 rounded-lg text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 transition"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
                     <span className="inline-block bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-extrabold px-2.5 py-1 rounded-xl shadow-xs">
                       {place.distanceFormatted}
                     </span>

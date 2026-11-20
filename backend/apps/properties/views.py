@@ -907,41 +907,134 @@ class PropertyViewSet(viewsets.ViewSet):
     def nearby(self, request, pk=None, *args, **kwargs):
         """
         GET /api/properties/<property_id>/nearby/
-        Returns nearby places around the property ordered by distance.
-        Supports query parameters: category, radius, limit.
+        Returns nearby places around the property or builder project ordered by distance.
+        Supports query parameters: category, radius, limit, lat, lon, locality.
         """
-        try:
-            property_obj = get_property(pk)
-        except (Property.DoesNotExist, DjangoValidationError, ValueError):
-            return Response({
-                "success": False,
-                "message": "Property not found.",
-                "data": {}
-            }, status=status.HTTP_404_NOT_FOUND)
+        from django.core.cache import cache
+        # pyrefly: ignore [missing-import]
+        from apps.locations.services import (
+            get_property_nearby_places_with_distances,
+            get_global_nearby_places_with_distances,
+            resolve_ahmedabad_coordinates,
+        )
 
         qp = _get_query_params(request)
         category = qp.get('category')
         radius = qp.get('radius')
         limit = qp.get('limit')
+        param_lat = qp.get('lat')
+        param_lon = qp.get('lon')
+        param_locality = qp.get('locality')
 
-        # pyrefly: ignore [missing-import]
-        from apps.locations.services import get_property_nearby_places_with_distances
-        nearby_places_list = get_property_nearby_places_with_distances(
-            property_obj=property_obj,
-            category=category,
-            radius=radius,
-            limit=limit
-        )
+        raw_pk = str(pk or '').strip()
+        clean_pk = raw_pk.split('--')[-1] if '--' in raw_pk else raw_pk
+
+        cache_key = f"verixa_prop_nearby_v2_{clean_pk}_{category}_{radius}_{limit}_{param_lat}_{param_lon}_{param_locality}"
+        cached_payload = cache.get(cache_key)
+        if cached_payload is not None:
+            resp = Response(cached_payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'HIT'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
+
+        property_obj = None
+        try:
+            property_obj = get_property(clean_pk)
+        except (Property.DoesNotExist, DjangoValidationError, ValueError):
+            property_obj = None
+
+        if property_obj is not None:
+            nearby_places_list = get_property_nearby_places_with_distances(
+                property_obj=property_obj,
+                category=category,
+                radius=radius,
+                limit=limit,
+            )
+            payload = {
+                "success": True,
+                "message": "Property nearby places retrieved successfully.",
+                "property_id": str(property_obj.property_id),
+                "property_name": property_obj.property_name,
+                "locality": property_obj.locality.name if property_obj.locality else None,
+                "total_count": len(nearby_places_list),
+                "nearby_places": nearby_places_list,
+            }
+            cache.set(cache_key, payload, timeout=600)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
+
+        # Fallback 1: Check BuilderProject by UUID
+        try:
+            from apps.builders.models import BuilderProject
+            bp = BuilderProject.objects.filter(project_id=clean_pk).first()
+        except Exception:
+            bp = None
+
+        if bp is not None:
+            bp_lat, bp_lon = resolve_ahmedabad_coordinates(
+                bp.latitude or param_lat,
+                bp.longitude or param_lon,
+                f"{bp.locality or ''} {bp.location or ''} {bp.project_name or ''}",
+                str(bp.project_id),
+            )
+            nearby_places_list = get_global_nearby_places_with_distances(
+                locality_filter=bp.locality or param_locality,
+                origin_lat=bp_lat,
+                origin_lon=bp_lon,
+                category=category,
+                radius=radius,
+                limit=limit,
+            )
+            payload = {
+                "success": True,
+                "message": "Project nearby places retrieved successfully.",
+                "property_id": str(bp.project_id),
+                "property_name": bp.project_name,
+                "locality": bp.locality,
+                "total_count": len(nearby_places_list),
+                "nearby_places": nearby_places_list,
+            }
+            cache.set(cache_key, payload, timeout=600)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
+
+        # Fallback 2: If lat/lon or locality query params are provided (e.g. static demo cards)
+        if param_lat is not None or param_lon is not None or param_locality:
+            res_lat, res_lon = resolve_ahmedabad_coordinates(
+                param_lat, param_lon, str(param_locality or raw_pk), clean_pk
+            )
+            nearby_places_list = get_global_nearby_places_with_distances(
+                locality_filter=param_locality,
+                origin_lat=res_lat,
+                origin_lon=res_lon,
+                category=category,
+                radius=radius,
+                limit=limit,
+            )
+            payload = {
+                "success": True,
+                "message": "Coordinate nearby places retrieved successfully.",
+                "property_id": clean_pk,
+                "property_name": param_locality or "Ahmedabad Property",
+                "locality": param_locality or "Ahmedabad",
+                "total_count": len(nearby_places_list),
+                "nearby_places": nearby_places_list,
+            }
+            cache.set(cache_key, payload, timeout=600)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            resp['X-Cache-Status'] = 'MISS'
+            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
+            return resp
 
         return Response({
-            "success": True,
-            "message": "Property nearby places retrieved successfully.",
-            "property_id": str(property_obj.property_id),
-            "property_name": property_obj.property_name,
-            "locality": property_obj.locality.name if property_obj.locality else None,
-            "total_count": len(nearby_places_list),
-            "nearby_places": nearby_places_list
-        }, status=status.HTTP_200_OK)
+            "success": False,
+            "message": "Property not found.",
+            "data": {}
+        }, status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         serializer = PropertyCreateSerializer(data=request.data)

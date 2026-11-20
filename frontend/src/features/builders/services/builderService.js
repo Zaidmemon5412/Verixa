@@ -1,6 +1,7 @@
 import apiClient from '../../../shared/services/apiClient';
 import { getBuilderBrandInfo } from '../utils/builderLogos';
 import { createBuilderSlug, createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
+import { resolveAhmedabadCoordinates } from '../../properties/services/nearbyService';
 
 /**
  * Format raw price string or float into Indian Currency format (e.g. ₹45.0 L, ₹2.50 Cr)
@@ -90,6 +91,12 @@ export function mapApiBuilderProjectToUi(item) {
     city: item.city || 'Ahmedabad',
     state: item.state || 'Gujarat',
     location: item.location || `${item.locality || 'Ahmedabad'}, ${item.city || 'Gujarat'}`,
+    ...resolveAhmedabadCoordinates(
+      item.latitude,
+      item.longitude,
+      `${item.locality || ''} ${item.location || ''} ${resolvedName}`,
+      resolvedId
+    ),
     image: finalPrimaryImage,
     images: finalGallery,
     aiScore: aiScore,

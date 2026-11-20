@@ -256,5 +256,11 @@ CLOUDINARY_API_SECRET = env.str('CLOUDINARY_API_SECRET', default='')
 # Google Gemini LLM API Configuration
 GEMINI_API_KEY = env.str('GEMINI_API_KEY', default='')
 
+# Spatial & Map Engine Configuration (Works keyless by default; optional provider keys supported)
+MAP_PROVIDER = env.str('MAP_PROVIDER', default='keyless_multi')
+MAP_API_KEY = env.str('MAP_API_KEY', default=env.str('GOOGLE_MAPS_API_KEY', default=''))
+MAP_DEFAULT_LAT = env.float('VITE_MAP_DEFAULT_LAT', default=23.0225)
+MAP_DEFAULT_LNG = env.float('VITE_MAP_DEFAULT_LNG', default=72.5714)
+
 
 

@@ -1,72 +1,166 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Circle, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import NearbyMarkers from './NearbyMarkers';
-
-const TILE_SERVERS = {
-  streets: {
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  },
-  satellite: {
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-  }
-};
+import { resolveAhmedabadCoordinates } from '../../services/nearbyService';
 
 /**
- * Controller component to handle map re-centering dynamically when property coords change
+ * Multi-provider spatial tile configuration with automatic keyless failover.
+ * Works out-of-the-box with zero API key errors, while optionally supporting
+ * VITE_MAP_API_KEY (MapTiler / LocationIQ) when a valid key is provided.
  */
-function MapViewController({ center, zoom }) {
+function getTileProviders() {
+  const rawKey = (
+    import.meta.env.VITE_MAP_API_KEY ||
+    import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
+    ''
+  ).trim();
+
+  // Only treat a key as a MapTiler key if explicitly configured and non-placeholder
+  const hasMapTilerKey =
+    rawKey.length >= 16 &&
+    !rawKey.startsWith('AIza') &&
+    !rawKey.startsWith('AQ.') &&
+    !rawKey.toLowerCase().includes('your_') &&
+    import.meta.env.VITE_MAP_PROVIDER === 'maptiler';
+
+  return {
+    streets: [
+      ...(hasMapTilerKey
+        ? [
+            {
+              url: `https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${rawKey}`,
+              attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+            },
+          ]
+        : []),
+      {
+        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      },
+      {
+        url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+        attribution: 'Map data &copy; Google Maps',
+      },
+      {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        attribution: '&copy; OpenStreetMap contributors',
+      },
+    ],
+    hybrid: [
+      {
+        url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        attribution: 'Imagery & Roads &copy; Google Maps',
+      },
+      {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attribution: 'Tiles &copy; Esri World Imagery',
+      },
+    ],
+    satellite: [
+      {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attribution:
+          'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+      },
+      {
+        url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attribution: 'Satellite Imagery &copy; Google',
+      },
+    ],
+  };
+}
+
+/**
+ * Controller component to handle map re-centering, selected-marker flyTo, and container resize
+ */
+function MapViewController({ center, zoom, selectedPlace, isFullscreen }) {
   const map = useMap();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [map, isFullscreen]);
+
   useEffect(() => {
     if (center && center[0] && center[1]) {
       map.setView(center, zoom, { animate: true });
     }
   }, [center, zoom, map]);
 
+  useEffect(() => {
+    if (selectedPlace && selectedPlace.latitude && selectedPlace.longitude) {
+      const lat = parseFloat(selectedPlace.latitude);
+      const lng = parseFloat(selectedPlace.longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        map.flyTo([lat, lng], 16, { duration: 0.7 });
+      }
+    }
+  }, [selectedPlace, map]);
+
   return null;
 }
 
-export function PropertyMap({ property, nearbyPlaces = [], radiusKm = 2, mapType = 'streets', activeCategory = 'all' }) {
-  const hasValidCoords = property?.latitude != null && property?.longitude != null && !isNaN(parseFloat(property.latitude)) && !isNaN(parseFloat(property.longitude));
+export function PropertyMap({
+  property,
+  nearbyPlaces = [],
+  radiusKm = 2,
+  mapType = 'streets',
+  activeCategory = 'all',
+  selectedPlace = null,
+  onSelectPlace,
+  isFullscreen = false,
+}) {
+  const [fallbackIdx, setFallbackIdx] = useState(0);
 
-  const center = useMemo(() => [
-    hasValidCoords ? parseFloat(property.latitude) : 23.0225,
-    hasValidCoords ? parseFloat(property.longitude) : 72.5714
-  ], [property?.latitude, property?.longitude, hasValidCoords]);
+  useEffect(() => {
+    setFallbackIdx(0);
+  }, [mapType]);
 
-  if (!hasValidCoords) {
-    return (
-      <div className="w-full h-full min-h-[300px] rounded-2xl bg-muted/40 border border-dashed border-border flex flex-col items-center justify-center p-6 text-center space-y-2">
-        <div className="p-3 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-          <span className="font-extrabold text-sm">Location Unavailable</span>
-        </div>
-        <p className="text-xs text-muted-foreground max-w-xs">
-          GPS latitude/longitude coordinates are not specified in database for property "{property?.name || 'Selected Property'}".
-        </p>
-      </div>
-    );
-  }
+  const resolvedCoords = useMemo(
+    () =>
+      resolveAhmedabadCoordinates(
+        property?.latitude,
+        property?.longitude,
+        `${property?.locality || ''} ${property?.location || ''} ${property?.address || ''} ${property?.name || ''}`,
+        property?.id
+      ),
+    [property?.latitude, property?.longitude, property?.locality, property?.location, property?.address, property?.name, property?.id]
+  );
 
+  const center = useMemo(
+    () => [resolvedCoords.latitude, resolvedCoords.longitude],
+    [resolvedCoords.latitude, resolvedCoords.longitude]
+  );
+
+  const providersByMode = useMemo(() => getTileProviders(), []);
+  const modeProviders = providersByMode[mapType] || providersByMode.streets;
+  const activeTile = modeProviders[Math.min(fallbackIdx, modeProviders.length - 1)];
 
   const radiusInMeters = radiusKm * 1000;
-  const currentTile = TILE_SERVERS[mapType] || TILE_SERVERS.streets;
-  const mapKey = `map-${property?.id || 'prop'}-${center[0]}-${center[1]}-${mapType}`;
+  const defaultZoom = radiusKm <= 0.5 ? 16 : radiusKm <= 1 ? 15 : radiusKm <= 2 ? 14 : 13;
 
   return (
     <div className="w-full h-full relative">
       <MapContainer
-        key={mapKey}
         center={center}
-        zoom={14}
+        zoom={defaultZoom}
         scrollWheelZoom={false}
         className="w-full h-full z-0 rounded-2xl"
       >
         <TileLayer
-          attribution={currentTile.attribution}
-          url={currentTile.url}
+          key={`${mapType}-${fallbackIdx}-${activeTile.url}`}
+          attribution={activeTile.attribution}
+          url={activeTile.url}
           maxZoom={19}
+          eventHandlers={{
+            tileerror: () => {
+              setFallbackIdx((prev) => (prev + 1 < modeProviders.length ? prev + 1 : prev));
+            },
+          }}
         />
 
         {/* Subtle Dynamic Radius Circle Overlay */}
@@ -75,21 +169,32 @@ export function PropertyMap({ property, nearbyPlaces = [], radiusKm = 2, mapType
           radius={radiusInMeters}
           pathOptions={{
             fillColor: '#6366f1',
-            fillOpacity: 0.05,
+            fillOpacity: 0.06,
             color: '#4f46e5',
             weight: 1.5,
-            dashArray: '4, 4'
+            dashArray: '4, 4',
           }}
         />
 
         {/* Property & Nearby Markers */}
-        <NearbyMarkers 
-          property={property} 
-          nearbyPlaces={nearbyPlaces} 
-          activeCategory={activeCategory} 
+        <NearbyMarkers
+          property={{
+            ...property,
+            latitude: resolvedCoords.latitude,
+            longitude: resolvedCoords.longitude,
+          }}
+          nearbyPlaces={nearbyPlaces}
+          activeCategory={activeCategory}
+          selectedPlace={selectedPlace}
+          onSelectPlace={onSelectPlace}
         />
 
-        <MapViewController center={center} zoom={14} />
+        <MapViewController
+          center={center}
+          zoom={defaultZoom}
+          selectedPlace={selectedPlace}
+          isFullscreen={isFullscreen}
+        />
       </MapContainer>
     </div>
   );

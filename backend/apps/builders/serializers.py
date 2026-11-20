@@ -287,6 +287,8 @@ class BuilderProjectSerializer(serializers.ModelSerializer):
     builder_name = serializers.CharField(source='builder.builder_name', read_only=True)
     company_name = serializers.CharField(source='builder.company_name', read_only=True)
     images = BuilderProjectImageSerializer(many=True, read_only=True)
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
 
     class Meta:
         model = BuilderProject
@@ -326,6 +328,26 @@ class BuilderProjectSerializer(serializers.ModelSerializer):
             'updated_at',
         ]
         read_only_fields = fields
+
+    def get_latitude(self, obj) -> float:
+        from apps.locations.services import resolve_ahmedabad_coordinates
+        lat, _ = resolve_ahmedabad_coordinates(
+            obj.latitude,
+            obj.longitude,
+            f"{obj.locality or ''} {obj.location or ''} {obj.project_name or ''}",
+            str(obj.project_id),
+        )
+        return lat
+
+    def get_longitude(self, obj) -> float:
+        from apps.locations.services import resolve_ahmedabad_coordinates
+        _, lon = resolve_ahmedabad_coordinates(
+            obj.latitude,
+            obj.longitude,
+            f"{obj.locality or ''} {obj.location or ''} {obj.project_name or ''}",
+            str(obj.project_id),
+        )
+        return lon
 
 
 class BuilderProjectCreateUpdateSerializer(serializers.ModelSerializer):
