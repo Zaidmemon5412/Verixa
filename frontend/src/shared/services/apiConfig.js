@@ -58,15 +58,24 @@ export function shouldAttachAuthHeader(config) {
 }
 
 /**
- * Fallback to direct Render origin if Vercel Edge rewrite times out (502/504) during cold start.
+ * Fallback to direct Render origin if Vercel Edge rewrite fails (network error, 502/503/504,
+ * or Vercel's non-JSON NOT_FOUND 404). Preserves genuine Django JSON 404 responses.
  */
 export function shouldRetryDirectOrigin(error, useSameOriginProxy) {
   const originalRequest = error?.config;
-  const status = error?.response?.status;
-  return Boolean(
-    useSameOriginProxy &&
-      originalRequest &&
-      !originalRequest._retriedDirect &&
-      (status === 502 || status === 504)
-  );
+  if (!useSameOriginProxy || !originalRequest || originalRequest._retriedDirect) {
+    return false;
+  }
+  if (!error?.response) {
+    return true;
+  }
+  const status = error.response.status;
+  if (status === 502 || status === 503 || status === 504) {
+    return true;
+  }
+  if (status === 404) {
+    const data = error.response.data;
+    return typeof data !== 'object' || data === null;
+  }
+  return false;
 }

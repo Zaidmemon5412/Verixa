@@ -65,3 +65,27 @@ class RequestLogMiddleware:
         )
 
         return response
+
+
+class EdgeCacheVaryMiddleware:
+    """
+    Strips `Cookie` from the `Vary` header on responses marked as publicly CDN-cacheable
+    (`CDN-Cache-Control`) after Django's SessionMiddleware and CsrfViewMiddleware run on response exit.
+    Prevents Vercel Edge CDN `vary_key_denied` misses while keeping private/authenticated responses untouched.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.has_header('CDN-Cache-Control') and response.has_header('Vary'):
+            filtered_vary = [
+                part.strip()
+                for part in response['Vary'].split(',')
+                if part.strip() and part.strip().lower() != 'cookie'
+            ]
+            if filtered_vary:
+                response['Vary'] = ', '.join(filtered_vary)
+            else:
+                del response['Vary']
+        return response

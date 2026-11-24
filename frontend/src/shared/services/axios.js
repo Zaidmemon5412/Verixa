@@ -113,7 +113,10 @@ apiClient.interceptors.response.use(
           });
         } catch (refreshHttpErr) {
           const st = refreshHttpErr?.response?.status;
-          if (useSameOriginProxy && (st === 502 || st === 504)) {
+          const isNonJson404 =
+            st === 404 &&
+            (typeof refreshHttpErr?.response?.data !== 'object' || refreshHttpErr?.response?.data === null);
+          if (useSameOriginProxy && (!st || st === 502 || st === 503 || st === 504 || isNonJson404)) {
             response = await axios.post(`${FALLBACK_DIRECT_API_URL}${API_ENDPOINTS.TOKEN_REFRESH}`, {
               refresh: refreshToken,
             });

@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Put near top
     'django.middleware.gzip.GZipMiddleware',  # Compress JSON/HTML payloads (80%+ size reduction)
     'django.middleware.security.SecurityMiddleware',
+    'common.middleware.EdgeCacheVaryMiddleware',  # Strip Vary: Cookie on public CDN-cacheable responses after SessionMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

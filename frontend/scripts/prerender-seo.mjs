@@ -127,30 +127,40 @@ function buildWebsiteSchema() {
   ];
 }
 
-async function fetchJsonWithTimeout(url, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
+async function fetchJsonWithTimeout(url, timeoutMs = 15000, retries = 1) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      if (res.status < 500 || attempt >= retries) {
+        return null;
+      }
+    } catch {
+      if (attempt >= retries) {
+        return null;
+      }
+    } finally {
+      clearTimeout(timer);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
+  return null;
 }
 
 async function fetchLiveCatalog() {
   const [buildersPayload, propsPayload, filterOptionsPayload, featuredProjectsPayload] =
     await Promise.all([
-      fetchJsonWithTimeout(`${API_BASE_URL}/builders/`, 8000),
-      fetchJsonWithTimeout(`${API_BASE_URL}/properties/?page_size=500&compact=1`, 8000),
-      fetchJsonWithTimeout(`${API_BASE_URL}/properties/filter-options/`, 8000),
-      fetchJsonWithTimeout(`${API_BASE_URL}/builders/projects/?page_size=12`, 8000),
+      fetchJsonWithTimeout(`${API_BASE_URL}/builders/`, 18000, 1),
+      fetchJsonWithTimeout(`${API_BASE_URL}/properties/?page_size=500&compact=1`, 18000, 1),
+      fetchJsonWithTimeout(`${API_BASE_URL}/properties/filter-options/`, 18000, 1),
+      fetchJsonWithTimeout(`${API_BASE_URL}/builders/projects/?page_size=12`, 18000, 1),
     ]);
 
   const rawBuilders =

@@ -252,7 +252,11 @@ export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onTo
         pageSize: PAGE_SIZE,
       });
 
-      if (cached && Array.isArray(cached.results) && cached.results.length > 0) {
+      let hasRenderedData = Boolean(
+        cached && Array.isArray(cached.results) && cached.results.length > 0
+      );
+
+      if (hasRenderedData) {
         setProjects(cached.results);
         setTotalCount(cached.count);
         setCurrentPage(cached.currentPage || 1);
@@ -277,6 +281,7 @@ export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onTo
           });
           if (isCancelled) return;
           if (seedPage && seedPage.results.length > 0) {
+            hasRenderedData = true;
             setProjects(seedPage.results);
             setTotalCount(seedPage.count);
             setCurrentPage(1);
@@ -287,6 +292,7 @@ export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onTo
           }
           const fallbackList = propertyService.getFallbackProperties(activeFilters);
           if (fallbackList.length > 0) {
+            hasRenderedData = true;
             setProjects(fallbackList);
             setTotalCount(fallbackList.length);
             setCurrentPage(1);
@@ -306,6 +312,7 @@ export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onTo
         if (coldStartTimer) clearTimeout(coldStartTimer);
         if (isCancelled) return;
 
+        hasRenderedData = true;
         setProjects(pageData.results || []);
         setTotalCount(pageData.count || 0);
         setCurrentPage(pageData.currentPage || 1);
@@ -318,6 +325,25 @@ export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onTo
         if (coldStartTimer) clearTimeout(coldStartTimer);
         if (!isCancelled) {
           console.error('Failed to load property list:', err);
+          if (!hasRenderedData) {
+            const seedPage = await propertyService
+              .getSeedPropertiesPage(activeFilters, { page: 1, pageSize: PAGE_SIZE })
+              .catch(() => null);
+            if (!isCancelled && seedPage && seedPage.results.length > 0) {
+              setProjects(seedPage.results);
+              setTotalCount(seedPage.count);
+              setCurrentPage(1);
+              setHasMore(false);
+            } else if (!isCancelled) {
+              const fallbackList = propertyService.getFallbackProperties(activeFilters);
+              if (fallbackList.length > 0) {
+                setProjects(fallbackList);
+                setTotalCount(fallbackList.length);
+                setCurrentPage(1);
+                setHasMore(false);
+              }
+            }
+          }
           setIsSyncingLive(false);
           setLoading(false);
         }
