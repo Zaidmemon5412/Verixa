@@ -292,3 +292,8 @@ input:-webkit-autofill:active {
   color: #ffffff !important;
 }
 
+.cv-auto-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 410px;
+}
+

@@ -32,9 +32,28 @@ function ScrollToTop() {
  * Configures React Router, Global Error Boundary, Toast Notifications, and Theme Sync.
  */
 export default function App() {
-  // Wake backend and pre-warm Page 1 (24 compact properties) + filter options on first visit
+  // Defer initial catalog & filter warming to idle time so first paint stays unblocked
   useEffect(() => {
-    propertyService.prefetchInitialPage();
+    let idleId;
+    let timerId;
+    const warm = () => {
+      propertyService.prefetchInitialPage();
+    };
+
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(warm, { timeout: 600 });
+    } else {
+      timerId = setTimeout(warm, 120);
+    }
+
+    return () => {
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId !== undefined) {
+        clearTimeout(timerId);
+      }
+    };
   }, []);
 
   return (

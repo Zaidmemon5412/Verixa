@@ -419,6 +419,12 @@ post_save.connect(bump_properties_cache_version, sender=Property)
 post_delete.connect(bump_properties_cache_version, sender=Property)
 post_save.connect(bump_properties_cache_version, sender=PropertyImage)
 post_delete.connect(bump_properties_cache_version, sender=PropertyImage)
+post_save.connect(bump_properties_cache_version, sender=PropertyLegal)
+post_delete.connect(bump_properties_cache_version, sender=PropertyLegal)
+post_save.connect(bump_properties_cache_version, sender=PropertyListing)
+post_delete.connect(bump_properties_cache_version, sender=PropertyListing)
+post_save.connect(bump_properties_cache_version, sender=PropertyAmenity)
+post_delete.connect(bump_properties_cache_version, sender=PropertyAmenity)
 
 
 def create_property(validated_data: dict) -> Property:
@@ -443,14 +449,16 @@ def create_property(validated_data: dict) -> Property:
 
 def get_property(property_id: Union[uuid.UUID, str]) -> Property:
     """
-    Retrieves a Property by UUID, primary key, or slugified name.
+    Retrieves a Property by UUID, hybrid SEO slug, primary key, or exact name.
     """
     logger.info(f"Retrieving property with identifier: {property_id}")
-    qs = Property.objects.select_related('locality', 'builder').prefetch_related(
+    qs = Property.objects.select_related('locality', 'builder', 'score').prefetch_related(
         'images', 'property_amenities__amenity', 'listings', 'legal_info', 'documents'
     )
-    
+
     clean_id = str(property_id).strip()
+    if '--' in clean_id:
+        clean_id = clean_id.split('--')[-1].strip()
 
     # 1. Try UUID lookup
     try:
@@ -473,12 +481,13 @@ def get_property(property_id: Union[uuid.UUID, str]) -> Property:
         except (Property.DoesNotExist, DjangoValidationError):
             pass
 
-    # 4. Try matching slugified property_name or property_id string
+    # 4. Lightweight database name lookup (avoids scanning 200 full Property graphs in RAM)
     try:
-        from django.utils.text import slugify
-        for p in qs.all()[:200]:
-            if str(p.property_id).lower() == clean_id.lower() or slugify(p.property_name) == clean_id.lower():
-                return p
+        name_guess = clean_id.replace('-', ' ').strip()
+        if name_guess:
+            match = qs.filter(property_name__iexact=name_guess).first()
+            if match:
+                return match
     except Exception:
         pass
 
@@ -536,7 +545,7 @@ def get_filter_options() -> dict:
     }
 
 
-def list_properties(params: dict = None) -> QuerySet[Property]:
+def list_properties(params: dict = None, compact: bool = False) -> QuerySet[Property]:
     """
     Retrieves list of properties filtered using PropertyFilter.
     Scopes to the 6 primary target micro-markets with minimal column fetching.
@@ -563,6 +572,15 @@ def list_properties(params: dict = None) -> QuerySet[Property]:
     if params:
         from .filters import PropertyFilter
         queryset = PropertyFilter.filter_queryset(queryset, params)
+    if compact:
+        queryset = queryset.only(
+            'property_id', 'property_name', 'locality_id', 'builder_id',
+            'rera_number', 'property_type', 'transaction_type', 'price',
+            'price_per_sqft', 'bhk', 'carpet_area', 'furnishing_status',
+            'facing', 'status', 'address', 'latitude', 'longitude', 'created_at',
+            'locality__locality_id', 'locality__name', 'locality__latitude', 'locality__longitude',
+            'builder__builder_id', 'builder__builder_name',
+        )
     return queryset
 
 

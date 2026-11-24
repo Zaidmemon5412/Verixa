@@ -8,6 +8,7 @@ import {
 import { Button } from './ui/button';
 import useAuth from '../../features/auth/hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
+import { prefetchRoute } from '../utils/routePrefetcher';
 
 export function Navbar({ wishlistCount = 0 }) {
   const { isDark, toggleDarkMode } = useTheme();
@@ -75,6 +76,8 @@ export function Navbar({ wishlistCount = 0 }) {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onMouseEnter={() => prefetchRoute(item.path)}
+                  onTouchStart={() => prefetchRoute(item.path)}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs lg:text-sm font-semibold transition-all ${isActive
                     ? 'bg-primary/10 text-primary shadow-xs'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
@@ -192,6 +195,8 @@ export function Navbar({ wishlistCount = 0 }) {
                   <Link
                     key={item.path}
                     to={item.path}
+                    onMouseEnter={() => prefetchRoute(item.path)}
+                    onTouchStart={() => prefetchRoute(item.path)}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-xs font-bold border transition-all ${isActive
                       ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
@@ -262,6 +267,8 @@ export function Navbar({ wishlistCount = 0 }) {
               <Link
                 key={item.path}
                 to={item.path}
+                onMouseEnter={() => prefetchRoute(item.path)}
+                onTouchStart={() => prefetchRoute(item.path)}
                 className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-xl transition-all relative ${isActive
                   ? 'text-primary font-extrabold'
                   : 'text-muted-foreground hover:text-foreground font-medium'

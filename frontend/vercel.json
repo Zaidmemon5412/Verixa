@@ -10,6 +10,15 @@
       ]
     },
     {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
       "source": "/sitemap.xml",
       "headers": [
         {
@@ -100,7 +109,11 @@
       "destination": "/guides/:slug/index.html"
     },
     {
-      "source": "/((?!sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|assets/).*)",
+      "source": "/api/:path*",
+      "destination": "https://verixa-backend-hwqz.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!api/|data/|sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|favicon\\.png|verixa-logo\\.png|assets/).*)",
       "destination": "/index.html"
     }
   ]

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Building2, Search, ArrowRight, Shield, Star,
@@ -13,21 +13,13 @@ import { PropertyHeroSlider } from '../components/PropertyHeroSlider';
 import { FeaturedNewLaunchesSection } from '../components/FeaturedNewLaunchesSection';
 import { PropertyCard } from '../../properties/components/PropertyCard';
 import { PROJECTS } from '../../properties/constants/propertyData';
-import { propertyService } from '../../properties/services/propertyService';
+import { prefetchRoute } from '../../../shared/utils/routePrefetcher';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildWebsiteSchema } from '../../../shared/utils/seoUtils';
 import { SEO_GUIDES } from '../../guides/constants/guidesData';
 
 export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wishlist = [] }) {
   const featuredProjects = PROJECTS.slice(0, 3);
-
-  // Background pre-warm Page 1 compact property registry + filter options so Properties loads in 0ms
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      propertyService.prefetchInitialPage();
-    }, 150);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="space-y-12 sm:space-y-20 pb-10 sm:pb-20">
@@ -83,6 +75,8 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Link
                   to="/properties"
+                  onMouseEnter={() => prefetchRoute('/properties')}
+                  onTouchStart={() => prefetchRoute('/properties')}
                   onClick={(e) => {
                     if (onNavigate) {
                       e.preventDefault();
@@ -96,6 +90,8 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
                 </Link>
                 <Link
                   to="/properties"
+                  onMouseEnter={() => prefetchRoute('/properties')}
+                  onTouchStart={() => prefetchRoute('/properties')}
                   onClick={(e) => {
                     if (onNavigate) {
                       e.preventDefault();
@@ -515,6 +511,8 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
           </div>
           <Link
             to="/guides"
+            onMouseEnter={() => prefetchRoute('/guides')}
+            onTouchStart={() => prefetchRoute('/guides')}
             className="text-xs sm:text-sm font-bold text-primary hover:underline inline-flex items-center gap-1 shrink-0"
           >
             <span>Explore All 6 Guides</span>
@@ -524,7 +522,13 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {SEO_GUIDES.slice(0, 3).map((guide) => (
-            <Link key={guide.slug} to={`/guides/${guide.slug}`} className="group flex">
+            <Link
+              key={guide.slug}
+              to={`/guides/${guide.slug}`}
+              onMouseEnter={() => prefetchRoute(`/guides/${guide.slug}`)}
+              onTouchStart={() => prefetchRoute(`/guides/${guide.slug}`)}
+              className="group flex"
+            >
               <Card className="rounded-2xl border bg-card p-5 space-y-3 hover:border-primary/40 hover:shadow-lg transition-all w-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-[11px] font-semibold">
@@ -617,6 +621,8 @@ export function LandingPage({ onNavigate, onSelectProject, onToggleWishlist, wis
             <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link
                 to="/properties"
+                onMouseEnter={() => prefetchRoute('/properties')}
+                onTouchStart={() => prefetchRoute('/properties')}
                 onClick={(e) => {
                   if (onNavigate) {
                     e.preventDefault();

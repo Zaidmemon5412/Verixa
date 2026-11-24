@@ -391,6 +391,19 @@ class PropertyUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
+def _resolve_property_coords(obj) -> tuple:
+    cached = getattr(obj, '_cached_coords', None)
+    if cached is not None:
+        return cached
+    from apps.locations.services import resolve_ahmedabad_coordinates
+    raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
+    raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
+    loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
+    coords = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
+    obj._cached_coords = coords
+    return coords
+
+
 class PropertyCompactListSerializer(serializers.ModelSerializer):
     """
     Ultra-lightweight list serializer for fast catalog loading (?compact=1).
@@ -417,20 +430,10 @@ class PropertyCompactListSerializer(serializers.ModelSerializer):
         return primary_img.image_url if primary_img else None
 
     def get_latitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        lat, _ = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lat
+        return _resolve_property_coords(obj)[0]
 
     def get_longitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        _, lon = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lon
+        return _resolve_property_coords(obj)[1]
 
 
 class PropertyListSerializer(serializers.ModelSerializer):
@@ -462,20 +465,10 @@ class PropertyListSerializer(serializers.ModelSerializer):
         return primary_img.image_url if primary_img else None
 
     def get_latitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        lat, _ = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lat
+        return _resolve_property_coords(obj)[0]
 
     def get_longitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        _, lon = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lon
+        return _resolve_property_coords(obj)[1]
 
     def get_builder_detail(self, obj):
         if not obj.builder:
@@ -542,20 +535,10 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_latitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        lat, _ = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lat
+        return _resolve_property_coords(obj)[0]
 
     def get_longitude(self, obj):
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        raw_lat = obj.latitude if obj.latitude is not None else (obj.locality.latitude if obj.locality else None)
-        raw_lon = obj.longitude if obj.longitude is not None else (obj.locality.longitude if obj.locality else None)
-        loc_text = f"{obj.locality.name if obj.locality else ''} {obj.address or ''} {obj.property_name or ''}"
-        _, lon = resolve_ahmedabad_coordinates(raw_lat, raw_lon, loc_text, str(obj.property_id))
-        return lon
+        return _resolve_property_coords(obj)[1]
 
     def get_builder_detail(self, obj):
 

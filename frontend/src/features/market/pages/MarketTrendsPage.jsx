@@ -12,24 +12,31 @@ import { SearchTrendsInvestmentSection } from '../components/SearchTrendsInvestm
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema } from '../../../shared/utils/seoUtils';
 
+const DEFAULT_MARKET_FILTERS = {
+  city: 'Ahmedabad',
+  locality: 'All',
+  propertyType: 'All',
+  bhk: 'All',
+  budget: 'All',
+  timeframe: '6M'
+};
+
 export function MarketTrendsPage() {
-  const [isLoading, setIsLoading] = useState(true);
-
   // Global Smart Filters State
-  const [filters, setFilters] = useState({
-    city: 'Ahmedabad',
-    locality: 'All',
-    propertyType: 'All',
-    bhk: 'All',
-    budget: 'All',
-    timeframe: '6M'
-  });
+  const [filters, setFilters] = useState(DEFAULT_MARKET_FILTERS);
 
-  // Market Intelligence Data State
-  const [marketData, setMarketData] = useState(null);
+  // Market Intelligence Data State (synchronous cache hydration when available)
+  const [marketData, setMarketData] = useState(() => marketService.getCachedMarketTrends(DEFAULT_MARKET_FILTERS));
+  const [isLoading, setIsLoading] = useState(() => !marketService.getCachedMarketTrends(DEFAULT_MARKET_FILTERS));
 
   const fetchAnalytics = useCallback(async (activeFilters) => {
-    setIsLoading(true);
+    const cached = marketService.getCachedMarketTrends(activeFilters);
+    if (cached) {
+      setMarketData(cached);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
     try {
       const data = await marketService.getMarketTrends(activeFilters);
       setMarketData(data);

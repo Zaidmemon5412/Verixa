@@ -7,22 +7,33 @@ import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
 export function BuildersPage({ onSelectBuilder }) {
-  const [builders, setBuilders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [builders, setBuilders] = useState(() => builderService.getCachedBuilders() || []);
+  const [loading, setLoading] = useState(() => !builderService.getCachedBuilders());
 
   useEffect(() => {
+    let isMounted = true;
     async function loadBuilders() {
-      setLoading(true);
+      const cached = builderService.getCachedBuilders();
+      if (!cached) {
+        setLoading(true);
+      }
       try {
         const data = await builderService.getBuilders();
-        setBuilders(data);
+        if (isMounted && Array.isArray(data)) {
+          setBuilders(data);
+        }
       } catch (err) {
         console.error('Failed to load builders:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     loadBuilders();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

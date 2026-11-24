@@ -7,25 +7,37 @@ import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { Button } from '../../../shared/components/ui/button';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
 export function LocalitiesPage({ onSelectLocality }) {
-  const [localities, setLocalities] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [localities, setLocalities] = useState(() => localityService.getCachedLocalities() || []);
+  const [loading, setLoading] = useState(() => (localityService.getCachedLocalities() || []).length === 0);
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
     async function loadLocalities() {
-      setLoading(true);
+      const cached = localityService.getCachedLocalities();
+      if (!cached || cached.length === 0) {
+        setLoading(true);
+      }
       try {
         const data = await localityService.getLocalities();
-        setLocalities(data);
+        if (isMounted && Array.isArray(data)) {
+          setLocalities(data);
+        }
       } catch (err) {
         console.error('Failed to load localities:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     loadLocalities();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleCardClick = (loc) => {
@@ -90,11 +102,11 @@ export function LocalitiesPage({ onSelectLocality }) {
               <div>
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                   <img 
-                    src={loc.image} 
+                    src={optimizeImageUrl(loc.image, 'card')} 
                     alt={`${loc.name}, Ahmedabad Real Estate – Avg Price ${loc.psf}/sqft`}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">

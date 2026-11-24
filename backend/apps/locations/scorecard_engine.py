@@ -29,17 +29,28 @@ class LocalityScorecardEngine:
         locality = self.locality
         props_qs = Property.objects.filter(locality=locality)
 
-        # 1. Base property stats from DB
-        prop_count = props_qs.count()
-        avg_price_raw = props_qs.aggregate(Avg('price'))['price__avg']
-        
-        # Filter price_per_sqft outliers (1500 to 30000) for realistic residential PSF calculation
-        filtered_psf_qs = props_qs.filter(price_per_sqft__gte=1500, price_per_sqft__lte=30000)
-        avg_psf_raw = filtered_psf_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
-        if avg_psf_raw is None:
-            avg_psf_raw = props_qs.aggregate(Avg('price_per_sqft'))['price_per_sqft__avg']
-
-        stddev_psf_raw = filtered_psf_qs.aggregate(StdDev('price_per_sqft'))['price_per_sqft__stddev']
+        # 1. Base property stats from DB (consolidated into 1 SQL query)
+        agg_props = props_qs.aggregate(
+            prop_count=Count('property_id'),
+            avg_price=Avg('price'),
+            filtered_avg_psf=Avg(
+                'price_per_sqft',
+                filter=Q(price_per_sqft__gte=1500, price_per_sqft__lte=30000),
+            ),
+            raw_avg_psf=Avg('price_per_sqft'),
+            filtered_stddev_psf=StdDev(
+                'price_per_sqft',
+                filter=Q(price_per_sqft__gte=1500, price_per_sqft__lte=30000),
+            ),
+        )
+        prop_count = agg_props['prop_count'] or 0
+        avg_price_raw = agg_props['avg_price']
+        avg_psf_raw = (
+            agg_props['filtered_avg_psf']
+            if agg_props['filtered_avg_psf'] is not None
+            else agg_props['raw_avg_psf']
+        )
+        stddev_psf_raw = agg_props['filtered_stddev_psf']
 
         avg_price_val = float(avg_price_raw) if avg_price_raw is not None else 6500000.0
         avg_psf_val = float(avg_psf_raw) if avg_psf_raw is not None else 5200.0
@@ -53,31 +64,29 @@ class LocalityScorecardEngine:
 
         psf_str = f"₹{int(avg_psf_val):,}"
 
-        # 2. Infrastructure counts & distances from NearbyPlace DB table
-        nearby_qs = NearbyPlace.objects.filter(locality=locality)
-        
-        schools_cnt = nearby_qs.filter(
-            Q(type__icontains='school') | Q(type__icontains='education') | Q(type__icontains='college') | Q(type__icontains='university')
-        ).count()
-        
-        hospitals_cnt = nearby_qs.filter(
-            Q(type__icontains='hospital') | Q(type__icontains='clinic') | Q(type__icontains='medical') | Q(type__icontains='doctor')
-        ).count()
-        
-        shopping_cnt = nearby_qs.filter(
-            Q(type__icontains='mall') | Q(type__icontains='shopping') | Q(type__icontains='market') | Q(type__icontains='store') | Q(type__icontains='supermarket')
-        ).count()
+        # 2. Infrastructure counts & distances from NearbyPlace DB table (consolidated into 1 SQL query)
+        schools_q = Q(type__icontains='school') | Q(type__icontains='education') | Q(type__icontains='college') | Q(type__icontains='university')
+        hospitals_q = Q(type__icontains='hospital') | Q(type__icontains='clinic') | Q(type__icontains='medical') | Q(type__icontains='doctor')
+        shopping_q = Q(type__icontains='mall') | Q(type__icontains='shopping') | Q(type__icontains='market') | Q(type__icontains='store') | Q(type__icontains='supermarket')
+        parks_q = Q(type__icontains='park') | Q(type__icontains='garden') | Q(type__icontains='recreation')
+        transit_q = Q(type__icontains='subway') | Q(type__icontains='metro') | Q(type__icontains='bus') | Q(type__icontains='station') | Q(type__icontains='transit') | Q(type__icontains='stop')
 
-        parks_cnt = nearby_qs.filter(
-            Q(type__icontains='park') | Q(type__icontains='garden') | Q(type__icontains='recreation')
-        ).count()
-
-        transit_qs = nearby_qs.filter(
-            Q(type__icontains='subway') | Q(type__icontains='metro') | Q(type__icontains='bus') | Q(type__icontains='station') | Q(type__icontains='transit') | Q(type__icontains='stop')
+        agg_nearby = NearbyPlace.objects.filter(locality=locality).aggregate(
+            total_cnt=Count('place_id'),
+            schools_cnt=Count('place_id', filter=schools_q),
+            hospitals_cnt=Count('place_id', filter=hospitals_q),
+            shopping_cnt=Count('place_id', filter=shopping_q),
+            parks_cnt=Count('place_id', filter=parks_q),
+            transit_cnt=Count('place_id', filter=transit_q),
+            min_metro_dist=Min('distance_km', filter=transit_q),
         )
-        transit_cnt = transit_qs.count()
-
-        min_metro_dist = transit_qs.aggregate(Min('distance_km'))['distance_km__min']
+        nearby_total_cnt = agg_nearby['total_cnt'] or 0
+        schools_cnt = agg_nearby['schools_cnt'] or 0
+        hospitals_cnt = agg_nearby['hospitals_cnt'] or 0
+        shopping_cnt = agg_nearby['shopping_cnt'] or 0
+        parks_cnt = agg_nearby['parks_cnt'] or 0
+        transit_cnt = agg_nearby['transit_cnt'] or 0
+        min_metro_dist = agg_nearby['min_metro_dist']
         if min_metro_dist is not None:
             metro_dist_float = float(min_metro_dist)
             metro_dist_str = f"{round(metro_dist_float, 1)} km"
@@ -122,7 +131,7 @@ class LocalityScorecardEngine:
         hospitals_score = min(100, max(40, int(50 + min(hospitals_cnt, 15) * 3.2)))
         shopping_score = min(100, max(40, int(50 + min(shopping_cnt, 20) * 2.5)))
         parks_score = min(100, max(40, int(55 + min(parks_cnt, 10) * 3.5)))
-        convenience_score = min(100, max(40, int(60 + min(nearby_qs.count(), 50) * 0.7)))
+        convenience_score = min(100, max(40, int(60 + min(nearby_total_cnt, 50) * 0.7)))
 
         social_infra_score = int(round(
             0.25 * schools_score +

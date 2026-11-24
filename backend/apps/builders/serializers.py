@@ -58,9 +58,13 @@ class BuilderSerializer(serializers.ModelSerializer):
         return max(1, current_year - est_year)
 
     def get_total_projects(self, obj) -> int:
+        if hasattr(obj, 'total_projects_db') and obj.total_projects_db is not None:
+            return int(obj.total_projects_db)
         return obj.projects.count()
 
     def get_completed_projects(self, obj) -> int:
+        if hasattr(obj, 'completed_projects_db') and obj.completed_projects_db is not None:
+            return int(obj.completed_projects_db)
         return obj.projects.filter(
             Q(project_status__icontains='completed') |
             Q(project_status__icontains='ready')
@@ -329,25 +333,25 @@ class BuilderProjectSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_latitude(self, obj) -> float:
+    def _resolve_coords(self, obj) -> tuple:
+        cached = getattr(obj, '_cached_coords', None)
+        if cached is not None:
+            return cached
         from apps.locations.services import resolve_ahmedabad_coordinates
-        lat, _ = resolve_ahmedabad_coordinates(
+        coords = resolve_ahmedabad_coordinates(
             obj.latitude,
             obj.longitude,
             f"{obj.locality or ''} {obj.location or ''} {obj.project_name or ''}",
             str(obj.project_id),
         )
-        return lat
+        obj._cached_coords = coords
+        return coords
+
+    def get_latitude(self, obj) -> float:
+        return self._resolve_coords(obj)[0]
 
     def get_longitude(self, obj) -> float:
-        from apps.locations.services import resolve_ahmedabad_coordinates
-        _, lon = resolve_ahmedabad_coordinates(
-            obj.latitude,
-            obj.longitude,
-            f"{obj.locality or ''} {obj.location or ''} {obj.project_name or ''}",
-            str(obj.project_id),
-        )
-        return lon
+        return self._resolve_coords(obj)[1]
 
 
 class BuilderProjectCreateUpdateSerializer(serializers.ModelSerializer):

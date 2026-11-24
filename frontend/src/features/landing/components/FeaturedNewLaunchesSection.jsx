@@ -16,12 +16,12 @@ import { Button } from '../../../shared/components/ui/button';
 import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Badge } from '../../../shared/components/ui/badge';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
-import apiClient from '../../../shared/services/apiClient';
-import { mapApiBuilderProjectToUi } from '../../builders/services/builderService';
+import { builderService } from '../../builders/services/builderService';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
 export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState(() => builderService.getCachedFeaturedProjects() || []);
+  const [isLoading, setIsLoading] = useState(() => !builderService.getCachedFeaturedProjects());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [cardsPerPage, setCardsPerPage] = useState(3);
@@ -45,27 +45,21 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch projects dynamically from backend REST APIs
+  // Fetch projects dynamically from cached builder service
   useEffect(() => {
     let isMounted = true;
     async function fetchFeaturedLaunches() {
-      setIsLoading(true);
+      const cached = builderService.getCachedFeaturedProjects();
+      if (cached?.length) {
+        setProjects(cached);
+        setIsLoading(false);
+      } else {
+        setIsLoading(true);
+      }
+
       try {
-        // Query builder projects list endpoint
-        const response = await apiClient.get('/builders/projects/?page_size=20');
-        const resData = response?.data?.data || response?.data || response;
-        const rawResults = resData?.results || (Array.isArray(resData) ? resData : []);
-
-        let mapped = rawResults.map(mapApiBuilderProjectToUi).filter(Boolean);
-
-        // Fallback to properties list if builder projects is empty
-        if (mapped.length === 0) {
-          const propsRes = await apiClient.get('/properties/?page_size=20');
-          const rawProps = propsRes?.data?.results || propsRes?.results || (Array.isArray(propsRes) ? propsRes : []);
-          mapped = rawProps.map(mapApiBuilderProjectToUi).filter(Boolean);
-        }
-
-        if (isMounted) {
+        const mapped = await builderService.getFeaturedProjects();
+        if (isMounted && Array.isArray(mapped)) {
           setProjects(mapped);
         }
       } catch (error) {
@@ -246,22 +240,22 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500 ease-in-out">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleProjects.map((project, idx) => (
             <Card 
               key={`${project.id}-${idx}`}
               onClick={() => handleProjectClick(project.slug || project.id)}
-              className="group relative rounded-3xl border border-border/70 bg-card hover:border-primary/40 hover:shadow-2xl hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between"
+              className="group relative rounded-3xl border border-border/70 bg-card hover:border-primary/40 hover:shadow-2xl hover:scale-[1.015] transition-[transform,box-shadow,border-color] duration-200 cursor-pointer overflow-hidden flex flex-col justify-between"
             >
               <div>
                 {/* Image Container with Badges */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img
-                    src={project.image}
+                    src={optimizeImageUrl(project.image, 'card')}
                     alt={`${project.name} by ${project.builderName} in ${project.location}`}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20" />
 
@@ -273,7 +267,7 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
                     </span>
 
                     {/* Transparent Sponsored Badge */}
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/40 text-white/90 border border-white/20 backdrop-blur-md flex items-center gap-1">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/65 text-white border border-white/20 flex items-center gap-1">
                       <Tag className="w-2.5 h-2.5" /> Sponsored
                     </span>
                   </div>
@@ -288,7 +282,7 @@ export function FeaturedNewLaunchesSection({ onNavigate, onSelectProject }) {
                     </div>
 
                     {project.pricePerSqft && (
-                      <span className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white/20 backdrop-blur-md text-white border border-white/30">
+                      <span className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-900/75 text-white border border-white/30">
                         {project.pricePerSqft}
                       </span>
                     )}

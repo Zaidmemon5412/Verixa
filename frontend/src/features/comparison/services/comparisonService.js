@@ -2,12 +2,19 @@ import { propertyService } from '../../properties/services/propertyService';
 
 export const comparisonService = {
   /**
-   * Fetches all live properties for comparison catalog.
+   * Fetches Page 1 catalog slice for quick comparison suggestions without downloading all records.
    */
   async getAllProperties() {
     try {
-      const properties = await propertyService.getProperties();
-      return properties || [];
+      const cached = propertyService.getCachedPropertiesPage({ ordering: 'newest' }, { page: 1, pageSize: 48 });
+      if (cached?.results?.length > 0 && !cached.fromStorage) {
+        return cached.results;
+      }
+      const pageData = await propertyService.getPropertiesPage(
+        { ordering: 'newest' },
+        { page: 1, pageSize: 48 }
+      );
+      return pageData?.results || [];
     } catch (err) {
       console.error('Error fetching properties for comparison:', err);
       return [];
@@ -15,34 +22,31 @@ export const comparisonService = {
   },
 
   /**
-   * Fetches specific properties by array of IDs.
-   * @param {Array<string>} ids 
+   * Fetches only the selected comparison property IDs in parallel (cached first).
+   * @param {Array<string>} ids
    */
   async getPropertiesByIds(ids = []) {
     if (!ids || ids.length === 0) return [];
     try {
-      const all = await this.getAllProperties();
-      const mappedMap = new Map(all.map(p => [String(p.id), p]));
-      
-      const results = [];
-      for (const id of ids) {
-        if (mappedMap.has(String(id))) {
-          results.push(mappedMap.get(String(id)));
-        } else {
+      const resolved = await Promise.all(
+        ids.map(async (id) => {
+          const cached = propertyService.getCachedProperty(id);
+          if (cached && cached._isFullDetail) return cached;
           try {
-            const single = await propertyService.getPropertyById(id);
-            if (single) results.push(single);
+            const fetched = await propertyService.getPropertyById(id);
+            return fetched || cached || null;
           } catch (e) {
             console.warn(`Failed to fetch property details for ID ${id}`, e);
+            return cached || null;
           }
-        }
-      }
-      return results;
+        })
+      );
+      return resolved.filter(Boolean);
     } catch (err) {
       console.error('Error fetching comparison properties by IDs:', err);
       return [];
     }
-  }
+  },
 };
 
 export default comparisonService;

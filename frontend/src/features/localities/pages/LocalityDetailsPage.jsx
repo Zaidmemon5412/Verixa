@@ -25,30 +25,48 @@ export function LocalityDetailsPage({ localityId: propLocalityId, onSelectProjec
   const navigate = useNavigate();
   const activeId = propLocalityId || urlId || '1';
 
-  const [localities, setLocalities] = useState([]);
-  const [locality, setLocality] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [localities, setLocalities] = useState(() => localityService.getCachedLocalities() || []);
+  const [locality, setLocality] = useState(() => localityService.getCachedLocalityById(activeId));
+  const [loading, setLoading] = useState(() => !localityService.getCachedLocalityById(activeId));
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function loadData() {
+    let isMounted = true;
+    const cachedList = localityService.getCachedLocalities();
+    const cachedTarget = localityService.getCachedLocalityById(activeId);
+    if (Array.isArray(cachedList) && cachedList.length > 0) {
+      setLocalities(cachedList);
+    }
+    if (cachedTarget) {
+      setLocality(cachedTarget);
+      setLoading(false);
+    } else {
       setLoading(true);
+    }
+
+    async function loadData() {
       setError(null);
       try {
         const [allLocs, targetLoc] = await Promise.all([
           localityService.getLocalities(),
           localityService.getLocalityById(activeId)
         ]);
+        if (!isMounted) return;
         setLocalities(allLocs || []);
         setLocality(targetLoc);
       } catch (err) {
         console.error('Failed to load locality details:', err);
-        setError('Failed to fetch locality intelligence data.');
+        if (isMounted && !cachedTarget) {
+          setError('Failed to fetch locality intelligence data.');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
     loadData();
+    return () => {
+      isMounted = false;
+    };
   }, [activeId]);
 
   const handleSelectTab = (selected) => {

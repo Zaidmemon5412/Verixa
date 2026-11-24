@@ -35,7 +35,9 @@ from .services import (
     delete_nearby_place,
     get_locality_nearby_places_with_distances,
     get_global_nearby_places_with_distances,
+    get_locations_cache_version,
 )
+from common.cache_headers import apply_public_edge_cache, safe_cache_key
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +55,27 @@ class LocalityViewSet(viewsets.ViewSet):
         Retrieves all localities.
         """
         try:
+            from django.core.cache import cache
+            cache_ver = get_locations_cache_version()
+            cache_key = f"verixa_localities_list_v{cache_ver}"
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Localities retrieved successfully.",
+                    "data": cached_data
+                }, status=status.HTTP_200_OK)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
+
             localities = get_all_localities()
             serializer = LocalitySerializer(localities, many=True)
-            return Response({
+            cache.set(cache_key, serializer.data, timeout=600)
+            resp = Response({
                 "success": True,
                 "message": "Localities retrieved successfully.",
                 "data": serializer.data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error listing localities")
             return Response({
@@ -76,11 +92,12 @@ class LocalityViewSet(viewsets.ViewSet):
         try:
             locality = get_locality(pk)
             serializer = LocalitySerializer(locality)
-            return Response({
+            resp = Response({
                 "success": True,
                 "message": "Locality retrieved successfully.",
                 "data": serializer.data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400)
         except (Locality.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,
@@ -102,6 +119,17 @@ class LocalityViewSet(viewsets.ViewSet):
         Retrieves nearby places for a locality with calculated distances.
         Supports query parameters: category, radius, limit.
         """
+        from django.core.cache import cache
+        category = request.query_params.get('category')
+        radius = request.query_params.get('radius')
+        limit = request.query_params.get('limit')
+        cache_ver = get_locations_cache_version()
+        cache_key = safe_cache_key(f"verixa_loc_nearby_v{cache_ver}", pk, category, radius, limit)
+        cached_payload = cache.get(cache_key)
+        if cached_payload is not None:
+            resp = Response(cached_payload, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=600, swr=86400, cache_status='HIT')
+
         try:
             locality = get_locality(pk)
         except (Locality.DoesNotExist, DjangoValidationError, ValueError):
@@ -111,10 +139,6 @@ class LocalityViewSet(viewsets.ViewSet):
                 "data": {}
             }, status=status.HTTP_404_NOT_FOUND)
 
-        category = request.query_params.get('category')
-        radius = request.query_params.get('radius')
-        limit = request.query_params.get('limit')
-
         nearby_places_list = get_locality_nearby_places_with_distances(
             locality_obj=locality,
             category=category,
@@ -122,7 +146,7 @@ class LocalityViewSet(viewsets.ViewSet):
             limit=limit
         )
 
-        return Response({
+        payload = {
             "success": True,
             "message": "Locality nearby places retrieved successfully.",
             "locality_id": str(locality.locality_id),
@@ -130,7 +154,10 @@ class LocalityViewSet(viewsets.ViewSet):
             "city": locality.city,
             "total_count": len(nearby_places_list),
             "nearby_places": nearby_places_list
-        }, status=status.HTTP_200_OK)
+        }
+        cache.set(cache_key, payload, timeout=600)
+        resp = Response(payload, status=status.HTTP_200_OK)
+        return apply_public_edge_cache(resp, max_age=300, s_maxage=600, swr=86400, cache_status='MISS')
 
     @action(detail=True, methods=['get'], url_path='analytics')
     def analytics(self, request, pk=None, *args, **kwargs):
@@ -138,7 +165,17 @@ class LocalityViewSet(viewsets.ViewSet):
         GET /localities/<locality_id>/analytics/
         Calculates live database metrics and dynamic scorecard for locality using LocalityScorecardEngine.
         """
+        from django.core.cache import cache
+        from apps.properties.services import get_properties_cache_version
         from .scorecard_engine import LocalityScorecardEngine
+
+        loc_ver = get_locations_cache_version()
+        prop_ver = get_properties_cache_version()
+        cache_key = safe_cache_key(f"verixa_loc_analytics_v{loc_ver}_{prop_ver}", pk)
+        cached_payload = cache.get(cache_key)
+        if cached_payload is not None:
+            resp = Response(cached_payload, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
 
         try:
             locality = get_locality(pk)
@@ -153,7 +190,9 @@ class LocalityViewSet(viewsets.ViewSet):
         scorecard_data = engine.calculate_metrics_and_scores()
         scorecard_data["success"] = True
 
-        return Response(scorecard_data, status=status.HTTP_200_OK)
+        cache.set(cache_key, scorecard_data, timeout=600)
+        resp = Response(scorecard_data, status=status.HTTP_200_OK)
+        return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
 
 
     def create(self, request, *args, **kwargs):
@@ -480,13 +519,20 @@ class GlobalNearbyPlacesAPIView(APIView):
         lat = request.query_params.get('lat')
         lon = request.query_params.get('lon')
 
-        cache_key = f"verixa_global_nearby_v2_{locality_param}_{category}_{radius}_{limit}_{lat}_{lon}"
+        cache_ver = get_locations_cache_version()
+        cache_key = safe_cache_key(
+            f"verixa_global_nearby_v2_{cache_ver}",
+            locality_param,
+            category,
+            radius,
+            limit,
+            lat,
+            lon,
+        )
         cached_payload = cache.get(cache_key)
         if cached_payload is not None:
             resp = Response(cached_payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'HIT'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=600, swr=86400, cache_status='HIT')
 
         try:
             nearby_places_list = get_global_nearby_places_with_distances(
@@ -506,9 +552,7 @@ class GlobalNearbyPlacesAPIView(APIView):
             }
             cache.set(cache_key, payload, timeout=600)
             resp = Response(payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=600, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error querying global nearby places")
             return Response({

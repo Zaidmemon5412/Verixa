@@ -15,8 +15,9 @@ import {
   Layers
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
-export function BuilderProjectCard({ project, onSelectProject }) {
+export const BuilderProjectCard = React.memo(function BuilderProjectCard({ project, onSelectProject }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
 
@@ -65,17 +66,17 @@ export function BuilderProjectCard({ project, onSelectProject }) {
   return (
     <div
       onClick={handleCardClick}
-      className="group bg-white dark:bg-slate-900 rounded-2xl border border-sky-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer"
+      className="group bg-white dark:bg-slate-900 rounded-2xl border border-sky-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1 transition-[transform,box-shadow] duration-200 flex flex-col justify-between overflow-hidden cursor-pointer cv-auto-card"
     >
       {/* Top Image Section */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         <img
-          src={project.image}
+          src={optimizeImageUrl(project.image, 'card')}
           alt={`${project.name} - ${project.bhkVariants} ${project.propertyType} in ${project.locality}, ${project.city}`}
           loading="lazy"
           decoding="async"
           onLoad={() => setImgLoaded(true)}
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
             imgLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         />
@@ -91,17 +92,17 @@ export function BuilderProjectCard({ project, onSelectProject }) {
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
           {/* Status Badge */}
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-md backdrop-blur-md ${
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-md ${
             isReadyToMove
-              ? 'bg-emerald-500/90 text-white'
-              : 'bg-amber-500/90 text-white'
+              ? 'bg-emerald-500/95 text-white'
+              : 'bg-amber-500/95 text-white'
           }`}>
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white" />
             {project.projectStatus}
           </span>
 
           {/* AI Score Badge */}
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-slate-900/80 text-sky-400 border border-sky-500/30 backdrop-blur-md shadow-md">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-slate-900/95 text-sky-400 border border-sky-500/30 shadow-md">
             <Sparkles className="w-3 h-3 text-sky-400" />
             <span>AI {project.aiScore}/100</span>
           </span>
@@ -110,7 +111,7 @@ export function BuilderProjectCard({ project, onSelectProject }) {
         {/* Bottom Floating RERA Badge */}
         {project.isReraVerified && (
           <div className="absolute bottom-3 left-3 pointer-events-none">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/90 dark:bg-slate-900/90 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow-sm">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/95 dark:bg-slate-900/95 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 shadow-sm">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>RERA Registered</span>
             </span>
@@ -219,7 +220,7 @@ export function BuilderProjectCard({ project, onSelectProject }) {
             {/* Compare Button */}
             <button
               onClick={handleCompareClick}
-              className={`p-2.5 rounded-xl border text-xs font-semibold transition-all ${
+              className={`p-2.5 rounded-xl border text-xs font-semibold transition-colors ${
                 isComparing
                   ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-600/20'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-700'
@@ -239,7 +240,7 @@ export function BuilderProjectCard({ project, onSelectProject }) {
                   onSelectProject(projectSlug);
                 }
               }}
-              className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white shadow-md shadow-sky-600/20 transition-all hover:gap-1.5"
+              className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white shadow-md shadow-sky-600/20 transition-colors"
             >
               <span>View Details</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -250,6 +251,6 @@ export function BuilderProjectCard({ project, onSelectProject }) {
       </div>
     </div>
   );
-}
+});
 
 export default BuilderProjectCard;

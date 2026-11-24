@@ -5,12 +5,47 @@ Handles core business logic for builder profile management.
 import uuid
 import logging
 from typing import Union
-from django.db.models import QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from .models import Builder
 
 logger = logging.getLogger(__name__)
+
+
+def get_builders_cache_version() -> int:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_builders_cache_ver')
+        if ver is None:
+            cache.set('verixa_builders_cache_ver', 1, timeout=None)
+            return 1
+        return int(ver)
+    except Exception:
+        return 1
+
+
+def bump_builders_cache_version(*args, **kwargs) -> None:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_builders_cache_ver')
+        cache.set('verixa_builders_cache_ver', (int(ver) + 1) if ver is not None else 2, timeout=None)
+    except Exception:
+        pass
+
+
+def _annotated_builders_qs() -> QuerySet[Builder]:
+    return Builder.objects.annotate(
+        total_projects_db=Count('projects', distinct=True),
+        completed_projects_db=Count(
+            'projects',
+            filter=(
+                Q(projects__project_status__icontains='completed') |
+                Q(projects__project_status__icontains='ready')
+            ),
+            distinct=True,
+        ),
+    )
 
 
 def create_builder(validated_data: dict) -> Builder:
@@ -34,19 +69,22 @@ def create_builder(validated_data: dict) -> Builder:
 
 def get_builder(builder_id: Union[uuid.UUID, str]) -> Builder:
     """
-    Business logic to retrieve a builder by ID.
+    Business logic to retrieve a builder by ID or hybrid SEO slug.
     Raises Builder.DoesNotExist if not found.
     """
     logger.info(f"Retrieving builder with ID: {builder_id}")
-    return Builder.objects.get(builder_id=builder_id)
+    clean_id = str(builder_id).strip()
+    if '--' in clean_id:
+        clean_id = clean_id.split('--')[-1].strip()
+    return _annotated_builders_qs().get(builder_id=clean_id)
 
 
 def get_all_builders() -> QuerySet[Builder]:
     """
-    Business logic to retrieve all builders.
+    Business logic to retrieve all builders with pre-aggregated project counts.
     """
     logger.info("Retrieving all builders")
-    return Builder.objects.all()
+    return _annotated_builders_qs()
 
 
 def update_builder(builder: Builder, validated_data: dict) -> Builder:
@@ -99,7 +137,10 @@ def get_builder_project(project_id: Union[uuid.UUID, str]) -> BuilderProject:
     Retrieves a single builder project by ID with pre-fetched builder and images.
     """
     logger.info(f"Retrieving builder project ID: {project_id}")
-    return BuilderProject.objects.select_related('builder').prefetch_related('images').get(project_id=project_id)
+    clean_id = str(project_id).strip()
+    if '--' in clean_id:
+        clean_id = clean_id.split('--')[-1].strip()
+    return BuilderProject.objects.select_related('builder').prefetch_related('images').get(project_id=clean_id)
 
 
 def get_all_builder_projects() -> QuerySet[BuilderProject]:
@@ -406,5 +447,14 @@ def import_builder_projects_from_csv(file_path: str, dry_run: bool = False) -> D
     report['import_duration_seconds'] = round(time.time() - start_time, 2)
     log_msg(f"Import process finished in {report['import_duration_seconds']}s")
     return report
+
+
+from django.db.models.signals import post_save, post_delete
+post_save.connect(bump_builders_cache_version, sender=Builder)
+post_delete.connect(bump_builders_cache_version, sender=Builder)
+post_save.connect(bump_builders_cache_version, sender=BuilderProject)
+post_delete.connect(bump_builders_cache_version, sender=BuilderProject)
+post_save.connect(bump_builders_cache_version, sender=BuilderProjectImage)
+post_delete.connect(bump_builders_cache_version, sender=BuilderProjectImage)
 
 

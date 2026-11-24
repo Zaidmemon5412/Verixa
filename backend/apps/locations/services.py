@@ -655,3 +655,31 @@ def get_global_nearby_places_with_distances(
     )
 
 
+def get_locations_cache_version() -> int:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_locations_cache_ver')
+        if ver is None:
+            cache.set('verixa_locations_cache_ver', 1, timeout=None)
+            return 1
+        return int(ver)
+    except Exception:
+        return 1
+
+
+def bump_locations_cache_version(*args, **kwargs) -> None:
+    from django.core.cache import cache
+    try:
+        ver = cache.get('verixa_locations_cache_ver')
+        cache.set('verixa_locations_cache_ver', (int(ver) + 1) if ver is not None else 2, timeout=None)
+    except Exception:
+        pass
+
+
+from django.db.models.signals import post_save, post_delete
+post_save.connect(bump_locations_cache_version, sender=Locality)
+post_delete.connect(bump_locations_cache_version, sender=Locality)
+post_save.connect(bump_locations_cache_version, sender=NearbyPlace)
+post_delete.connect(bump_locations_cache_version, sender=NearbyPlace)
+
+

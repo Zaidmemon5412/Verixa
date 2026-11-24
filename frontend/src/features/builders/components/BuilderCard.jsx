@@ -5,8 +5,9 @@ import { Card, CardContent } from '../../../shared/components/ui/card';
 import { Button } from '../../../shared/components/ui/button';
 
 import { getBuilderBrandInfo } from '../utils/builderLogos';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
-export function BuilderCard({ builder, onSelect }) {
+export const BuilderCard = React.memo(function BuilderCard({ builder, onSelect }) {
   if (!builder) return null;
 
   const brandInfo = getBuilderBrandInfo(builder.name, builder.logoUrl);
@@ -18,14 +19,16 @@ export function BuilderCard({ builder, onSelect }) {
   const deliveryStatus = builder.deliveryRate ? `${builder.deliveryRate}% On-Time` : (builder.avgDelivery || '95% On-Time');
 
   return (
-    <Card className="rounded-2xl border border-sky-100 dark:border-slate-800 bg-card hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+    <Card className="rounded-2xl border border-sky-100 dark:border-slate-800 bg-card hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-0.5 transition-[transform,box-shadow] duration-200 flex flex-col justify-between overflow-hidden">
       <CardContent className="p-6 space-y-4">
         {/* Header Avatar Logo & Name */}
         <div className="flex items-center gap-4">
           {brandInfo.logo ? (
             <img
-              src={brandInfo.logo}
+              src={optimizeImageUrl(brandInfo.logo, 'logo')}
               alt={`${builder.name} - RERA Verified Real Estate Developer in Ahmedabad`}
+              loading="lazy"
+              decoding="async"
               className="w-14 h-14 rounded-2xl object-contain bg-white p-1.5 border border-sky-100 dark:border-slate-800 shadow-md shrink-0"
               onError={(e) => {
                 // Fallback to monogram if image fails to load
@@ -103,4 +106,4 @@ export function BuilderCard({ builder, onSelect }) {
       </div>
     </Card>
   );
-}
+});

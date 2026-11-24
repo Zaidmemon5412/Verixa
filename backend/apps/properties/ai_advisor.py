@@ -6,7 +6,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-8b"]
+GEMINI_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash"]
 
 
 def _is_valid_gemini_api_key(api_key: str) -> bool:
@@ -107,7 +107,7 @@ Respond ONLY with a VALID JSON object adhering to this schema (no markdown fence
     for model_name in GEMINI_MODELS:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
         try:
-            resp = requests.post(url, json=payload, headers=headers, timeout=10)
+            resp = requests.post(url, json=payload, headers=headers, timeout=4)
 
             if resp.status_code == 200:
                 data = resp.json()

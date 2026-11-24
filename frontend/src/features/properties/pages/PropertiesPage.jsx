@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Building2, Sparkles, Filter, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
+import { Building2, Sparkles, RotateCcw, Loader2 } from 'lucide-react';
 import { PropertyCard } from '../components/PropertyCard';
 import { PropertyFilters } from '../components/PropertyFilters';
 import { propertyService } from '../services/propertyService';
@@ -13,7 +13,7 @@ import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildItemListSchema } from '../../../shared/utils/seoUtils';
 
 const PAGE_SIZE = 24;
-const COLD_START_GRACE_MS = 900;
+const COLD_START_GRACE_MS = 350;
 const KNOWN_LOCALITIES = ['Gota', 'Chandkheda', 'Sola', 'Thaltej', 'Satellite', 'Maninagar'];
 const KNOWN_TYPES = ['Apartment', 'Villa', 'Plot', 'Penthouse', 'Studio'];
 const STATUS_FROM_PARAM = {
@@ -64,18 +64,26 @@ function parseSearchParams(params) {
   };
 }
 
-export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlist }) {
+export function PropertiesPage({ onSelectProject, wishlist: _wishlist = [], onToggleWishlist }) {
   const { isWishlisted: checkIsWishlisted, toggleWishlist: defaultToggleWishlist } = useWishlist();
-  const { selectedIds, addProperty, removeProperty } = usePropertyComparison();
+  const { selectedIds, addProperty, removeProperty } = usePropertyComparison([], {
+    loadCatalog: false,
+    loadCompared: false,
+  });
 
-  const handleToggleCompare = (propertyId) => {
-    const targetId = String(propertyId);
-    if (selectedIds.includes(targetId)) {
-      removeProperty(targetId);
-    } else {
-      addProperty(targetId);
-    }
-  };
+  const selectedIdsSet = useMemo(() => new Set(selectedIds.map(String)), [selectedIds]);
+
+  const handleToggleCompare = useCallback(
+    (propertyId) => {
+      const targetId = String(propertyId);
+      if (selectedIdsSet.has(targetId)) {
+        removeProperty(targetId);
+      } else {
+        addProperty(targetId);
+      }
+    },
+    [selectedIdsSet, addProperty, removeProperty]
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initialFromUrl = parseSearchParams(searchParams);
@@ -97,8 +105,10 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
   const [totalCount, setTotalCount] = useState(initialCachedPage?.count || 0);
   const [currentPage, setCurrentPage] = useState(initialCachedPage?.currentPage || 1);
   const [hasMore, setHasMore] = useState(Boolean(initialCachedPage?.hasNext));
-  const [localities, setLocalities] = useState([]);
-  const [builders, setBuilders] = useState([]);
+  const [localities, setLocalities] = useState(() => localityService.getCachedLocalities() || []);
+  const [builders, setBuilders] = useState(
+    () => propertyService.getCachedFilterOptions()?.builders || []
+  );
   const [loading, setLoading] = useState(!initialCachedPage);
   const [isSyncingLive, setIsSyncingLive] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -257,10 +267,24 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       } else {
         setLoading(true);
         setIsSyncingLive(false);
-        // Cold-start grace preview: if backend takes >900ms (e.g. Render wake-up for a brand-new visitor),
-        // immediately show curated RERA-verified Ahmedabad listings while live DB finishes syncing.
-        coldStartTimer = setTimeout(() => {
+        // Cold-start grace preview: if backend takes >350ms (e.g. Render wake-up for a brand-new visitor),
+        // hydrate immediately from the build-time real DB snapshot (or curated fallback) while live API syncs.
+        coldStartTimer = setTimeout(async () => {
           if (isCancelled) return;
+          const seedPage = await propertyService.getSeedPropertiesPage(activeFilters, {
+            page: 1,
+            pageSize: PAGE_SIZE,
+          });
+          if (isCancelled) return;
+          if (seedPage && seedPage.results.length > 0) {
+            setProjects(seedPage.results);
+            setTotalCount(seedPage.count);
+            setCurrentPage(1);
+            setHasMore(false);
+            setIsSyncingLive(true);
+            setLoading(false);
+            return;
+          }
           const fallbackList = propertyService.getFallbackProperties(activeFilters);
           if (fallbackList.length > 0) {
             setProjects(fallbackList);
@@ -364,20 +388,47 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
     };
   }, [loading, hasMore, isSyncingLive, loadingMore, loadNextPage]);
 
-  const handleReset = () => {
+  const handleLocalityChange = useCallback(
+    (val) => startTransition(() => setSelectedLocality(val)),
+    []
+  );
+  const handleStatusChange = useCallback(
+    (val) => startTransition(() => setSelectedStatus(val)),
+    []
+  );
+  const handleTypeChange = useCallback(
+    (val) => startTransition(() => setSelectedType(val)),
+    []
+  );
+  const handleBhkChange = useCallback(
+    (val) => startTransition(() => setSelectedBhk(val)),
+    []
+  );
+  const handleBuilderChange = useCallback(
+    (val) => startTransition(() => setSelectedBuilder(val)),
+    []
+  );
+  const handleOrderingChange = useCallback(
+    (val) => startTransition(() => setSelectedOrdering(val)),
+    []
+  );
+
+  const handleReset = useCallback(() => {
     setSearchQuery('');
-    setDebouncedSearchQuery('');
-    setSelectedLocality('All');
-    setSelectedStatus('All');
-    setSelectedType('All');
-    setSelectedBhk([]);
-    setMinPrice('');
-    setMaxPrice('');
-    setMinArea('');
-    setMaxArea('');
-    setSelectedBuilder('All');
-    setSelectedOrdering('newest');
-  };
+    startTransition(() => {
+      setDebouncedSearchQuery('');
+      setSelectedLocality('All');
+      setSelectedStatus('All');
+      setSelectedType('All');
+      setSelectedBhk([]);
+      setMinPrice('');
+      setMaxPrice('');
+      setMinArea('');
+      setMaxArea('');
+      setSelectedBuilder('All');
+      setSelectedOrdering('newest');
+    });
+  }, []);
 
   const hasActiveFilters = Boolean(
     searchQuery ||
@@ -548,13 +599,13 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         selectedLocality={selectedLocality}
-        setSelectedLocality={setSelectedLocality}
+        setSelectedLocality={handleLocalityChange}
         selectedStatus={selectedStatus}
-        setSelectedStatus={setSelectedStatus}
+        setSelectedStatus={handleStatusChange}
         selectedType={selectedType}
-        setSelectedType={setSelectedType}
+        setSelectedType={handleTypeChange}
         selectedBhk={selectedBhk}
-        setSelectedBhk={setSelectedBhk}
+        setSelectedBhk={handleBhkChange}
         minPrice={minPrice}
         setMinPrice={setMinPrice}
         maxPrice={maxPrice}
@@ -564,25 +615,25 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
         maxArea={maxArea}
         setMaxArea={setMaxArea}
         selectedBuilder={selectedBuilder}
-        setSelectedBuilder={setSelectedBuilder}
+        setSelectedBuilder={handleBuilderChange}
         selectedOrdering={selectedOrdering}
-        setSelectedOrdering={setSelectedOrdering}
+        setSelectedOrdering={handleOrderingChange}
         localities={localities}
         builders={builders}
         onReset={handleReset}
       />
 
       {/* Dynamic Results Summary Bar */}
-      {!loading && (
+      {(!loading || projects.length > 0) && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 py-1.5 border-b pb-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-base font-extrabold text-foreground">
               Showing {displayTotalCount} {displayTotalCount === 1 ? 'Property' : 'Properties'} {selectedLocality !== 'All' ? `in ${selectedLocality}` : 'across All 6 Areas'}
             </span>
-            {isSyncingLive && (
+            {(isSyncingLive || loading) && (
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
                 <Loader2 className="w-3 h-3 animate-spin" />
-                <span>Syncing live registry (672+ properties)...</span>
+                <span>{loading ? 'Updating listings...' : 'Syncing live registry (672+ properties)...'}</span>
               </span>
             )}
             {hasActiveFilters && (
@@ -606,7 +657,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
       )}
 
       {/* Content Section with Loading, Empty & Grid States */}
-      {loading ? (
+      {loading && projects.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="border rounded-2xl overflow-hidden bg-card shadow-sm">
@@ -648,7 +699,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
           )}
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className={`space-y-8 transition-opacity duration-200 ${loading ? 'opacity-65' : 'opacity-100'}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {visibleProjects.map((project, idx) => (
               <PropertyCard
@@ -659,7 +710,7 @@ export function PropertiesPage({ onSelectProject, wishlist = [], onToggleWishlis
                 onToggleWishlist={onToggleWishlist || defaultToggleWishlist}
                 isWishlisted={checkIsWishlisted(project.id)}
                 onToggleCompare={handleToggleCompare}
-                isCompared={selectedIds.includes(String(project.id))}
+                isCompared={selectedIdsSet.has(String(project.id))}
               />
             ))}
           </div>

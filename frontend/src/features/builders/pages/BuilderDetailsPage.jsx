@@ -23,7 +23,7 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
   const targetId = propBuilderId || urlParamId;
 
   // State Management
-  const [builder, setBuilder] = useState(null);
+  const [builder, setBuilder] = useState(() => builderService.getCachedBuilderById(targetId) || null);
   const [projects, setProjects] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,7 +43,7 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
   }, [user, location.state]);
 
   // Loading and Error States
-  const [loadingBuilder, setLoadingBuilder] = useState(true);
+  const [loadingBuilder, setLoadingBuilder] = useState(() => !builderService.getCachedBuilderById(targetId));
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [error, setError] = useState(null);
 
@@ -61,7 +61,13 @@ export function BuilderDetailsPage({ builderId: propBuilderId, onSelectProject, 
       return;
     }
 
-    setLoadingBuilder(true);
+    const cachedBuilder = builderService.getCachedBuilderById(targetId);
+    if (cachedBuilder) {
+      setBuilder(cachedBuilder);
+      setLoadingBuilder(false);
+    } else {
+      setLoadingBuilder(true);
+    }
     setError(null);
 
     try {

@@ -5,44 +5,58 @@ import { PropertyCard } from '../../properties/components/PropertyCard';
 import { LocalityProjectsSkeleton } from './Skeletons';
 
 export function LocalityProjects({ locality, onSelectProject }) {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const locName = locality?.name || '';
+  const locKeyword = locName ? locName.split(' ')[0] : '';
+  const initialCached = locKeyword
+    ? propertyService.getCachedPropertiesPage({ locality: locKeyword }, { page: 1, pageSize: 12 })?.results
+    : null;
+  const [projects, setProjects] = useState(() => initialCached || []);
+  const [loading, setLoading] = useState(() => !initialCached);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadProjects() {
-      if (!locality?.name) return;
-      setLoading(true);
+      if (!locKeyword) return;
+      const cached = propertyService.getCachedPropertiesPage(
+        { locality: locKeyword },
+        { page: 1, pageSize: 12 }
+      );
+      if (cached?.results?.length) {
+        setProjects(cached.results);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
+
       try {
-        const locName = locality.name;
-        const locKeyword = locName.split(' ')[0]; // e.g. "Satellite", "Thaltej", "Gota", "Chandkheda", "Sola"
+        let pageRes = await propertyService.getPropertiesPage(
+          { locality: locKeyword },
+          { page: 1, pageSize: 12 }
+        );
+        let fetched = Array.isArray(pageRes?.results) ? pageRes.results : [];
 
-        // 1. Fetch properties from service
-        let fetched = await propertyService.getProperties({ search: locKeyword });
-        if (!Array.isArray(fetched) || fetched.length === 0) {
-          fetched = await propertyService.getProperties();
+        if (fetched.length === 0) {
+          const fallbackRes = await propertyService.getPropertiesPage({}, { page: 1, pageSize: 12 });
+          fetched = Array.isArray(fallbackRes?.results) ? fallbackRes.results : [];
         }
 
-        // 2. Filter properties belonging or related to this locality
-        let matches = fetched.filter((p) => {
-          const locStr = `${p.locality || ''} ${p.address || ''} ${p.location || ''}`.toLowerCase();
-          return locStr.includes(locKeyword.toLowerCase()) || locStr.includes(locName.toLowerCase());
-        });
-
-        // 3. Fallback to general properties if no specific matches found
-        if (matches.length === 0) {
-          matches = fetched;
+        if (isMounted) {
+          setProjects(fetched);
         }
-
-        setProjects(matches);
       } catch (err) {
         console.error('Failed to load locality projects:', err);
-        setProjects([]);
+        if (isMounted && !cached?.results?.length) {
+          setProjects([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
     loadProjects();
-  }, [locality?.name]);
+    return () => {
+      isMounted = false;
+    };
+  }, [locKeyword]);
 
   if (loading) {
     return (

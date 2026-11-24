@@ -21,7 +21,9 @@ from .services import (
     get_all_builders,
     update_builder,
     delete_builder,
+    get_builders_cache_version,
 )
+from common.cache_headers import apply_public_edge_cache, safe_cache_key
 
 logger = logging.getLogger(__name__)
 
@@ -39,13 +41,27 @@ class BuilderViewSet(viewsets.ViewSet):
         Retrieves all builders.
         """
         try:
+            from django.core.cache import cache
+            cache_ver = get_builders_cache_version()
+            cache_key = f"verixa_builders_list_v{cache_ver}"
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Builders retrieved successfully.",
+                    "data": cached_data
+                }, status=status.HTTP_200_OK)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
+
             builders = get_all_builders()
             serializer = BuilderSerializer(builders, many=True)
-            return Response({
+            cache.set(cache_key, serializer.data, timeout=600)
+            resp = Response({
                 "success": True,
                 "message": "Builders retrieved successfully.",
                 "data": serializer.data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error listing builders")
             return Response({
@@ -60,13 +76,30 @@ class BuilderViewSet(viewsets.ViewSet):
         Retrieves a single builder by ID.
         """
         try:
-            builder = get_builder(pk)
+            from django.core.cache import cache
+            clean_pk = str(pk or '').strip()
+            if '--' in clean_pk:
+                clean_pk = clean_pk.split('--')[-1].strip()
+            cache_ver = get_builders_cache_version()
+            cache_key = safe_cache_key(f"verixa_builder_detail_v{cache_ver}", clean_pk)
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Builder retrieved successfully.",
+                    "data": cached_data
+                }, status=status.HTTP_200_OK)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
+
+            builder = get_builder(clean_pk)
             serializer = BuilderSerializer(builder)
-            return Response({
+            cache.set(cache_key, serializer.data, timeout=600)
+            resp = Response({
                 "success": True,
                 "message": "Builder retrieved successfully.",
                 "data": serializer.data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except (Builder.DoesNotExist, DjangoValidationError, ValueError):
             # ValidationError or ValueError might be raised if pk is an invalid UUID format
             return Response({
@@ -280,6 +313,18 @@ class BuilderProjectViewSet(viewsets.ViewSet):
     )
     def list(self, request, *args, **kwargs):
         try:
+            import hashlib
+            from django.core.cache import cache
+            qp = request.query_params
+            qp_str = "&".join(f"{k}={qp.get(k)}" for k in sorted(qp.keys()))
+            cache_ver = get_builders_cache_version()
+            digest = hashlib.md5(qp_str.encode('utf-8')).hexdigest()
+            cache_key = f"verixa_builder_projects_v{cache_ver}_{digest}"
+            cached_payload = cache.get(cache_key)
+            if cached_payload is not None:
+                resp = Response(cached_payload, status=status.HTTP_200_OK)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
+
             queryset = BuilderProject.objects.select_related('builder').prefetch_related('images').all()
 
             # Search filter
@@ -296,6 +341,8 @@ class BuilderProjectViewSet(viewsets.ViewSet):
             # Specific field filters
             builder_id = request.query_params.get('builder', '').strip()
             if builder_id:
+                if '--' in builder_id:
+                    builder_id = builder_id.split('--')[-1].strip()
                 queryset = queryset.filter(builder_id=builder_id)
 
             city = request.query_params.get('city', '').strip()
@@ -338,14 +385,19 @@ class BuilderProjectViewSet(viewsets.ViewSet):
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
                 serializer = BuilderProjectSerializer(page, many=True)
-                return paginator.get_paginated_response(serializer.data)
+                resp = paginator.get_paginated_response(serializer.data)
+                cache.set(cache_key, resp.data, timeout=600)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
 
             serializer = BuilderProjectSerializer(queryset, many=True)
-            return Response({
+            payload = {
                 "success": True,
                 "message": "Builder projects retrieved successfully.",
                 "data": serializer.data
-            }, status=status.HTTP_200_OK)
+            }
+            cache.set(cache_key, payload, timeout=600)
+            resp = Response(payload, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
 
         except Exception as e:
             logger.exception("Error listing builder projects")
@@ -362,13 +414,30 @@ class BuilderProjectViewSet(viewsets.ViewSet):
     )
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
-            project = get_builder_project(pk)
+            from django.core.cache import cache
+            clean_pk = str(pk or '').strip()
+            if '--' in clean_pk:
+                clean_pk = clean_pk.split('--')[-1].strip()
+            cache_ver = get_builders_cache_version()
+            cache_key = safe_cache_key(f"verixa_builder_project_detail_v{cache_ver}", clean_pk)
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                resp = Response({
+                    "success": True,
+                    "message": "Builder project retrieved successfully.",
+                    "data": cached_data
+                }, status=status.HTTP_200_OK)
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
+
+            project = get_builder_project(clean_pk)
             serializer = BuilderProjectSerializer(project)
-            return Response({
+            cache.set(cache_key, serializer.data, timeout=600)
+            resp = Response({
                 "success": True,
                 "message": "Builder project retrieved successfully.",
                 "data": serializer.data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except (BuilderProject.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,

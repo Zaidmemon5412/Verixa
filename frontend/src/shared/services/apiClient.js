@@ -1,37 +1,34 @@
 import axios from 'axios';
 import { getAccessToken } from '../utils/token';
+import {
+  FALLBACK_DIRECT_API_URL,
+  resolveApiConfig,
+  shouldAttachAuthHeader,
+  shouldRetryDirectOrigin,
+} from './apiConfig';
 
-const isLocalBrowser =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-const defaultBackendOrigin = isLocalBrowser
-  ? 'http://127.0.0.1:8000'
-  : 'https://verixa-backend-hwqz.onrender.com';
-
-const envCandidate = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '';
-const rawEnvUrl =
-  !isLocalBrowser && (envCandidate.includes('localhost') || envCandidate.includes('127.0.0.1') || !envCandidate)
-    ? defaultBackendOrigin
-    : envCandidate || defaultBackendOrigin;
-
-const resolvedBaseUrl = rawEnvUrl.endsWith('/api')
-  ? rawEnvUrl
-  : `${rawEnvUrl.replace(/\/+$/, '')}/api`;
+const { baseURL, useSameOriginProxy } = resolveApiConfig({
+  localOrigin: 'http://127.0.0.1:8000',
+});
 
 const apiClient = axios.create({
-  baseURL: resolvedBaseUrl,
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
   timeout: 60000,
 });
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = getAccessToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (shouldAttachAuthHeader(config)) {
+      const token = getAccessToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } else if (config.headers?.Authorization) {
+      delete config.headers.Authorization;
     }
     return config;
   },
@@ -41,6 +38,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    if (shouldRetryDirectOrigin(error, useSameOriginProxy)) {
+      const retryConfig = error.config;
+      retryConfig._retriedDirect = true;
+      retryConfig.baseURL = FALLBACK_DIRECT_API_URL;
+      return apiClient(retryConfig);
+    }
     if (error?.response?.status === 429) {
       const retryAfter =
         error.response.data?.retry_after ||

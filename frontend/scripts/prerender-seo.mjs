@@ -145,10 +145,13 @@ async function fetchJsonWithTimeout(url, timeoutMs = 8000) {
 }
 
 async function fetchLiveCatalog() {
-  const [buildersPayload, propsPayload] = await Promise.all([
-    fetchJsonWithTimeout(`${API_BASE_URL}/builders/`, 8000),
-    fetchJsonWithTimeout(`${API_BASE_URL}/properties/?page_size=500&compact=1`, 8000),
-  ]);
+  const [buildersPayload, propsPayload, filterOptionsPayload, featuredProjectsPayload] =
+    await Promise.all([
+      fetchJsonWithTimeout(`${API_BASE_URL}/builders/`, 8000),
+      fetchJsonWithTimeout(`${API_BASE_URL}/properties/?page_size=500&compact=1`, 8000),
+      fetchJsonWithTimeout(`${API_BASE_URL}/properties/filter-options/`, 8000),
+      fetchJsonWithTimeout(`${API_BASE_URL}/builders/projects/?page_size=12`, 8000),
+    ]);
 
   const rawBuilders =
     buildersPayload?.data || (Array.isArray(buildersPayload) ? buildersPayload : []);
@@ -156,8 +159,23 @@ async function fetchLiveCatalog() {
     propsPayload?.data?.results ||
     propsPayload?.results ||
     (Array.isArray(propsPayload?.data) ? propsPayload.data : []);
+  const rawFeaturedProjects =
+    featuredProjectsPayload?.data?.results ||
+    featuredProjectsPayload?.results ||
+    (Array.isArray(featuredProjectsPayload?.data) ? featuredProjectsPayload.data : []);
+  const rawFilterOptions = filterOptionsPayload?.data || null;
 
-  const builders = (Array.isArray(rawBuilders) ? rawBuilders : [])
+  const safeRawBuilders = Array.isArray(rawBuilders) ? rawBuilders : [];
+  const safeRawProps = Array.isArray(rawProps) ? rawProps : [];
+  const safeRawFeatured = Array.isArray(rawFeaturedProjects) ? rawFeaturedProjects : [];
+  const liveCount =
+    typeof propsPayload?.data?.count === 'number'
+      ? propsPayload.data.count
+      : typeof propsPayload?.count === 'number'
+      ? propsPayload.count
+      : safeRawProps.length;
+
+  const builders = safeRawBuilders
     .filter((b) => b && (b.builder_id || b.id))
     .map((b) => ({
       id: b.builder_id || b.id,
@@ -169,7 +187,7 @@ async function fetchLiveCatalog() {
       updatedAt: b.updated_at ? String(b.updated_at).slice(0, 10) : null,
     }));
 
-  const properties = (Array.isArray(rawProps) ? rawProps : [])
+  const properties = safeRawProps
     .filter((p) => p && (p.property_id || p.project_id || p.id))
     .map((p) => ({
       id: p.property_id || p.project_id || p.id,
@@ -183,7 +201,15 @@ async function fetchLiveCatalog() {
       updatedAt: p.created_at ? String(p.created_at).slice(0, 10) : null,
     }));
 
-  return { builders, properties };
+  return {
+    builders,
+    properties,
+    rawBuilders: safeRawBuilders,
+    rawProperties: safeRawProps,
+    rawFeaturedProjects: safeRawFeatured,
+    rawFilterOptions,
+    liveCount,
+  };
 }
 
 function buildNavFooterHtml() {
@@ -943,9 +969,28 @@ async function main() {
   const { xml, urlCount } = generateSitemapXml(catalog);
   fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), xml, 'utf8');
 
+  const snapshotDir = path.join(DIST_DIR, 'data');
+  fs.mkdirSync(snapshotDir, { recursive: true });
+  const initialCatalog = {
+    generatedAt: new Date().toISOString(),
+    count: catalog.liveCount || catalog.rawProperties.length || 0,
+    properties: catalog.rawProperties.slice(0, 48),
+    builders: catalog.rawBuilders || [],
+    featuredProjects: catalog.rawFeaturedProjects.slice(0, 12),
+    filterOptions: catalog.rawFilterOptions || null,
+  };
+  fs.writeFileSync(
+    path.join(snapshotDir, 'initial-catalog.json'),
+    JSON.stringify(initialCatalog),
+    'utf8'
+  );
+
   console.log(`[prerender-seo] Pre-rendered ${routes.length} static SEO routes into dist/`);
   console.log(
     `[prerender-seo] Generated dist/sitemap.xml with ${urlCount} URLs (builders: ${catalog.builders.length}, properties: ${catalog.properties.length})`
+  );
+  console.log(
+    `[prerender-seo] Wrote dist/data/initial-catalog.json (properties: ${initialCatalog.properties.length}, builders: ${initialCatalog.builders.length}, featured: ${initialCatalog.featuredProjects.length})`
   );
 }
 

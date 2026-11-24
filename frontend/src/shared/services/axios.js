@@ -1,24 +1,16 @@
 import axios from 'axios';
 import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken, clearTokens } from '../utils/token';
 import { API_ENDPOINTS } from './endpoints';
+import {
+  FALLBACK_DIRECT_API_URL,
+  resolveApiConfig,
+  shouldAttachAuthHeader,
+  shouldRetryDirectOrigin,
+} from './apiConfig';
 
-const isLocalBrowser =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-const defaultBackendOrigin = isLocalBrowser
-  ? 'http://localhost:8000'
-  : 'https://verixa-backend-hwqz.onrender.com';
-
-const envCandidate = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '';
-const rawEnvUrl =
-  !isLocalBrowser && (envCandidate.includes('localhost') || envCandidate.includes('127.0.0.1') || !envCandidate)
-    ? defaultBackendOrigin
-    : envCandidate || defaultBackendOrigin;
-
-const API_BASE_URL = rawEnvUrl.endsWith('/api')
-  ? rawEnvUrl
-  : `${rawEnvUrl.replace(/\/+$/, '')}/api`;
+const { baseURL: API_BASE_URL, useSameOriginProxy } = resolveApiConfig({
+  localOrigin: 'http://localhost:8000',
+});
 
 // Create Axios Instance (60s timeout to accommodate Render free-tier cold start)
 const apiClient = axios.create({
@@ -30,12 +22,16 @@ const apiClient = axios.create({
   },
 });
 
-// Request Interceptor to automatically attach active JWT Bearer token
+// Request Interceptor to attach active JWT Bearer token only when required
 apiClient.interceptors.request.use(
   (config) => {
-    const token = getAccessToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (shouldAttachAuthHeader(config)) {
+      const token = getAccessToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } else if (config.headers?.Authorization) {
+      delete config.headers.Authorization;
     }
     return config;
   },
@@ -63,8 +59,14 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (shouldRetryDirectOrigin(error, useSameOriginProxy)) {
+      originalRequest._retriedDirect = true;
+      originalRequest.baseURL = FALLBACK_DIRECT_API_URL;
+      return apiClient(originalRequest);
+    }
+
     // Avoid recursion if token refresh call itself returns a 401
-    if (originalRequest.url === API_ENDPOINTS.TOKEN_REFRESH) {
+    if (originalRequest?.url === API_ENDPOINTS.TOKEN_REFRESH) {
       clearTokens();
       window.dispatchEvent(new Event('auth:logout'));
       return Promise.reject(error);
@@ -78,7 +80,7 @@ apiClient.interceptors.response.use(
       reqUrl.includes('/accounts/forgot-password') ||
       reqUrl.includes('/accounts/reset-password');
 
-    if (error.response?.status === 401 && !originalRequest._retry && !isPublicAuthCall) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isPublicAuthCall) {
       if (isRefreshing) {
         // Enqueue request while refresh is actively in progress
         return new Promise((resolve, reject) => {
@@ -104,19 +106,30 @@ apiClient.interceptors.response.use(
 
       try {
         // Invoke API token refresh endpoint (use a separate standard axios client to prevent loops)
-        const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.TOKEN_REFRESH}`, {
-          refresh: refreshToken,
-        });
+        let response;
+        try {
+          response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.TOKEN_REFRESH}`, {
+            refresh: refreshToken,
+          });
+        } catch (refreshHttpErr) {
+          const st = refreshHttpErr?.response?.status;
+          if (useSameOriginProxy && (st === 502 || st === 504)) {
+            response = await axios.post(`${FALLBACK_DIRECT_API_URL}${API_ENDPOINTS.TOKEN_REFRESH}`, {
+              refresh: refreshToken,
+            });
+          } else {
+            throw refreshHttpErr;
+          }
+        }
 
         const newAccessToken = response.data.access;
         setAccessToken(newAccessToken);
-        
+
         // Save rotated refresh token if provided by backend
         if (response.data.refresh) {
           setRefreshToken(response.data.refresh);
         }
 
-        apiClient.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         processQueue(null, newAccessToken);

@@ -1,7 +1,19 @@
 import apiClient from '../../../shared/services/apiClient';
 import { getBuilderBrandInfo } from '../utils/builderLogos';
 import { createBuilderSlug, createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
-import { resolveAhmedabadCoordinates } from '../../properties/services/nearbyService';
+import { resolveAhmedabadCoordinates } from '../../../shared/utils/coordinates';
+import { getCatalogSeed } from '../../../shared/services/catalogSeed';
+import { readSwr, writeSwr, SWR_PREFIX } from '../../../shared/utils/swrCache';
+
+const MEMORY_CACHE_TTL_MS = 5 * 60 * 1000;
+let buildersListCache = null;
+let pendingBuildersPromise = null;
+const builderByIdCache = new Map();
+const pendingBuilderById = new Map();
+const builderProjectsCache = new Map();
+const pendingBuilderProjects = new Map();
+let featuredProjectsCache = null;
+let pendingFeaturedPromise = null;
 
 /**
  * Format raw price string or float into Indian Currency format (e.g. ₹45.0 L, ₹2.50 Cr)
@@ -168,57 +180,196 @@ export function mapApiBuilderToUi(item) {
 
 export const builderService = {
   /**
-   * GET /api/builders/
-   * List all verified builders
+   * Synchronous cache lookup for frame-0 builders directory render.
    */
-  async getBuilders() {
-    try {
-      const response = await apiClient.get('/builders/');
-      const rawData = response?.data?.data || response?.data || response;
-      if (Array.isArray(rawData)) {
-        return rawData.map(mapApiBuilderToUi).filter(Boolean);
-      }
-      return [];
-    } catch (error) {
-      console.warn('builderService: Error fetching builders list:', error);
-      return [];
+  getCachedBuilders() {
+    if (buildersListCache && Date.now() - buildersListCache.timestamp < MEMORY_CACHE_TTL_MS) {
+      return buildersListCache.data;
     }
+    const swr = readSwr(`${SWR_PREFIX}builders_list`);
+    if (Array.isArray(swr) && swr.length > 0) {
+      buildersListCache = { timestamp: Date.now(), data: swr };
+      return swr;
+    }
+    return null;
+  },
+
+  /**
+   * Synchronous cache lookup for a single builder by UUID or slug.
+   */
+  getCachedBuilderById(id) {
+    if (!id || id === 'undefined' || id === 'null') return null;
+    const cleanId = extractIdFromSlug(id).toLowerCase();
+    const rawLower = String(id).toLowerCase();
+
+    const cached = builderByIdCache.get(cleanId) || builderByIdCache.get(rawLower);
+    if (cached && Date.now() - cached.timestamp < MEMORY_CACHE_TTL_MS) {
+      return cached.data;
+    }
+
+    const list = this.getCachedBuilders();
+    if (Array.isArray(list)) {
+      const hit = list.find(
+        (b) =>
+          String(b.id).toLowerCase() === cleanId ||
+          String(b.slug || '').toLowerCase() === rawLower ||
+          slugify(b.name) === slugify(cleanId)
+      );
+      if (hit) return hit;
+    }
+
+    return readSwr(`${SWR_PREFIX}builder_${cleanId}`);
+  },
+
+  /**
+   * Synchronous cache lookup for LandingPage featured launches carousel.
+   */
+  getCachedFeaturedProjects() {
+    if (featuredProjectsCache && Date.now() - featuredProjectsCache.timestamp < MEMORY_CACHE_TTL_MS) {
+      return featuredProjectsCache.data;
+    }
+    const swr = readSwr(`${SWR_PREFIX}featured_projects`);
+    if (Array.isArray(swr) && swr.length > 0) {
+      featuredProjectsCache = { timestamp: Date.now(), data: swr };
+      return swr;
+    }
+    return null;
+  },
+
+  async getFeaturedProjects() {
+    if (featuredProjectsCache && Date.now() - featuredProjectsCache.timestamp < MEMORY_CACHE_TTL_MS) {
+      return featuredProjectsCache.data;
+    }
+    if (pendingFeaturedPromise) return pendingFeaturedPromise;
+
+    pendingFeaturedPromise = (async () => {
+      try {
+        const response = await apiClient.get('/builders/projects/?page_size=20');
+        const resData = response?.data?.data || response?.data || response;
+        const rawResults = resData?.results || (Array.isArray(resData) ? resData : []);
+        let mapped = rawResults.map(mapApiBuilderProjectToUi).filter(Boolean);
+
+        if (mapped.length === 0) {
+          const propsRes = await apiClient.get('/properties/?page_size=20&compact=1');
+          const rawProps = propsRes?.data?.results || propsRes?.results || (Array.isArray(propsRes) ? propsRes : []);
+          mapped = rawProps.map(mapApiBuilderProjectToUi).filter(Boolean);
+        }
+
+        if (mapped.length > 0) {
+          featuredProjectsCache = { timestamp: Date.now(), data: mapped };
+          writeSwr(`${SWR_PREFIX}featured_projects`, mapped);
+        }
+        return mapped;
+      } catch (error) {
+        console.warn('builderService: Error fetching featured projects:', error);
+        const seed = await getCatalogSeed();
+        const seedRaw = seed?.featuredProjects?.length ? seed.featuredProjects : seed?.properties || [];
+        if (seedRaw.length > 0) {
+          return seedRaw.map(mapApiBuilderProjectToUi).filter(Boolean);
+        }
+        return readSwr(`${SWR_PREFIX}featured_projects`) || [];
+      } finally {
+        pendingFeaturedPromise = null;
+      }
+    })();
+
+    return pendingFeaturedPromise;
+  },
+
+  /**
+   * GET /api/builders/
+   * List all verified builders (cached & deduplicated)
+   */
+  async getBuilders({ forceRefresh = false } = {}) {
+    if (!forceRefresh && buildersListCache && Date.now() - buildersListCache.timestamp < MEMORY_CACHE_TTL_MS) {
+      return buildersListCache.data;
+    }
+    if (pendingBuildersPromise) return pendingBuildersPromise;
+
+    pendingBuildersPromise = (async () => {
+      try {
+        const response = await apiClient.get('/builders/');
+        const rawData = response?.data?.data || response?.data || response;
+        if (Array.isArray(rawData)) {
+          const mapped = rawData.map(mapApiBuilderToUi).filter(Boolean);
+          buildersListCache = { timestamp: Date.now(), data: mapped };
+          mapped.forEach((b) => {
+            builderByIdCache.set(String(b.id).toLowerCase(), { timestamp: Date.now(), data: b });
+          });
+          writeSwr(`${SWR_PREFIX}builders_list`, mapped);
+          return mapped;
+        }
+        return [];
+      } catch (error) {
+        console.warn('builderService: Error fetching builders list:', error);
+        const seed = await getCatalogSeed();
+        if (Array.isArray(seed?.builders) && seed.builders.length > 0) {
+          return seed.builders.map(mapApiBuilderToUi).filter(Boolean);
+        }
+        return readSwr(`${SWR_PREFIX}builders_list`) || [];
+      } finally {
+        pendingBuildersPromise = null;
+      }
+    })();
+
+    return pendingBuildersPromise;
   },
 
   /**
    * GET /api/builders/:id/
-   * Retrieve single builder by UUID or slug
+   * Retrieve single builder by UUID or slug (cached & deduplicated)
    */
   async getBuilderById(id) {
     if (!id || id === 'undefined' || id === 'null') return null;
 
     const cleanId = extractIdFromSlug(id);
+    const cacheKey = cleanId.toLowerCase();
 
-    try {
-      const response = await apiClient.get(`/builders/${cleanId}/`);
-      const rawData = response?.data?.data || response?.data || response;
-      if (rawData && (rawData.builder_id || rawData.id)) {
-        return mapApiBuilderToUi(rawData);
+    const cached = builderByIdCache.get(cacheKey) || builderByIdCache.get(String(id).toLowerCase());
+    if (cached && Date.now() - cached.timestamp < MEMORY_CACHE_TTL_MS) {
+      return cached.data;
+    }
+
+    if (pendingBuilderById.has(cacheKey)) {
+      return pendingBuilderById.get(cacheKey);
+    }
+
+    const fetchPromise = (async () => {
+      try {
+        try {
+          const response = await apiClient.get(`/builders/${cleanId}/`);
+          const rawData = response?.data?.data || response?.data || response;
+          if (rawData && (rawData.builder_id || rawData.id)) {
+            const mapped = mapApiBuilderToUi(rawData);
+            builderByIdCache.set(cacheKey, { timestamp: Date.now(), data: mapped });
+            writeSwr(`${SWR_PREFIX}builder_${cacheKey}`, mapped);
+            return mapped;
+          }
+        } catch (error) {
+          console.warn(`builderService: Direct lookup for "${id}" failed, searching list:`, error?.message || error);
+        }
+
+        try {
+          const allBuilders = await this.getBuilders();
+          const match = allBuilders.find(
+            (b) =>
+              String(b.id).toLowerCase() === cacheKey ||
+              String(b.slug || '').toLowerCase() === String(id).toLowerCase() ||
+              slugify(b.name) === slugify(cleanId)
+          );
+          if (match) return match;
+        } catch (err) {
+          console.warn('builderService: List search fallback failed:', err);
+        }
+
+        return null;
+      } finally {
+        pendingBuilderById.delete(cacheKey);
       }
-    } catch (error) {
-      console.warn(`builderService: Direct lookup for "${id}" failed, searching list:`, error?.message || error);
-    }
+    })();
 
-    // Fallback: search builders list
-    try {
-      const allBuilders = await this.getBuilders();
-      const match = allBuilders.find(
-        (b) =>
-          String(b.id).toLowerCase() === cleanId.toLowerCase() ||
-          String(b.slug || '').toLowerCase() === String(id).toLowerCase() ||
-          slugify(b.name) === slugify(cleanId)
-      );
-      if (match) return match;
-    } catch (err) {
-      console.warn('builderService: List search fallback failed:', err);
-    }
-
-    return null;
+    pendingBuilderById.set(cacheKey, fetchPromise);
+    return fetchPromise;
   },
 
   /**
@@ -229,37 +380,55 @@ export const builderService = {
     if (!builderId) return { results: [], count: 0, totalPages: 1 };
 
     const cleanId = extractIdFromSlug(builderId);
+    const params = new URLSearchParams();
+    params.append('builder', cleanId);
+    params.append('page_size', '20');
 
-    try {
-      const params = new URLSearchParams();
-      params.append('builder', cleanId);
-      params.append('page_size', '20');
+    if (filters.search) params.append('search', filters.search);
+    if (filters.status && filters.status !== 'All') params.append('project_status', filters.status);
+    if (filters.property_type && filters.property_type !== 'All') params.append('property_type', filters.property_type);
+    if (filters.ordering) params.append('ordering', filters.ordering);
+    if (filters.page) params.append('page', String(filters.page));
 
-      if (filters.search) params.append('search', filters.search);
-      if (filters.status && filters.status !== 'All') params.append('project_status', filters.status);
-      if (filters.property_type && filters.property_type !== 'All') params.append('property_type', filters.property_type);
-      if (filters.ordering) params.append('ordering', filters.ordering);
-      if (filters.page) params.append('page', String(filters.page));
-
-      const response = await apiClient.get(`/builders/projects/?${params.toString()}`);
-      const resData = response?.data?.data || response?.data || response;
-
-      let rawResults = resData?.results || (Array.isArray(resData) ? resData : []);
-      const totalCount = resData?.count || rawResults.length;
-      const totalPages = resData?.total_pages || Math.ceil(totalCount / 20) || 1;
-
-      const mappedProjects = rawResults.map(mapApiBuilderProjectToUi).filter(Boolean);
-
-      return {
-        results: mappedProjects,
-        count: totalCount,
-        totalPages: totalPages,
-        currentPage: resData?.current_page || 1,
-      };
-    } catch (error) {
-      console.warn(`builderService: Error fetching projects for builder "${builderId}":`, error);
-      return { results: [], count: 0, totalPages: 1, currentPage: 1 };
+    const queryKey = params.toString();
+    const cached = builderProjectsCache.get(queryKey);
+    if (cached && Date.now() - cached.timestamp < MEMORY_CACHE_TTL_MS) {
+      return cached.data;
     }
+
+    if (pendingBuilderProjects.has(queryKey)) {
+      return pendingBuilderProjects.get(queryKey);
+    }
+
+    const fetchPromise = (async () => {
+      try {
+        const response = await apiClient.get(`/builders/projects/?${queryKey}`);
+        const resData = response?.data?.data || response?.data || response;
+
+        const rawResults = resData?.results || (Array.isArray(resData) ? resData : []);
+        const totalCount = resData?.count || rawResults.length;
+        const totalPages = resData?.total_pages || Math.ceil(totalCount / 20) || 1;
+
+        const mappedProjects = rawResults.map(mapApiBuilderProjectToUi).filter(Boolean);
+
+        const payload = {
+          results: mappedProjects,
+          count: totalCount,
+          totalPages,
+          currentPage: resData?.current_page || 1,
+        };
+        builderProjectsCache.set(queryKey, { timestamp: Date.now(), data: payload });
+        return payload;
+      } catch (error) {
+        console.warn(`builderService: Error fetching projects for builder "${builderId}":`, error);
+        return { results: [], count: 0, totalPages: 1, currentPage: 1 };
+      } finally {
+        pendingBuilderProjects.delete(queryKey);
+      }
+    })();
+
+    pendingBuilderProjects.set(queryKey, fetchPromise);
+    return fetchPromise;
   },
 };
 

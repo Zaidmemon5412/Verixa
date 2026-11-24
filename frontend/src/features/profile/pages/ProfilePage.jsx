@@ -24,7 +24,10 @@ export function ProfilePage() {
     toggleWishlist
   } = useWishlist();
 
-  const { selectedIds, addProperty, removeProperty } = usePropertyComparison();
+  const { selectedIds, addProperty, removeProperty } = usePropertyComparison([], {
+    loadCatalog: false,
+    loadCompared: false,
+  });
 
   const handleToggleCompare = (propertyId) => {
     const targetId = String(propertyId);

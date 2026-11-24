@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Plus, X, Building2, MapPin, ShieldCheck, Sparkles } from 'lucide-react';
+import { Search, Plus, X, MapPin, Sparkles } from 'lucide-react';
 import { Button } from '../../../shared/components/ui/button';
+import { propertyService } from '../../properties/services/propertyService';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
 export function PropertySearchSelector({ 
   allProperties = [], 
@@ -12,6 +14,8 @@ export function PropertySearchSelector({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [remoteResults, setRemoteResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const containerRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -25,10 +29,52 @@ export function PropertySearchSelector({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter properties based on search query matching Name, Builder, or Locality
+  // Debounced server search across full database catalog when typing >= 2 chars
+  useEffect(() => {
+    const query = searchTerm.trim();
+    if (query.length < 2) {
+      setRemoteResults([]);
+      setIsSearching(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const cached = propertyService.getCachedPropertiesPage({ search: query }, { page: 1, pageSize: 16 });
+    if (cached?.results?.length) {
+      setRemoteResults(cached.results);
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await propertyService.getPropertiesPage({ search: query }, { page: 1, pageSize: 16 });
+        if (!cancelled && Array.isArray(res?.results)) {
+          setRemoteResults(res.results);
+        }
+      } catch {
+        // Keep local catalog matches if remote lookup fails
+      } finally {
+        if (!cancelled) setIsSearching(false);
+      }
+    }, 200);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchTerm]);
+
+  // Filter merged properties based on search query matching Name, Builder, or Locality
   const filteredProperties = useMemo(() => {
     const query = searchTerm.toLowerCase().trim();
-    return allProperties.filter((p) => {
+    const mergedMap = new Map();
+    [...remoteResults, ...allProperties].forEach((p) => {
+      if (p?.id && !mergedMap.has(String(p.id))) {
+        mergedMap.set(String(p.id), p);
+      }
+    });
+
+    return Array.from(mergedMap.values()).filter((p) => {
       // Exclude already selected properties unless replacing
       const isAlreadySelected = selectedIds.includes(String(p.id));
       if (isAlreadySelected && activeSlotIndex === null) return false;
@@ -41,7 +87,7 @@ export function PropertySearchSelector({
 
       return nameMatch || builderMatch || localityMatch;
     }).slice(0, 8); // Limit dropdown results to 8 items
-  }, [allProperties, selectedIds, searchTerm, activeSlotIndex]);
+  }, [allProperties, remoteResults, selectedIds, searchTerm, activeSlotIndex]);
 
   const handleSelect = (propertyId) => {
     if (activeSlotIndex !== null && onReplaceProperty) {
@@ -90,7 +136,11 @@ export function PropertySearchSelector({
           <div className="p-3 bg-muted/40 border-b flex items-center justify-between text-xs text-muted-foreground font-semibold">
             <span className="flex items-center gap-1 text-primary font-bold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Available Database Properties ({filteredProperties.length})</span>
+              <span>
+                {isSearching
+                  ? 'Searching live properties...'
+                  : `Available Database Properties (${filteredProperties.length})`}
+              </span>
             </span>
             {activeSlotIndex !== null && (
               <span className="text-amber-600 dark:text-amber-400 font-bold">Replacing Slot #{activeSlotIndex + 1}</span>
@@ -112,8 +162,10 @@ export function PropertySearchSelector({
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img
-                      src={prop.image}
+                      src={optimizeImageUrl(prop.image, 'thumb')}
                       alt={prop.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-12 h-12 rounded-xl object-cover border shrink-0 group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0">

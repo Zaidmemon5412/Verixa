@@ -180,9 +180,8 @@ export function PropertyMapSection({ property }) {
       {/* Map Main Engine Container */}
       <div
         id="verixa-interactive-map-container"
-        className={`relative w-full ${
-          isFullscreen ? 'h-[75vh] min-h-[520px]' : 'h-[360px] sm:h-[460px]'
-        } rounded-2xl sm:rounded-3xl overflow-hidden border border-border shadow-xl bg-muted/20 transition-all duration-300`}
+        className={`relative w-full ${isFullscreen ? 'h-[75vh] min-h-[520px]' : 'h-[360px] sm:h-[460px]'
+          } rounded-2xl sm:rounded-3xl overflow-hidden border border-border shadow-xl bg-muted/20 transition-all duration-300`}
       >
         <MapControls
           mapType={mapType}

@@ -2,10 +2,8 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { 
-  Building2, MapPin, Shield, BedDouble, Calendar, 
-  Heart, ArrowLeft, Calculator, Phone, CheckCircle, 
-  Share2, Award, Zap, Trees, Hospital, Train, ShoppingBag,
-  FileCheck, AlertCircle, Check, Image as ImageIcon, CalendarCheck
+  Building2, MapPin, Shield, Calendar, 
+  Phone, CheckCircle, Share2, Image as ImageIcon, CalendarCheck, ArrowLeft
 } from 'lucide-react';
 import { propertyService } from '../services/propertyService';
 import { builderService } from '../../builders/services/builderService';
@@ -15,10 +13,13 @@ import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { Skeleton } from '../../../shared/components/ui/skeleton';
 import { PropertyDetailSkeleton } from '../../../shared/components/skeletons';
+import { LazyViewportSection } from '../../../shared/components/LazyViewportSection';
 import { InquiryModal } from '../../inquiries/components/InquiryModal';
 import { EMICalculatorCard } from '../components/EMICalculatorCard';
 import { SEOHead } from '../../../shared/components/SEOHead';
 import { buildBreadcrumbSchema, buildPropertySchema, slugify } from '../../../shared/utils/seoUtils';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
+import { getBuilderBrandInfo } from '../../builders/utils/builderLogos';
 
 // Route-level Code-Splitting & Lazy Loading for Heavy Below-the-Fold Components
 const PropertyMapSection = lazy(() => import('../components/PropertyMap'));
@@ -36,6 +37,27 @@ const ComponentSkeleton = ({ height = "h-32", title = "Loading AI & Spatial Data
   </Card>
 );
 
+function buildInitialBuilderState(prop) {
+  if (!prop) return null;
+  const bd = prop.builderDetail;
+  if (bd?.builder_id || bd?.builder_name) {
+    const brand = getBuilderBrandInfo(bd.builder_name, bd.logo);
+    return {
+      id: bd.builder_id || prop.builderId,
+      name: bd.builder_name || prop.builder,
+      yearsExp: bd.experience_years || 10,
+      completedProjects: bd.completed_projects ?? 15,
+      trustScore: 92,
+      abbr: brand.abbr,
+      color: brand.color,
+    };
+  }
+  if (prop.builderId) {
+    return builderService.getCachedBuilderById(prop.builderId);
+  }
+  return null;
+}
+
 export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onSelectBuilder }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -44,7 +66,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
   const initialCached = projectId ? propertyService.getCachedProperty(projectId) : null;
 
   const [project, setProject] = useState(initialCached);
-  const [builder, setBuilder] = useState(null);
+  const [builder, setBuilder] = useState(() => buildInitialBuilderState(initialCached));
   const [loading, setLoading] = useState(!initialCached);
   const [selectedImage, setSelectedImage] = useState(initialCached?.image || null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
@@ -60,6 +82,10 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         setProject(cached);
         setSelectedImage((prev) => prev || cached.image || null);
         setLoading(false);
+        const quickBuilder = buildInitialBuilderState(cached);
+        if (quickBuilder) {
+          setBuilder((prev) => prev || quickBuilder);
+        }
         if (cached.builderId) {
           builderService.getBuilderById(cached.builderId)
             .then((bData) => {
@@ -88,6 +114,10 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
             if (Array.isArray(pData.images) && pData.images.includes(prev)) return prev;
             return pData.image || prev;
           });
+          const quickBuilder = buildInitialBuilderState(pData);
+          if (quickBuilder) {
+            setBuilder((prev) => prev || quickBuilder);
+          }
         } else if (!cached) {
           setProject(null);
         }
@@ -299,7 +329,7 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
           <div className="space-y-3">
             <div className="relative aspect-[4/3] sm:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border shadow-lg bg-muted">
               <img
-                src={currentImage}
+                src={optimizeImageUrl(currentImage, 'hero')}
                 alt={`${project.name} - ${project.config} in ${project.location}`}
                 loading="eager"
                 fetchPriority="high"
@@ -329,12 +359,16 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(imgUrl)}
+                    onMouseEnter={() => {
+                      const pre = new Image();
+                      pre.src = optimizeImageUrl(imgUrl, 'hero');
+                    }}
                     className={`relative w-24 h-16 sm:w-28 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 snap-start group ${
                       currentImage === imgUrl ? 'border-primary ring-2 ring-primary/40 shadow-md' : 'border-transparent opacity-75 hover:opacity-100'
                     }`}
                   >
-                    <img src={imgUrl} alt={`Photo ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                    <img src={optimizeImageUrl(imgUrl, 'thumb')} alt={`Photo ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                    <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded">
                       #{idx + 1}
                     </span>
                   </button>
@@ -501,11 +535,16 @@ export function PropertyDetailPage({ projectId, isLegalView = false, onBack, onS
         </div>
       </div>
 
-      {/* FULL WIDTH LOCATION & SURROUNDING ECOSYSTEM SECTION (Lazy Loaded Below 2-Column Grid) */}
+      {/* FULL WIDTH LOCATION & SURROUNDING ECOSYSTEM SECTION (Viewport-Gated Lazy Hydration) */}
       <div className="w-full pt-4">
-        <Suspense fallback={<ComponentSkeleton height="h-64" title="Loading Spatial Engine & Nearby Places..." />}>
-          <PropertyMapSection property={project} />
-        </Suspense>
+        <LazyViewportSection
+          fallback={<ComponentSkeleton height="h-64" title="Loading Spatial Engine & Nearby Places..." />}
+          rootMargin="450px 0px"
+        >
+          <Suspense fallback={<ComponentSkeleton height="h-64" title="Loading Spatial Engine & Nearby Places..." />}>
+            <PropertyMapSection property={project} />
+          </Suspense>
+        </LazyViewportSection>
       </div>
 
       {/* Request Site Visit / Callback Modal */}

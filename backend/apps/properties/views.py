@@ -66,6 +66,7 @@ from .pagination import PropertyPagination, StandardResultsSetPagination
 from .permissions import IsAdminOrReadOnly, IsListingOwnerOrBuilderOrAdmin
 from .ai_advisor import generate_ai_property_advisory
 from common.throttling import AIAdvisorRateThrottle, WriteActionRateThrottle
+from common.cache_headers import apply_public_edge_cache, safe_cache_key
 
 logger = logging.getLogger(__name__)
 
@@ -785,9 +786,7 @@ class PropertyViewSet(viewsets.ViewSet):
                     "message": "Filter options retrieved successfully.",
                     "data": cached_options
                 }, status=status.HTTP_200_OK)
-                resp['X-Cache-Status'] = 'HIT'
-                resp['Cache-Control'] = 'public, max-age=120, stale-while-revalidate=600'
-                return resp
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
 
             options = get_filter_options()
             cache.set(cache_key, options, timeout=600)
@@ -796,9 +795,7 @@ class PropertyViewSet(viewsets.ViewSet):
                 "message": "Filter options retrieved successfully.",
                 "data": options
             }, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=120, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error retrieving filter options")
             return Response({
@@ -821,23 +818,19 @@ class PropertyViewSet(viewsets.ViewSet):
             cached_payload = cache.get(cache_key)
             if cached_payload is not None:
                 resp = Response(cached_payload, status=status.HTTP_200_OK)
-                resp['X-Cache-Status'] = 'HIT'
-                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
-                return resp
+                return apply_public_edge_cache(resp, max_age=60, s_maxage=300, swr=86400, cache_status='HIT')
 
             is_compact = str(qp.get('compact', '')).lower() in ('1', 'true', 'yes')
             serializer_cls = PropertyCompactListSerializer if is_compact else PropertyListSerializer
 
-            queryset = list_properties(qp)
+            queryset = list_properties(qp, compact=is_compact)
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(queryset, request)
             if page is not None:
                 serializer = serializer_cls(page, many=True)
                 resp = paginator.get_paginated_response(serializer.data)
                 cache.set(cache_key, resp.data, timeout=300)
-                resp['X-Cache-Status'] = 'MISS'
-                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
-                return resp
+                return apply_public_edge_cache(resp, max_age=60, s_maxage=300, swr=86400, cache_status='MISS')
 
             serializer = serializer_cls(queryset, many=True)
             payload = {
@@ -847,9 +840,7 @@ class PropertyViewSet(viewsets.ViewSet):
             }
             cache.set(cache_key, payload, timeout=300)
             resp = Response(payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
-            return resp
+            return apply_public_edge_cache(resp, max_age=60, s_maxage=300, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error listing properties")
             return Response({
@@ -863,8 +854,11 @@ class PropertyViewSet(viewsets.ViewSet):
             from django.core.cache import cache
             qp = _get_query_params(request)
             include_nearby = str(qp.get('include_nearby', '')).lower() in ('1', 'true', 'yes')
+            clean_pk = str(pk or '').strip()
+            if '--' in clean_pk:
+                clean_pk = clean_pk.split('--')[-1].strip()
             cache_ver = get_properties_cache_version()
-            cache_key = f"verixa_prop_detail_v{cache_ver}_{pk}_{int(include_nearby)}"
+            cache_key = safe_cache_key(f"verixa_prop_detail_v{cache_ver}", clean_pk, int(include_nearby))
 
             cached_data = cache.get(cache_key)
             if cached_data is not None:
@@ -873,11 +867,9 @@ class PropertyViewSet(viewsets.ViewSet):
                     "message": "Property retrieved successfully.",
                     "data": cached_data
                 }, status=status.HTTP_200_OK)
-                resp['X-Cache-Status'] = 'HIT'
-                resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
-                return resp
+                return apply_public_edge_cache(resp, max_age=60, s_maxage=300, swr=86400, cache_status='HIT')
 
-            property_obj = get_property(pk)
+            property_obj = get_property(clean_pk)
             serializer = PropertyDetailSerializer(property_obj, context={'include_nearby': include_nearby})
             data = serializer.data
             cache.set(cache_key, data, timeout=300)
@@ -886,9 +878,7 @@ class PropertyViewSet(viewsets.ViewSet):
                 "message": "Property retrieved successfully.",
                 "data": data
             }, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=60, stale-while-revalidate=300'
-            return resp
+            return apply_public_edge_cache(resp, max_age=60, s_maxage=300, swr=86400, cache_status='MISS')
         except (Property.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,
@@ -929,13 +919,21 @@ class PropertyViewSet(viewsets.ViewSet):
         raw_pk = str(pk or '').strip()
         clean_pk = raw_pk.split('--')[-1] if '--' in raw_pk else raw_pk
 
-        cache_key = f"verixa_prop_nearby_v2_{clean_pk}_{category}_{radius}_{limit}_{param_lat}_{param_lon}_{param_locality}"
+        cache_ver = get_properties_cache_version()
+        cache_key = safe_cache_key(
+            f"verixa_prop_nearby_v2_{cache_ver}",
+            clean_pk,
+            category,
+            radius,
+            limit,
+            param_lat,
+            param_lon,
+            param_locality,
+        )
         cached_payload = cache.get(cache_key)
         if cached_payload is not None:
             resp = Response(cached_payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'HIT'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='HIT')
 
         property_obj = None
         try:
@@ -961,9 +959,7 @@ class PropertyViewSet(viewsets.ViewSet):
             }
             cache.set(cache_key, payload, timeout=600)
             resp = Response(payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='MISS')
 
         # Fallback 1: Check BuilderProject by UUID
         try:
@@ -998,9 +994,7 @@ class PropertyViewSet(viewsets.ViewSet):
             }
             cache.set(cache_key, payload, timeout=600)
             resp = Response(payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='MISS')
 
         # Fallback 2: If lat/lon or locality query params are provided (e.g. static demo cards)
         if param_lat is not None or param_lon is not None or param_locality:
@@ -1026,9 +1020,7 @@ class PropertyViewSet(viewsets.ViewSet):
             }
             cache.set(cache_key, payload, timeout=600)
             resp = Response(payload, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            resp['Cache-Control'] = 'public, max-age=300, stale-while-revalidate=600'
-            return resp
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='MISS')
 
         return Response({
             "success": False,
@@ -1176,8 +1168,23 @@ class PropertyViewSet(viewsets.ViewSet):
         Retrieves the AI Fair Price prediction and confidence score for a property.
         Endpoint: GET /api/properties/<property_id>/fair-price/
         """
+        from django.core.cache import cache
+        clean_pk = str(pk or '').strip()
+        if '--' in clean_pk:
+            clean_pk = clean_pk.split('--')[-1].strip()
+        cache_ver = get_properties_cache_version()
+        cache_key = safe_cache_key(f"verixa_fair_price_v{cache_ver}", clean_pk)
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            resp = Response({
+                "success": True,
+                "message": "AI Fair price prediction retrieved successfully.",
+                "data": cached_data
+            }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='HIT')
+
         try:
-            property_obj = get_property(pk)
+            property_obj = get_property(clean_pk)
         except (Property.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,
@@ -1201,7 +1208,7 @@ class PropertyViewSet(viewsets.ViewSet):
                     # pyrefly: ignore [missing-import]
                     from prediction_service import predict_property_fair_price
                     features = {
-                        "bhk": property_obj.primary_bhk or 2,
+                        "bhk": property_obj.bhk or 2,
                         "carpet_area": float(property_obj.carpet_area or 1200),
                         "builtup_area": float(property_obj.builtup_area or 1400),
                         "locality_name": property_obj.locality.name if property_obj.locality else "Satellite",
@@ -1239,22 +1246,25 @@ class PropertyViewSet(viewsets.ViewSet):
                 verdict_color = "yellow"
                 insight = "This property asking price aligns closely with current algorithmic valuation models."
 
-            return Response({
+            fair_price_data = {
+                "property_id": str(property_obj.property_id),
+                "predicted_fair_price": round(predicted_price, 2),
+                "confidence_score": round(confidence_score, 1),
+                "listed_price": round(listed_price, 2),
+                "price_difference": round(abs(diff), 2),
+                "difference_percentage": round(diff_pct, 1),
+                "verdict": verdict,
+                "verdict_color": verdict_color,
+                "insight": insight,
+                "model_type": "XGBoost + RandomForest Ensemble"
+            }
+            cache.set(cache_key, fair_price_data, timeout=1800)
+            resp = Response({
                 "success": True,
                 "message": "AI Fair price prediction retrieved successfully.",
-                "data": {
-                    "property_id": str(property_obj.property_id),
-                    "predicted_fair_price": round(predicted_price, 2),
-                    "confidence_score": round(confidence_score, 1),
-                    "listed_price": round(listed_price, 2),
-                    "price_difference": round(abs(diff), 2),
-                    "difference_percentage": round(diff_pct, 1),
-                    "verdict": verdict,
-                    "verdict_color": verdict_color,
-                    "insight": insight,
-                    "model_type": "XGBoost + RandomForest Ensemble"
-                }
+                "data": fair_price_data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception(f"Error calculating fair price for property ID {pk}")
             return Response({
@@ -1269,8 +1279,23 @@ class PropertyViewSet(viewsets.ViewSet):
         Generates an executive Verixa AI Property Audit decision report for buyers.
         Endpoint: GET /api/properties/<property_id>/audit/
         """
+        from django.core.cache import cache
+        clean_pk = str(pk or '').strip()
+        if '--' in clean_pk:
+            clean_pk = clean_pk.split('--')[-1].strip()
+        cache_ver = get_properties_cache_version()
+        cache_key = safe_cache_key(f"verixa_prop_audit_v{cache_ver}", clean_pk)
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            resp = Response({
+                "success": True,
+                "message": "Verixa AI Property Audit report generated successfully.",
+                "data": cached_data
+            }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='HIT')
+
         try:
-            property_obj = get_property(pk)
+            property_obj = get_property(clean_pk)
         except (Property.DoesNotExist, DjangoValidationError, ValueError):
             return Response({
                 "success": False,
@@ -1395,63 +1420,66 @@ class PropertyViewSet(viewsets.ViewSet):
             }
             ai_advisor_data = generate_ai_property_advisory(ai_context)
 
-            return Response({
+            audit_data = {
+                "property_id": str(property_obj.property_id),
+                "property_name": property_obj.property_name,
+                "audited_at": "Live DB Audit",
+                "price_analysis": {
+                    "listed_price": listed_price,
+                    "fair_price": predicted_price,
+                    "difference": abs(diff),
+                    "difference_pct": round(diff_pct, 1),
+                    "verdict": price_verdict,
+                    "verdict_color": price_color,
+                    "negotiation_tip": price_negotiation
+                },
+                "builder_analysis": {
+                    "builder_name": builder_name,
+                    "years_experience": years_exp,
+                    "completed_projects": completed_projects,
+                    "trust_score": trust_score,
+                    "assessment": builder_assessment
+                },
+                "locality_analysis": {
+                    "locality_name": loc_name,
+                    "strengths": locality_strengths,
+                    "weaknesses": locality_weaknesses,
+                    "rental_demand": "High"
+                },
+                "legal_analysis": {
+                    "verification_status": legal_status,
+                    "statement": legal_statement,
+                    "survey_number": survey_no,
+                    "khata_number": khata_no,
+                    "na_converted": na_converted,
+                    "missing_records": missing_legal,
+                    "disclaimer": "Analysis based solely on records provided in database. Does not replace formal legal advice."
+                },
+                "investment_analysis": {
+                    "capital_growth": "High (+8.4% YoY)",
+                    "end_user_suitability": "Excellent",
+                    "rental_yield": "3.8% - 4.2%",
+                    "summary": investment_summary
+                },
+                "risk_analysis": {
+                    "identified_risks": risks
+                },
+                "lifestyle_recommendation": lifestyle,
+                "final_recommendation": {
+                    "decision": rec_decision,
+                    "badge": rec_badge,
+                    "color": rec_color,
+                    "rationale_bullets": rationale_bullets
+                },
+                "ai_advisor": ai_advisor_data
+            }
+            cache.set(cache_key, audit_data, timeout=1800)
+            resp = Response({
                 "success": True,
                 "message": "Verixa AI Property Audit report generated successfully.",
-                "data": {
-                    "property_id": str(property_obj.property_id),
-                    "property_name": property_obj.property_name,
-                    "audited_at": "Live DB Audit",
-                    "price_analysis": {
-                        "listed_price": listed_price,
-                        "fair_price": predicted_price,
-                        "difference": abs(diff),
-                        "difference_pct": round(diff_pct, 1),
-                        "verdict": price_verdict,
-                        "verdict_color": price_color,
-                        "negotiation_tip": price_negotiation
-                    },
-                    "builder_analysis": {
-                        "builder_name": builder_name,
-                        "years_experience": years_exp,
-                        "completed_projects": completed_projects,
-                        "trust_score": trust_score,
-                        "assessment": builder_assessment
-                    },
-                    "locality_analysis": {
-                        "locality_name": loc_name,
-                        "strengths": locality_strengths,
-                        "weaknesses": locality_weaknesses,
-                        "rental_demand": "High"
-                    },
-                    "legal_analysis": {
-                        "verification_status": legal_status,
-                        "statement": legal_statement,
-                        "survey_number": survey_no,
-                        "khata_number": khata_no,
-                        "na_converted": na_converted,
-                        "missing_records": missing_legal,
-                        "disclaimer": "Analysis based solely on records provided in database. Does not replace formal legal advice."
-                    },
-                    "investment_analysis": {
-                        "capital_growth": "High (+8.4% YoY)",
-                        "end_user_suitability": "Excellent",
-                        "rental_yield": "3.8% - 4.2%",
-                        "summary": investment_summary
-                    },
-                    "risk_analysis": {
-                        "identified_risks": risks
-                    },
-                    "lifestyle_recommendation": lifestyle,
-                    "final_recommendation": {
-                        "decision": rec_decision,
-                        "badge": rec_badge,
-                        "color": rec_color,
-                        "rationale_bullets": rationale_bullets
-                    },
-                    "ai_advisor": ai_advisor_data
-                }
+                "data": audit_data
             }, status=status.HTTP_200_OK)
+            return apply_public_edge_cache(resp, max_age=300, s_maxage=900, swr=86400, cache_status='MISS')
 
         except Exception as e:
             logger.exception(f"Error generating audit for property ID {pk}")
@@ -1804,8 +1832,7 @@ class MarketTrendsAnalyticsAPIView(APIView):
             cached_data = cache.get(cache_key)
             if cached_data is not None:
                 resp = Response(cached_data, status=status.HTTP_200_OK)
-                resp['X-Cache-Status'] = 'HIT'
-                return resp
+                return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='HIT')
 
             from .market_trends_engine import MarketTrendsEngine
             engine = MarketTrendsEngine(filters=filters)
@@ -1813,8 +1840,7 @@ class MarketTrendsAnalyticsAPIView(APIView):
             analytics_data['success'] = True
             cache.set(cache_key, analytics_data, timeout=300)
             resp = Response(analytics_data, status=status.HTTP_200_OK)
-            resp['X-Cache-Status'] = 'MISS'
-            return resp
+            return apply_public_edge_cache(resp, max_age=120, s_maxage=600, swr=86400, cache_status='MISS')
         except Exception as e:
             logger.exception("Error generating market trends analytics")
             return Response({

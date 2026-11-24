@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { memo, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Building2, MapPin, Shield, BedDouble, Calendar,
-  Heart, ArrowRight, Star, ExternalLink, ArrowLeftRight
+  MapPin, Shield, BedDouble, Calendar,
+  Heart, Star, ArrowLeftRight
 } from 'lucide-react';
 import { Card, CardContent } from '../../../shared/components/ui/card';
-import { Badge } from '../../../shared/components/ui/badge';
 import { Button } from '../../../shared/components/ui/button';
 import { propertyService } from '../services/propertyService';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
+import { prefetchRoute } from '../../../shared/utils/routePrefetcher';
 
-export function PropertyCard({
+function PropertyCardComponent({
   project,
   onSelect,
   onSelectLegal,
@@ -19,6 +20,14 @@ export function PropertyCard({
   isCompared,
   priority = false,
 }) {
+  const hoverTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
   if (!project) return null;
 
   const targetId = project.id || project.property_id || project.name || 'card';
@@ -26,8 +35,8 @@ export function PropertyCard({
   const detailHref = `/properties/${navSlug}`;
   const legalHref = `/properties/${navSlug}/legal`;
   const imageAlt = `${project.name} - ${project.config || 'Residential'} ${project.propertyType || 'Property'} in ${project.locality || 'Ahmedabad'}`;
+  const optimizedImgSrc = optimizeImageUrl(project.image, 'card');
 
-  // Seeded hash for unique dynamic scoring if scores are uniform/static
   const seedString = `${targetId}-${project.name || ''}`;
   let seedHash = 0;
   for (let i = 0; i < seedString.length; i++) {
@@ -38,18 +47,41 @@ export function PropertyCard({
 
   const displayTrustScore = (project.trustScore && project.trustScore !== 95)
     ? project.trustScore
-    : (87 + (posHash % 11)); // 87..97%
+    : (87 + (posHash % 11));
 
   const displayInvestScore = (project.investScore && project.investScore !== 88)
     ? project.investScore
-    : (80 + ((posHash + 7) % 15)); // 80..94
+    : (80 + ((posHash + 7) % 15));
+
+  const handleMouseEnter = () => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
+      prefetchRoute(detailHref);
+      propertyService.prefetchPropertyDetail(navSlug);
+    }, 140);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  };
+
+  const handleTouchStart = () => {
+    prefetchRoute(detailHref);
+    propertyService.prefetchPropertyDetail(navSlug);
+  };
 
   return (
     <Card
       onClick={() => onSelect && onSelect(navSlug)}
-      onMouseEnter={() => propertyService.prefetchPropertyDetail(navSlug)}
-      onTouchStart={() => propertyService.prefetchPropertyDetail(navSlug)}
-      className="group relative overflow-hidden border bg-card hover:shadow-2xl transition-all duration-300 rounded-2xl flex flex-col justify-between cursor-pointer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      className={`group relative overflow-hidden border bg-card hover:shadow-2xl transition-[transform,box-shadow,border-color] duration-300 rounded-2xl flex flex-col justify-between cursor-pointer ${
+        priority ? '' : 'cv-auto-card'
+      }`}
     >
       {/* Diagonal Light Sweep Shine Effect on Hover */}
       <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden rounded-2xl">
@@ -60,11 +92,11 @@ export function PropertyCard({
         {/* Card Media Header */}
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           <img
-            src={project.image}
+            src={optimizedImgSrc}
             alt={imageAlt}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : "auto"}
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -76,9 +108,9 @@ export function PropertyCard({
               .map((badge, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-background/90 text-foreground backdrop-blur-md shadow-sm border border-white/20"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-background/95 text-foreground shadow-sm border border-white/20"
                 >
-                  {badge === "RERA Verified" && <Shield className="w-3 h-3 text-emerald-500 fill-emerald-500/20" />}
+                  {badge === 'RERA Verified' && <Shield className="w-3 h-3 text-emerald-500 fill-emerald-500/20" />}
                   {badge}
                 </span>
               ))}
@@ -90,13 +122,13 @@ export function PropertyCard({
               e.stopPropagation();
               onToggleWishlist && onToggleWishlist(targetId);
             }}
-            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${isWishlisted
-              ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105"
-              : "bg-black/40 text-white hover:bg-white hover:text-rose-600"
+            className={`absolute top-3 right-3 p-2.5 rounded-full transition-transform duration-200 z-10 ${isWishlisted
+              ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-105'
+              : 'bg-slate-900/75 text-white hover:bg-white hover:text-rose-600'
               }`}
-            title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
+            title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
           >
-            <Heart className={`w-4 h-4 ${isWishlisted ? "fill-white text-white" : ""}`} />
+            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-white text-white' : ''}`} />
           </button>
 
           {/* Title & Price Overlay */}
@@ -184,13 +216,13 @@ export function PropertyCard({
             onToggleCompare && onToggleCompare(targetId);
           }}
           className={`w-full h-9 flex items-center justify-center gap-1 rounded-xl text-[11px] font-bold px-2 ${isCompared
-            ? "bg-primary text-primary-foreground border-primary shadow-sm"
-            : "bg-muted/40 text-foreground border-border hover:bg-muted"
+            ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+            : 'bg-muted/40 text-foreground border-border hover:bg-muted'
             }`}
           variant="outline"
         >
           <ArrowLeftRight className="w-3 h-3 shrink-0" />
-          <span className="truncate">{isCompared ? "Compared" : "Compare"}</span>
+          <span className="truncate">{isCompared ? 'Compared' : 'Compare'}</span>
         </Button>
 
         <Link
@@ -215,4 +247,5 @@ export function PropertyCard({
   );
 }
 
+export const PropertyCard = memo(PropertyCardComponent);
 export default PropertyCard;

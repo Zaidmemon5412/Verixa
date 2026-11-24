@@ -23,5 +23,18 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'map-vendor': ['leaflet', 'react-leaflet'],
+          'chart-vendor': ['recharts'],
+        },
+      },
+    },
+  },
+  esbuild: {
+    drop: ['debugger'],
   },
 });

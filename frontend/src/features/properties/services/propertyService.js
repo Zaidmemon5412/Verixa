@@ -1,12 +1,12 @@
 import apiClient from '../../../shared/services/apiClient';
 import { createPropertySlug, extractIdFromSlug, slugify } from '../../../shared/utils/seoUtils';
 import { PROJECTS } from '../constants/propertyData';
-import { resolveAhmedabadCoordinates } from './nearbyService';
+import { resolveAhmedabadCoordinates } from '../../../shared/utils/coordinates';
+import { getCatalogSeed } from '../../../shared/services/catalogSeed';
+import { readSwr, writeSwr, SWR_PREFIX } from '../../../shared/utils/swrCache';
 
 const MEMORY_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const FILTER_OPTIONS_TTL_MS = 10 * 60 * 1000; // 10 minutes
-const SWR_STORAGE_TTL_MS = 30 * 60 * 1000; // 30 minutes
-const SWR_PREFIX = 'verixa_swr_v1_';
 const SWR_RECENT_DETAILS_KEY = `${SWR_PREFIX}recent_details`;
 const MAX_RECENT_DETAILS = 12;
 
@@ -67,34 +67,81 @@ function extractArray(val) {
   return [];
 }
 
-function readSwr(key) {
-  if (typeof window === 'undefined' || !window.localStorage) return null;
-  try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.timestamp !== 'number') return null;
-    if (Date.now() - parsed.timestamp > SWR_STORAGE_TTL_MS) {
-      window.localStorage.removeItem(key);
-      return null;
-    }
-    return parsed.data;
-  } catch {
-    return null;
+function filterMappedSeedList(list, filters = {}) {
+  let result = list;
+
+  if (filters.locality && filters.locality !== 'All') {
+    const target = String(filters.locality).toLowerCase();
+    result = result.filter(
+      (p) =>
+        String(p.locality || '').toLowerCase() === target ||
+        String(p.address || '').toLowerCase().includes(target)
+    );
   }
+  if (filters.builder && filters.builder !== 'All') {
+    const target = String(filters.builder).toLowerCase();
+    result = result.filter((p) => String(p.builder || '').toLowerCase().includes(target));
+  }
+  if (filters.status && filters.status !== 'All') {
+    const target = String(filters.status).toLowerCase();
+    result = result.filter((p) => {
+      const s = String(p.status || '').toLowerCase();
+      if (target.includes('ready')) return s.includes('ready');
+      if (target.includes('under') || target.includes('construction')) return s.includes('construction') || s.includes('under');
+      return s === target;
+    });
+  }
+  if (filters.property_type && filters.property_type !== 'All') {
+    const target = String(filters.property_type).toLowerCase();
+    result = result.filter((p) => String(p.propertyType || '').toLowerCase().includes(target));
+  }
+  if (filters.bhk && filters.bhk !== 'All') {
+    const rawList = Array.isArray(filters.bhk) ? filters.bhk : [filters.bhk];
+    const nums = rawList.map((b) => parseInt(String(b).replace(/[^0-9]/g, ''), 10)).filter(Boolean);
+    if (nums.length > 0) {
+      result = result.filter((p) => nums.includes(Number(p.bhkNum)));
+    }
+  }
+  if (filters.min_price) {
+    const minP = parseFloat(filters.min_price);
+    if (!isNaN(minP)) result = result.filter((p) => p.priceNum >= minP);
+  }
+  if (filters.max_price) {
+    const maxP = parseFloat(filters.max_price);
+    if (!isNaN(maxP)) result = result.filter((p) => p.priceNum <= maxP);
+  }
+  if (filters.min_area) {
+    const minA = parseFloat(filters.min_area);
+    if (!isNaN(minA)) result = result.filter((p) => p.areaNum >= minA);
+  }
+  if (filters.max_area) {
+    const maxA = parseFloat(filters.max_area);
+    if (!isNaN(maxA)) result = result.filter((p) => p.areaNum <= maxA);
+  }
+  if (filters.search) {
+    const q = String(filters.search).trim().toLowerCase();
+    result = result.filter(
+      (p) =>
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.locality || '').toLowerCase().includes(q) ||
+        (p.address || '').toLowerCase().includes(q) ||
+        (p.builder || '').toLowerCase().includes(q)
+    );
+  }
+  if (filters.ordering === 'price_asc') {
+    result = [...result].sort((a, b) => a.priceNum - b.priceNum);
+  } else if (filters.ordering === 'price_desc') {
+    result = [...result].sort((a, b) => b.priceNum - a.priceNum);
+  } else if (filters.ordering === 'carpet_area_asc') {
+    result = [...result].sort((a, b) => a.areaNum - b.areaNum);
+  } else if (filters.ordering === 'carpet_area_desc') {
+    result = [...result].sort((a, b) => b.areaNum - a.areaNum);
+  }
+
+  return result;
 }
 
-function writeSwr(key, data) {
-  if (typeof window === 'undefined' || !window.localStorage) return;
-  try {
-    window.localStorage.setItem(
-      key,
-      JSON.stringify({ timestamp: Date.now(), data })
-    );
-  } catch {
-    // Ignore storage quota / private browsing errors
-  }
-}
+let cachedMappedSeedProperties = null;
 
 function normalizeFallbackProject(p) {
   const id = p.id;
@@ -332,6 +379,56 @@ function findRecentDetailSwr(idOrSlug) {
 }
 
 export const propertyService = {
+  /**
+   * Build-time real database catalog snapshot lookup for zero-delay cold starts.
+   */
+  async getSeedPropertiesPage(filters = {}, { page = 1, pageSize = 24 } = {}) {
+    if (page !== 1) return null;
+    const seed = await getCatalogSeed();
+    if (!seed || !Array.isArray(seed.properties) || seed.properties.length === 0) {
+      return null;
+    }
+
+    if (seed.filterOptions && !filterOptionsCache) {
+      filterOptionsCache = { timestamp: Date.now(), data: seed.filterOptions };
+    }
+
+    if (!cachedMappedSeedProperties) {
+      cachedMappedSeedProperties = seed.properties
+        .map((item) => mapApiPropertyToUi(item, { isFullDetail: false }))
+        .filter(Boolean);
+      cachedMappedSeedProperties.forEach((p) => indexPropertyInMemory(p, { isFull: false }));
+    }
+
+    const filtered = filterMappedSeedList(cachedMappedSeedProperties, filters);
+    if (filtered.length === 0) return null;
+
+    const hasNarrowFilter = Boolean(
+      filters.search ||
+        (filters.locality && filters.locality !== 'All') ||
+        (filters.builder && filters.builder !== 'All') ||
+        (filters.status && filters.status !== 'All') ||
+        (filters.property_type && filters.property_type !== 'All') ||
+        (filters.bhk && filters.bhk !== 'All') ||
+        filters.min_price ||
+        filters.max_price ||
+        filters.min_area ||
+        filters.max_area
+    );
+
+    const totalCount = hasNarrowFilter ? filtered.length : seed.count || filtered.length;
+    const slice = filtered.slice(0, pageSize);
+
+    return {
+      results: slice,
+      count: totalCount,
+      totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
+      currentPage: 1,
+      hasNext: filtered.length > pageSize,
+      isSeed: true,
+    };
+  },
+
   /**
    * Synchronous fallback properties for cold-start grace preview (brand-new visitors).
    */
@@ -641,6 +738,18 @@ export const propertyService = {
 
     pendingDetailRequests.set(cacheKey, fetchPromise);
     return fetchPromise;
+  },
+
+  getCachedFilterOptions() {
+    if (filterOptionsCache && Date.now() - filterOptionsCache.timestamp < FILTER_OPTIONS_TTL_MS) {
+      return filterOptionsCache.data;
+    }
+    const swr = readSwr(`${SWR_PREFIX}filter_options`, FILTER_OPTIONS_TTL_MS);
+    if (swr) {
+      filterOptionsCache = { timestamp: Date.now(), data: swr };
+      return swr;
+    }
+    return null;
   },
 
   async getFilterOptions() {

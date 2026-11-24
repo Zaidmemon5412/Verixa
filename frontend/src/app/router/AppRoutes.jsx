@@ -1,11 +1,10 @@
-import React, { lazy } from 'react';
+import React, { lazy, useCallback } from 'react';
 import { Routes, Route, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
 
 
-// Layout wrappers
+// Layout wrappers (MainLayout eager for shell; AuthLayout isolated & lazy)
 import MainLayout from '../layouts/MainLayout';
-import AuthLayout from '../layouts/AuthLayout';
-import DashboardLayout from '../layouts/DashboardLayout';
+const AuthLayout = lazy(() => import('../layouts/AuthLayout'));
 
 // Guard & Performance components
 import ProtectedRoute from '../../shared/components/ProtectedRoute';
@@ -59,28 +58,32 @@ function PropertyDetailPageWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
   const isLegalView = location.pathname.includes('/legal');
+  const handleBack = useCallback(() => navigate('/properties'), [navigate]);
+  const handleSelectBuilder = useCallback((bId) => navigate(`/builders/${bId}`), [navigate]);
 
   return (
     <PropertyDetailPage
       projectId={id}
       isLegalView={isLegalView}
-      onBack={() => navigate('/properties')}
-      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
+      onBack={handleBack}
+      onSelectBuilder={handleSelectBuilder}
     />
   );
 }
 
 function PropertiesPageWrapper() {
   const navigate = useNavigate();
+  const handleSelectProject = useCallback((id, view) => {
+    if (view === 'legal') {
+      navigate(`/properties/${id}/legal`);
+    } else {
+      navigate(`/properties/${id}`);
+    }
+  }, [navigate]);
+
   return (
     <PropertiesPage
-      onSelectProject={(id, view) => {
-        if (view === 'legal') {
-          navigate(`/properties/${id}/legal`);
-        } else {
-          navigate(`/properties/${id}`);
-        }
-      }}
+      onSelectProject={handleSelectProject}
     />
   );
 }
@@ -88,9 +91,10 @@ function PropertiesPageWrapper() {
 
 function BuildersPageWrapper() {
   const navigate = useNavigate();
+  const handleSelectBuilder = useCallback((bId) => navigate(`/builders/${bId}`), [navigate]);
   return (
     <BuildersPage
-      onSelectBuilder={(bId) => navigate(`/builders/${bId}`)}
+      onSelectBuilder={handleSelectBuilder}
     />
   );
 }
@@ -103,11 +107,13 @@ function ParamRedirect({ toPrefix, suffix = '' }) {
 function BuilderDetailsPageWrapper() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const handleSelectProject = useCallback((pId) => navigate(`/properties/${pId}`), [navigate]);
+  const handleBack = useCallback(() => navigate('/builders'), [navigate]);
   return (
     <BuilderDetailsPage
       builderId={id}
-      onSelectProject={(pId) => navigate(`/properties/${pId}`)}
-      onBack={() => navigate('/builders')}
+      onSelectProject={handleSelectProject}
+      onBack={handleBack}
     />
   );
 }
@@ -115,20 +121,22 @@ function BuilderDetailsPageWrapper() {
 function LocalityDetailsPageWrapper() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const handleSelectProject = useCallback((pId) => navigate(`/properties/${pId}`), [navigate]);
 
   return (
     <LocalityDetailsPage
       localityId={id}
-      onSelectProject={(pId) => navigate(`/properties/${pId}`)}
+      onSelectProject={handleSelectProject}
     />
   );
 }
 
 function ComparisonPageWrapper() {
   const navigate = useNavigate();
+  const handleSelectProject = useCallback((id) => navigate(`/properties/${id}`), [navigate]);
   return (
     <ComparisonPage
-      onSelectProject={(id) => navigate(`/properties/${id}`)}
+      onSelectProject={handleSelectProject}
     />
   );
 }
@@ -136,19 +144,22 @@ function ComparisonPageWrapper() {
 
 function LandingPageWrapper() {
   const navigate = useNavigate();
+  const handleNavigate = useCallback((path, id) => {
+    if (path === 'detail' && id) navigate(`/properties/${id}`);
+    else if (path === 'builder' && id) navigate(`/builders/${id}`);
+    else if (path === 'projects') navigate('/properties');
+    else if (path === 'builders') navigate('/builders');
+    else if (path === 'localities') navigate('/localities');
+    else if (path === 'compare') navigate('/comparison');
+    else if (path === 'market') navigate('/market');
+    else navigate(path.startsWith('/') ? path : `/${path}`);
+  }, [navigate]);
+  const handleSelectProject = useCallback((id) => navigate(`/properties/${id}`), [navigate]);
+
   return (
     <LandingPage
-      onNavigate={(path, id) => {
-        if (path === 'detail' && id) navigate(`/properties/${id}`);
-        else if (path === 'builder' && id) navigate(`/builders/${id}`);
-        else if (path === 'projects') navigate('/properties');
-        else if (path === 'builders') navigate('/builders');
-        else if (path === 'localities') navigate('/localities');
-        else if (path === 'compare') navigate('/comparison');
-        else if (path === 'market') navigate('/market');
-        else navigate(path.startsWith('/') ? path : `/${path}`);
-      }}
-      onSelectProject={(id) => navigate(`/properties/${id}`)}
+      onNavigate={handleNavigate}
+      onSelectProject={handleSelectProject}
     />
   );
 }
@@ -283,7 +294,13 @@ export const AppRoutes = () => {
       </Route>
 
       {/* 2. Public Authentication Routes (Isolated AuthLayout Shell) */}
-      <Route element={<AuthLayout />}>
+      <Route
+        element={
+          <AppSuspense>
+            <AuthLayout />
+          </AppSuspense>
+        }
+      >
         <Route
           path="/login"
           element={

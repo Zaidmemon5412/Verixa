@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PROJECTS } from '../../properties/constants/propertyData';
+import { optimizeImageUrl } from '../../../shared/utils/imageUtils';
 
 export function PropertyHeroSlider() {
   // 4 property slides in order
@@ -52,7 +53,7 @@ export function PropertyHeroSlider() {
             }`}
           >
             <img
-              src={slide.image}
+              src={optimizeImageUrl(slide.image, 'hero')}
               alt={`${slide.name} - ${slide.config || 'Verified Residential Property'} in ${slide.locality || slide.location || 'Ahmedabad'}`}
               loading={idx === 0 ? 'eager' : 'lazy'}
               fetchPriority={idx === 0 ? 'high' : 'auto'}
